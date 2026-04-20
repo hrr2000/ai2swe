@@ -1,0 +1,222 @@
+---
+title: "What Are Embeddings? (Hash Maps to Vector Space)"
+module: 2
+lesson: 1
+slug: "what-are-embeddings"
+analogy: "A hash map where every key maps to a float array, and similar keys are nearby"
+prerequisites: ["ai-is-just-software", "what-is-a-neuron"]
+estimatedTime: "18 min"
+difficulty: "beginner"
+tags: ["embeddings", "vectors", "semantic-search", "nlp"]
+lastUpdated: "2026-04-15"
+published: true
+summary: "Embeddings convert anything — words, sentences, images — into fixed-size float arrays. Similar things get similar arrays. This lets you do math on meaning."
+---
+
+## The Problem: Computers Can't Read
+
+Programs work with numbers. Text is strings. Strings don't have a natural numeric representation that captures *meaning*.
+
+You can hash a string: `hash("queen") → 0x4f2a...` — but hashing is lossy and loses all semantic structure. `hash("king")` is nothing like `hash("queen")` even though they're semantically related concepts.
+
+You need a different kind of mapping.
+
+---
+
+## Embeddings: A Smarter Hash Map
+
+An embedding converts a piece of text (or image, or audio) into a **fixed-size array of numbers** — called a **vector** — where similar things produce similar vectors.
+
+```typescript
+// Traditional hash → no semantic structure
+hash("king")   // → 0x7a3f...
+hash("queen")  // → 0x2b14... (completely different — semantically useless)
+
+// Embedding → semantically structured
+embed("king")  // → [0.82, -0.41, 0.67, 0.23, ...]  (768 numbers)
+embed("queen") // → [0.79, -0.38, 0.71, 0.25, ...]  (very similar numbers!)
+embed("car")   // → [-0.34, 0.89, -0.12, 0.56, ...] (very different)
+```
+
+The key property: **similar meanings → similar numbers**.
+
+<AnalogyBox
+  code="HashMap<String, long> — maps a key to an arbitrary integer"
+  ai="Embedding model — maps a string to float[768] where similar strings cluster nearby"
+/>
+
+---
+
+## Visualizing Vector Space
+
+Imagine a 2D coordinate system where we plot words:
+
+```
+                [royalty]
+         queen *
+           king *
+                    [politics]
+          president *
+           senator *
+
+   [tech]
+  software *
+  engineer *
+        code *
+                              [vehicles]
+                        car *
+                       bus *
+```
+
+Words with similar meanings land near each other in this "meaning space." In reality, it's not 2D — it's 768, 1536, or even 4096 dimensions — but the same principle applies.
+
+---
+
+## Math on Meaning? Yes, Really.
+
+Once you have vectors, you can do arithmetic on meaning:
+
+```python
+# Famous example — this actually works with real embedding models
+v_king   = embed("king")
+v_queen  = embed("queen")
+v_man    = embed("man")
+v_woman  = embed("woman")
+
+# king - man + woman ≈ queen
+result = v_king - v_man + v_woman
+nearest = find_nearest_neighbor(result, vocabulary)
+print(nearest)  # → "queen"
+```
+
+This is **not** a trick — it's a genuine property of well-trained embeddings. The model learned that `[royalty relationship]` between king and queen is the same as between man and woman.
+
+<Callout type="insight">
+**Key Insight:** If you can represent meaning as numbers, you can do *math* on meaning. Subtraction, addition, similarity comparisons — this unlocks semantic search, recommendation systems, clustering, and more.
+</Callout>
+
+---
+
+## How to Get Embeddings
+
+In practice, you call an API:
+
+```typescript
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
+
+async function embed(text: string): Promise<number[]> {
+  const result = await model.embedContent(text);
+  return result.embedding.values;  // float[] of length 768
+}
+
+// Example
+const v1 = await embed("JavaScript is a programming language");
+const v2 = await embed("TypeScript is a typed superset of JS");
+const v3 = await embed("Pizza margherita has tomato and mozzarella");
+
+console.log(similarity(v1, v2));  // → ~0.92 (very similar)
+console.log(similarity(v1, v3));  // → ~0.25 (very different)
+```
+
+---
+
+## Cosine Similarity: The Fuzzy Match
+
+To compare two vectors (find how similar two things are), we use **cosine similarity**:
+
+```typescript
+function cosineSimilarity(a: number[], b: number[]): number {
+  // Think of it as: "do these two vectors point in the same direction?"
+  // 1.0  = identical direction (same meaning)
+  // 0.0  = perpendicular (unrelated)
+  // -1.0 = opposite directions (opposite meanings)
+
+  const dotProduct = a.reduce((sum, ai, i) => sum + ai * b[i], 0);
+  const magA = Math.sqrt(a.reduce((sum, ai) => sum + ai * ai, 0));
+  const magB = Math.sqrt(b.reduce((sum, bi) => sum + bi * bi, 0));
+  return dotProduct / (magA * magB);
+}
+```
+
+If you're familiar with string similarity algorithms (Levenshtein distance, Jaccard similarity), this is the semantic equivalent — except instead of character overlap, you're measuring *directional alignment in meaning space*.
+
+---
+
+## Real-World Applications
+
+| Use Case | How Embeddings Power It |
+|---|---|
+| **Semantic search** | Embed query + all docs. Find most similar doc vectors. |
+| **Recommendation** | Embed user history + catalog. Find similar items. |
+| **Duplicate detection** | If similarity > 0.95, likely the same content. |
+| **Clustering** | Group similar embeddings. No labels needed. |
+| **RAG (AI + your data)** | Embed your docs. At query time, find relevant chunks. |
+| **Anomaly detection** | Unusual items are far from all cluster centers. |
+
+---
+
+## Try It Yourself
+
+Build a tiny semantic search engine in Node.js:
+
+```typescript
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const embModel = genAI.getGenerativeModel({ model: "text-embedding-004" });
+
+// Your "database" of knowledge
+const documents = [
+  "Gradient descent minimizes loss by following the slope downhill",
+  "Attention mechanisms let tokens focus on relevant context",
+  "Tokenization splits text into subword units called tokens",
+  "Fine-tuning adapts a pretrained model to a specific task",
+  "RAG combines retrieval with generation for knowledge-grounded responses",
+];
+
+function cosineSim(a: number[], b: number[]): number {
+  const dot = a.reduce((s, v, i) => s + v * b[i], 0);
+  const magA = Math.sqrt(a.reduce((s, v) => s + v * v, 0));
+  const magB = Math.sqrt(b.reduce((s, v) => s + v * v, 0));
+  return dot / (magA * magB);
+}
+
+async function search(query: string, topK = 2) {
+  // Embed all documents (in production: do this once, cache it)
+  const docEmbeds = await Promise.all(
+    documents.map((d) => embModel.embedContent(d))
+  );
+  const queryEmbed = await embModel.embedContent(query);
+
+  // Score each document
+  const scores = docEmbeds.map((docEmb, i) => ({
+    doc: documents[i],
+    score: cosineSim(queryEmbed.embedding.values, docEmb.embedding.values),
+  }));
+
+  // Return top-K results
+  return scores.sort((a, b) => b.score - a.score).slice(0, topK);
+}
+
+// Test it
+const results = await search("How does the model pay attention to relevant words?");
+console.log(results);
+// → [{ doc: "Attention mechanisms let tokens...", score: 0.89 }, ...]
+```
+
+You just built the core of a RAG system. The vector database layer (Pinecone, Chroma, pgvector) is basically this, scaled to millions of documents.
+
+---
+
+## Key Takeaways
+
+- Embeddings = **float arrays that capture meaning** (`string → number[]`)
+- Similar meanings → similar vectors → nearby in "vector space"
+- **Cosine similarity** measures how aligned two vectors are (like fuzzy matching)
+- Embeddings enable: semantic search, rec systems, RAG, clustering
+- Call `model.embedContent(text)` — no math required
+
+**Next up:** [Vector Similarity: Fuzzy Matching at Scale →](/tutorials/vector-similarity)

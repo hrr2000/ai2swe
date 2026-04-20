@@ -1,0 +1,177 @@
+---
+title: "AI Is Just Software With Learned Parameters"
+module: 0
+lesson: 1
+slug: "ai-is-just-software"
+analogy: "Config files vs. hardcoded logic"
+prerequisites: []
+estimatedTime: "12 min"
+difficulty: "beginner"
+tags: ["fundamentals", "mental-model", "parameters"]
+lastUpdated: "2026-04-15"
+published: true
+summary: "Strip away the hype and AI models are just programs where the business logic was learned from data instead of hand-coded. That's the single most important insight for a software engineer."
+---
+
+## The Biggest Misconception About AI
+
+When most engineers hear "neural network" or "large language model," they picture some alien mathematics — calculus, linear algebra, black-box magic. Maybe that's you right now.
+
+Here's the truth: **AI models are just software**. They have inputs, outputs, and logic. The only thing unusual about them is that the logic wasn't written by a human — it was *learned* from data.
+
+That's it. Let's break that apart.
+
+<AnalogyBox
+  code="A function with hand-written if/else rules and hardcoded constants"
+  ai="A function with the same structure, but the constants were optimized automatically from millions of examples"
+/>
+
+---
+
+## Your Old Mental Model: Hardcoded Logic
+
+Imagine you're building a spam filter. The old-school way:
+
+```python
+def is_spam(email: str) -> bool:
+    if "free money" in email.lower():
+        return True
+    if "click here" in email.lower():
+        return True
+    if len(email) < 20:
+        return True
+    return False
+```
+
+This works. But it breaks when spammers learn your rules. You have to update your `if/else` statements manually — forever.
+
+---
+
+## The AI Way: Learned Parameters
+
+Now imagine the same function, but instead of hand-writing the rules, you *learn* them from 10 million labeled emails (spam or not spam):
+
+```python
+def is_spam(email: str, params: dict) -> float:
+    # params were NOT written by a human.
+    # They were calculated by looking at millions of examples.
+    score = 0.0
+    for word, weight in params["word_weights"].items():
+        if word in email.lower():
+            score += weight
+    return score > params["threshold"]
+```
+
+The structure is the same! Input → some computation → output.
+
+The difference: `params["word_weights"]` wasn't written by you. The system **learned** those weights by seeing emails labeled "spam" and "not spam" and figuring out which word weights minimize mistakes.
+
+<Callout type="insight">
+**The core insight:** AI training is the process of finding the best values for `params`. That's gradient descent. That's backpropagation. That's all the "math" — it's just automated parameter tuning.
+</Callout>
+
+---
+
+## The Config File Analogy
+
+Think of a traditional app's `config.json`:
+
+```json
+{
+  "spamThreshold": 0.7,
+  "trustedDomains": ["gmail.com", "outlook.com"],
+  "maxEmailLength": 5000
+}
+```
+
+A developer wrote those values. They made judgment calls.
+
+Now imagine:
+- You have **millions of config files** — one per "scenario" you want to handle
+- A system reads **real-world feedback** (did the user mark this as spam?)
+- The system **adjusts those config values** to minimize mistakes
+
+That's a neural network. The "config file" has millions of values (called **weights** or **parameters**), and the "adjustment process" is called **training**.
+
+```
+Traditional app:  Config written by developer
+AI model:         Config discovered by optimizer
+```
+
+---
+
+## What's Actually Inside a Model File
+
+When you download a model like `gemini-2.0-flash` or `llama-3.1-8b`, you're downloading:
+
+1. **Architecture** — the structure of the computation (which recipe to follow)
+2. **Weights** — billions of floating-point numbers (the "configuration")
+
+That's it. A 7 billion parameter model has 7,000,000,000 floating point numbers. The architecture says *how* to use them. The weights are what was *learned*.
+
+```python
+# Pseudocode: What "loading a model" actually does
+with open("llama-3.1-8b.gguf", "rb") as f:
+    architecture = read_model_architecture(f)  # The recipe
+    weights = read_float_array(f, size=7_000_000_000)  # The config
+
+# Now "run" it:
+def generate(prompt: str) -> str:
+    tokens = tokenize(prompt)
+    return architecture.forward(tokens, weights)
+```
+
+<Callout type="tip">
+**Practical takeaway:** When you call `gemini.generateContent("Hello")`, you're hitting a REST API backed by a server running exactly this kind of loop. It's absolutely ordinary software engineering underneath.
+</Callout>
+
+---
+
+## Why This Changes Everything
+
+Once you internalize "AI = learned config," the rest falls into place:
+
+| AI Jargon | What It Actually Is |
+|---|---|
+| Training | Running an optimizer to find good weight values |
+| Inference | Calling the function with the learned weights |
+| Fine-tuning | Re-optimizing some weights for a specific task |
+| Model size (7B, 70B) | Number of floats in the config file |
+| GPU requirement | Big float arrays need big matrix math hardware |
+| Context window | How much input the function can process at once |
+
+---
+
+## Try It Yourself
+
+1. Open [Google AI Studio](https://aistudio.google.com/) and get a free API key
+2. Install the SDK: `npm install @google/generative-ai`
+3. Call your first model:
+
+```typescript
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+const result = await model.generateContent(
+  "What is gradient descent? Explain in one sentence."
+);
+
+console.log(result.response.text());
+// → "Gradient descent is an iterative optimization algorithm that..."
+```
+
+You just called a function backed by 20+ billion learned parameters. Feels less magical now, right?
+
+---
+
+## Key Takeaways
+
+- AI models are functions: `input → computation → output`
+- The "computation" uses billions of values called **weights** or **parameters**
+- **Training** = automatically finding the best weight values from data
+- **Inference** = calling the function with the learned weights
+- The math (backprop, gradient descent) is just the optimizer — you don't need to implement it yourself
+
+**Next up:** [Data Is the New Source Code →](/tutorials/data-as-source-code)

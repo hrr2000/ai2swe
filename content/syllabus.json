@@ -1,0 +1,188 @@
+[
+  {
+    "id": 0,
+    "title": "The Mental Model Shift",
+    "description": "Before you write a single line, you need to rewire how you think about software. AI isn't magic — it's software with learned parameters.",
+    "analogy": "Think of pre-training like compiling source code into a binary",
+    "icon": "🧠",
+    "color": "cyan",
+    "lessons": [
+      { "slug": "ai-is-just-software", "title": "AI Is Just Software With Learned Parameters", "lesson": 1, "estimatedTime": "12 min", "difficulty": "beginner", "published": true },
+      { "slug": "data-as-source-code", "title": "Data Is the New Source Code", "lesson": 2, "estimatedTime": "10 min", "difficulty": "beginner", "published": true },
+      { "slug": "ai-development-lifecycle", "title": "The AI Dev Lifecycle (It's Just CI/CD)", "lesson": 3, "estimatedTime": "15 min", "difficulty": "beginner", "published": true },
+      { "slug": "setup-your-ai-playground", "title": "Set Up Your AI Playground", "lesson": 4, "estimatedTime": "20 min", "difficulty": "beginner", "published": true },
+      { "slug": "your-first-prompt", "title": "Your First Prompt: Calling an API in Natural Language", "lesson": 5, "estimatedTime": "15 min", "difficulty": "beginner", "published": true }
+    ]
+  },
+  {
+    "id": 1,
+    "title": "Neural Networks — The Computation Pipeline",
+    "description": "Neural networks are just function composition pipelines where the functions have been optimized automatically. That's it.",
+    "analogy": "An Express.js middleware chain where the handlers were learned from data",
+    "icon": "⚡",
+    "color": "blue",
+    "lessons": [
+      { "slug": "what-is-a-neuron", "title": "What Is a Neuron? (It's Just a Function)", "lesson": 1, "estimatedTime": "15 min", "difficulty": "beginner", "published": true },
+      { "slug": "layers-pipeline-stages", "title": "Layers Are Pipeline Stages", "lesson": 2, "estimatedTime": "18 min", "difficulty": "beginner", "published": true },
+      { "slug": "activation-functions", "title": "Activation Functions: The Soft If/Else", "lesson": 3, "estimatedTime": "12 min", "difficulty": "beginner", "published": true },
+      { "slug": "forward-pass", "title": "The Forward Pass: Your Request Goes Through Middleware", "lesson": 4, "estimatedTime": "15 min", "difficulty": "beginner", "published": true },
+      { "slug": "loss-functions", "title": "Loss Functions: AI's Unit Test Assertions", "lesson": 5, "estimatedTime": "15 min", "difficulty": "beginner", "published": true },
+      { "slug": "backpropagation", "title": "Backpropagation: Reverse Git Blame", "lesson": 6, "estimatedTime": "22 min", "difficulty": "intermediate", "published": true },
+      { "slug": "gradient-descent", "title": "Gradient Descent: Binary Search for the Best Config", "lesson": 7, "estimatedTime": "20 min", "difficulty": "intermediate", "published": true },
+      { "slug": "learning-rate", "title": "Learning Rate: Step Size Matters", "lesson": 8, "estimatedTime": "10 min", "difficulty": "intermediate", "published": false },
+      { "slug": "batches-and-epochs", "title": "Batches & Epochs: Pagination + Loops", "lesson": 9, "estimatedTime": "12 min", "difficulty": "beginner", "published": false },
+      { "slug": "overfitting", "title": "Overfitting: Over-engineering Your Model", "lesson": 10, "estimatedTime": "18 min", "difficulty": "intermediate", "published": false },
+      { "slug": "regularization", "title": "Regularization: Linting for Neural Nets", "lesson": 11, "estimatedTime": "15 min", "difficulty": "intermediate", "published": false }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Embeddings — The Vector Database of Meaning",
+    "description": "Embeddings give every word, sentence, or image a GPS coordinate in meaning-space. Similarity becomes distance.",
+    "analogy": "A hash map where every key maps to a float array, and similar keys cluster nearby",
+    "icon": "🗺️",
+    "color": "violet",
+    "lessons": [
+      { "slug": "what-are-embeddings", "title": "What Are Embeddings? (Hash Maps to Vector Space)", "lesson": 1, "estimatedTime": "18 min", "difficulty": "beginner", "published": true },
+      { "slug": "word-embeddings", "title": "Word2Vec & GloVe: Semantic Hash Codes", "lesson": 2, "estimatedTime": "20 min", "difficulty": "intermediate", "published": false },
+      { "slug": "vector-similarity", "title": "Vector Similarity: Fuzzy Matching at Scale", "lesson": 3, "estimatedTime": "15 min", "difficulty": "intermediate", "published": false },
+      { "slug": "embedding-dimensions", "title": "Embedding Dimensions: Schema Columns for Meaning", "lesson": 4, "estimatedTime": "12 min", "difficulty": "beginner", "published": false },
+      { "slug": "sentence-embeddings", "title": "Sentence & Document Embeddings", "lesson": 5, "estimatedTime": "15 min", "difficulty": "intermediate", "published": false },
+      { "slug": "vector-databases", "title": "Vector Databases: Semantic Search Indexes", "lesson": 6, "estimatedTime": "25 min", "difficulty": "intermediate", "published": false },
+      { "slug": "build-semantic-search", "title": "Hands-On: Build a Semantic Search Engine", "lesson": 7, "estimatedTime": "35 min", "difficulty": "advanced", "published": false }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Tokenization — The Lexer of AI",
+    "description": "Before a compiler can work, it needs a lexer. Before an LLM can work, it needs a tokenizer. Same idea.",
+    "analogy": "String.split() on steroids — a custom lexer that learned from the whole internet",
+    "icon": "🔤",
+    "color": "emerald",
+    "lessons": [
+      { "slug": "tokenization-fundamentals", "title": "Tokenization: AI's Lexer", "lesson": 1, "estimatedTime": "15 min", "difficulty": "beginner", "published": false },
+      { "slug": "byte-pair-encoding", "title": "BPE: Text Compression as Tokenization", "lesson": 2, "estimatedTime": "20 min", "difficulty": "intermediate", "published": false },
+      { "slug": "token-vocabularies", "title": "Token Vocabularies: Your Model's Enum", "lesson": 3, "estimatedTime": "12 min", "difficulty": "beginner", "published": false },
+      { "slug": "context-windows", "title": "Context Windows: The Buffer Size of AI", "lesson": 4, "estimatedTime": "18 min", "difficulty": "beginner", "published": false },
+      { "slug": "special-tokens", "title": "Special Tokens: Reserved Keywords", "lesson": 5, "estimatedTime": "12 min", "difficulty": "beginner", "published": false },
+      { "slug": "tokenizer-playground", "title": "Hands-On: Build a Tokenizer Visualizer", "lesson": 6, "estimatedTime": "30 min", "difficulty": "intermediate", "published": false }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Transformers — The Game Changer",
+    "description": "The transformer is the architecture that started it all. It's a data processing pipeline with a built-in search engine.",
+    "analogy": "An event-driven pipeline where every token can query every other token simultaneously",
+    "icon": "⚙️",
+    "color": "amber",
+    "lessons": [
+      { "slug": "why-transformers", "title": "Why Transformers Beat Everything Else", "lesson": 1, "estimatedTime": "18 min", "difficulty": "intermediate", "published": false },
+      { "slug": "self-attention", "title": "Self-Attention: A Database JOIN on Relevance", "lesson": 2, "estimatedTime": "25 min", "difficulty": "intermediate", "published": false },
+      { "slug": "query-key-value", "title": "Query, Key, Value: The REST API of Attention", "lesson": 3, "estimatedTime": "20 min", "difficulty": "intermediate", "published": false },
+      { "slug": "multi-head-attention", "title": "Multi-Head Attention: Parallel Search Queries", "lesson": 4, "estimatedTime": "22 min", "difficulty": "intermediate", "published": false },
+      { "slug": "positional-encoding", "title": "Positional Encoding: Array Indexes for AI", "lesson": 5, "estimatedTime": "15 min", "difficulty": "intermediate", "published": false },
+      { "slug": "encoder-vs-decoder", "title": "Encoder vs Decoder: Request Handler vs Response Builder", "lesson": 6, "estimatedTime": "20 min", "difficulty": "intermediate", "published": false },
+      { "slug": "bert-vs-gpt", "title": "BERT vs GPT: Classifier vs Generator", "lesson": 7, "estimatedTime": "20 min", "difficulty": "intermediate", "published": false },
+      { "slug": "build-attention-scratch", "title": "Hands-On: Build Attention in 50 Lines", "lesson": 8, "estimatedTime": "45 min", "difficulty": "advanced", "published": false }
+    ]
+  },
+  {
+    "id": 5,
+    "title": "Large Language Models — The Revolution",
+    "description": "LLMs are massive auto-complete engines trained on the internet. Understanding their scale, capabilities, and limits is essential for any engineer today.",
+    "analogy": "The world's most sophisticated autocomplete — trained on a trillion-token codebase called 'the internet'",
+    "icon": "🚀",
+    "color": "rose",
+    "lessons": [
+      { "slug": "what-makes-a-model-large", "title": "What Makes a Model 'Large'?", "lesson": 1, "estimatedTime": "15 min", "difficulty": "beginner", "published": false },
+      { "slug": "next-token-prediction", "title": "Next-Token Prediction: AI Is Just Autocomplete", "lesson": 2, "estimatedTime": "18 min", "difficulty": "beginner", "published": false },
+      { "slug": "temperature-and-sampling", "title": "Temperature & Sampling: Controlling Randomness", "lesson": 3, "estimatedTime": "15 min", "difficulty": "beginner", "published": false },
+      { "slug": "gpt-family", "title": "The GPT Family: Version Releases With Breaking Changes", "lesson": 4, "estimatedTime": "20 min", "difficulty": "beginner", "published": false },
+      { "slug": "open-source-llms", "title": "Open Source LLMs: The Linux of AI", "lesson": 5, "estimatedTime": "20 min", "difficulty": "intermediate", "published": false },
+      { "slug": "gemini-family", "title": "The Gemini Family: Google's Model Tiers", "lesson": 6, "estimatedTime": "15 min", "difficulty": "beginner", "published": false },
+      { "slug": "emergent-abilities", "title": "Emergent Abilities: Features That Appear at Scale", "lesson": 7, "estimatedTime": "20 min", "difficulty": "intermediate", "published": false }
+    ]
+  },
+  {
+    "id": 6,
+    "title": "Prompt Engineering — Programming in Natural Language",
+    "description": "The prompt is your API request body. Getting it right is the difference between a useless response and a perfectly structured output.",
+    "analogy": "Writing function signatures and documentation — except the runtime is an LLM",
+    "icon": "✍️",
+    "color": "pink",
+    "lessons": [
+      { "slug": "prompt-structure", "title": "Prompt Structure: System, User, Assistant (HTTP Headers)", "lesson": 1, "estimatedTime": "15 min", "difficulty": "beginner", "published": false },
+      { "slug": "zero-shot-prompting", "title": "Zero-Shot vs Few-Shot: No Examples vs Test Cases", "lesson": 2, "estimatedTime": "15 min", "difficulty": "beginner", "published": false },
+      { "slug": "chain-of-thought", "title": "Chain-of-Thought: console.log() Debugging for AI", "lesson": 3, "estimatedTime": "18 min", "difficulty": "intermediate", "published": false },
+      { "slug": "structured-output", "title": "Structured Output: Schema-Enforced API Responses", "lesson": 4, "estimatedTime": "20 min", "difficulty": "intermediate", "published": false },
+      { "slug": "prompt-templates", "title": "Prompt Templates: String Template Literals with Variables", "lesson": 5, "estimatedTime": "15 min", "difficulty": "beginner", "published": false },
+      { "slug": "prompt-chaining", "title": "Prompt Chaining: Function Composition for AI", "lesson": 6, "estimatedTime": "22 min", "difficulty": "intermediate", "published": false }
+    ]
+  },
+  {
+    "id": 7,
+    "title": "Training & Fine-Tuning — Fork, Modify, Build",
+    "description": "Pre-training gives you a foundation. Fine-tuning lets you customize it without rewriting everything.",
+    "analogy": "Fork the repo, override the methods you care about — don't rewrite from scratch",
+    "icon": "🔧",
+    "color": "blue",
+    "lessons": [
+      { "slug": "pretraining-vs-finetuning", "title": "Pre-training vs Fine-tuning: Source vs Library", "lesson": 1, "estimatedTime": "18 min", "difficulty": "intermediate", "published": false },
+      { "slug": "rlhf", "title": "RLHF: A/B Testing With Human Preference Data", "lesson": 2, "estimatedTime": "25 min", "difficulty": "advanced", "published": false },
+      { "slug": "lora", "title": "LoRA: Monkey-Patching Your Model", "lesson": 3, "estimatedTime": "25 min", "difficulty": "advanced", "published": false },
+      { "slug": "qlora", "title": "QLoRA: LoRA But Memory-Efficient", "lesson": 4, "estimatedTime": "20 min", "difficulty": "advanced", "published": false },
+      { "slug": "dataset-preparation", "title": "Dataset Preparation: ETL for Training Data", "lesson": 5, "estimatedTime": "25 min", "difficulty": "intermediate", "published": false },
+      { "slug": "model-distillation", "title": "Model Distillation: Minification for AI", "lesson": 6, "estimatedTime": "20 min", "difficulty": "advanced", "published": false },
+      { "slug": "finetune-7b-lora", "title": "Hands-On: Fine-tune a 7B Model With LoRA", "lesson": 7, "estimatedTime": "60 min", "difficulty": "advanced", "published": false }
+    ]
+  },
+  {
+    "id": 8,
+    "title": "Inference & Deployment — Shipping AI to Production",
+    "description": "You've built the model. Now comes the hard part: shipping it reliably, efficiently, and at scale.",
+    "analogy": "You've built the app — now containerize it, autoscale it, and monitor it",
+    "icon": "🏭",
+    "color": "emerald",
+    "lessons": [
+      { "slug": "quantization", "title": "Quantization: Image Compression for Models", "lesson": 1, "estimatedTime": "20 min", "difficulty": "intermediate", "published": false },
+      { "slug": "kv-cache", "title": "KV Cache: Connection Pooling + Memoization", "lesson": 2, "estimatedTime": "20 min", "difficulty": "advanced", "published": false },
+      { "slug": "serving-frameworks", "title": "Serving Frameworks: Nginx for Your Model", "lesson": 3, "estimatedTime": "25 min", "difficulty": "intermediate", "published": false },
+      { "slug": "streaming-responses", "title": "Streaming Responses: SSE + WebSockets for AI", "lesson": 4, "estimatedTime": "20 min", "difficulty": "intermediate", "published": false },
+      { "slug": "monitoring-ai", "title": "Monitoring AI Systems: Logs, Metrics, Traces", "lesson": 5, "estimatedTime": "22 min", "difficulty": "intermediate", "published": false }
+    ]
+  },
+  {
+    "id": 9,
+    "title": "RAG & AI Applications — Building Real Products",
+    "description": "Give your AI a search engine and a database. RAG is how you build AI that knows your data.",
+    "analogy": "SELECT from your knowledge base, then ask the LLM to reason over the results",
+    "icon": "🏗️",
+    "color": "violet",
+    "lessons": [
+      { "slug": "what-is-rag", "title": "RAG: Give Your AI a Search Engine", "lesson": 1, "estimatedTime": "22 min", "difficulty": "intermediate", "published": false },
+      { "slug": "chunking-strategies", "title": "Chunking: Paginating Your Knowledge Base", "lesson": 2, "estimatedTime": "18 min", "difficulty": "intermediate", "published": false },
+      { "slug": "function-calling", "title": "Function Calling: Your Model Can Call Your APIs", "lesson": 3, "estimatedTime": "25 min", "difficulty": "intermediate", "published": false },
+      { "slug": "ai-agents", "title": "AI Agents: Autonomous Services With Decision Loops", "lesson": 4, "estimatedTime": "28 min", "difficulty": "advanced", "published": false },
+      { "slug": "mcp-protocol", "title": "MCP: The USB Standard for AI Tools", "lesson": 5, "estimatedTime": "22 min", "difficulty": "intermediate", "published": false },
+      { "slug": "guardrails", "title": "Guardrails: Input Validation for AI", "lesson": 6, "estimatedTime": "18 min", "difficulty": "intermediate", "published": false },
+      { "slug": "build-rag-chatbot", "title": "Hands-On: Build a RAG Chatbot Over Your Codebase", "lesson": 7, "estimatedTime": "60 min", "difficulty": "advanced", "published": false }
+    ]
+  },
+  {
+    "id": 10,
+    "title": "Multimodal & Frontier AI — 2025–2026 Cutting Edge",
+    "description": "The latest wave: AI that sees, hears, creates, and acts. What it means for your stack and career.",
+    "analogy": "APIs that accept images, audio, and video — not just text strings",
+    "icon": "🌌",
+    "color": "rose",
+    "lessons": [
+      { "slug": "vision-language-models", "title": "Vision-Language Models: APIs That See", "lesson": 1, "estimatedTime": "20 min", "difficulty": "intermediate", "published": false },
+      { "slug": "image-generation-diffusion", "title": "Image Generation: Lossy Decompression From Noise", "lesson": 2, "estimatedTime": "22 min", "difficulty": "intermediate", "published": false },
+      { "slug": "reasoning-models", "title": "Reasoning Models (o1, o3, DeepSeek R1): Debuggers That Think", "lesson": 3, "estimatedTime": "25 min", "difficulty": "intermediate", "published": false },
+      { "slug": "mixture-of-experts", "title": "Mixture of Experts: Load Balancer for Neurons", "lesson": 4, "estimatedTime": "22 min", "difficulty": "advanced", "published": false },
+      { "slug": "long-context-models", "title": "1M+ Token Models: Process Your Entire Codebase", "lesson": 5, "estimatedTime": "18 min", "difficulty": "intermediate", "published": false },
+      { "slug": "ai-coding-agents", "title": "AI Coding Agents: Devin, OpenHands, and the Future", "lesson": 6, "estimatedTime": "25 min", "difficulty": "intermediate", "published": false },
+      { "slug": "whats-next", "title": "What's Next: Where AI Is Heading in 2026+", "lesson": 7, "estimatedTime": "20 min", "difficulty": "beginner", "published": false }
+    ]
+  }
+]
