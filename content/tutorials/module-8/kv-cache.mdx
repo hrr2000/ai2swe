@@ -1,0 +1,53 @@
+---
+title: "KV Cache: Connection Pooling + Memoization"
+module: 8
+lesson: 2
+slug: "kv-cache"
+analogy: "Memoize expensive partial renders — reuse K/V tensors for past tokens during autoregressive decode"
+prerequisites: ["quantization"]
+estimatedTime: "20 min"
+difficulty: "advanced"
+tags: ["kv-cache", "inference", "transformers", "throughput"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "During decoding, keys and values for prior positions do not change — cache them to avoid recomputing attention over the full prefix each new token."
+---
+
+## Autoregressive cost without cache
+
+Generating token `t` naively recomputes attention for positions `1…t` every step → **O(T²)** work across the whole generation.
+
+## With KV cache
+
+Store, per layer and head, tensors `K_{1:t}`, `V_{1:t}`. New token only computes `q_{t+1}` against cached `K,V` and **appends** its own `k_{t+1}, v_{t+1}`.
+
+Per-step cost ~ **O(t)** attention against growing cache — still heavy for huge contexts but far better than quadratic recomputation.
+
+<AnalogyBox
+  code="Incremental compilation — reuse object files for unchanged translation units"
+  ai="KV cache — reuse attention context blocks for frozen prefix"
+/>
+
+## Memory footprint
+
+KV cache RAM scales roughly:
+
+```text
+2 × layers × batch × heads × seq_len × head_dim × bytes_per_element
+```
+
+**Multi-query attention (MQA)** and **grouped-query (GQA)** shrink cache by sharing K/V heads — dominant in long-context deployments.
+
+<Callout type="tip">
+When sizing GPUs for serving, budget **KV cache + activations**, not weights alone — long concurrent chats explode memory.
+</Callout>
+
+---
+
+## Key takeaways
+
+- KV cache avoids **recomputing** past keys/values during decode.
+- Memory grows **linearly** with sequence length × batch × layers.
+- **MQA/GQA** are architectural responses to KV RAM pressure.
+
+**Next:** [Serving frameworks →](/tutorials/serving-frameworks)

@@ -1,61 +1,91 @@
 ---
 title: "RAG: Give Your AI a Search Engine"
-summary: "How to combine a frozen model with fresh, private data without expensive retraining."
 module: 9
 lesson: 1
 slug: "what-is-rag"
-analogy: "RAG as an Open-Book Exam (Model + Database)"
-estimatedTime: "22 min"
-readingTime: "11 min"
+analogy: "Open-book exam: retrieve relevant pages, then reason — the model is the student, your index is the textbook"
+prerequisites: ["monitoring-ai"]
+estimatedTime: "26 min"
+difficulty: "intermediate"
+tags: ["rag", "retrieval", "embeddings", "production"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Retrieval-Augmented Generation grounds answers in your data: embed queries and docs, fetch top chunks, paste them into the prompt, then generate — fresher and cheaper than retraining on every doc change."
 ---
 
-# Retrieval-Augmented Generation (RAG)
+## The problem RAG solves
 
-An AI model is like a brilliant student who graduated with a PhD in 2024 but has been **locked in a room without internet** ever since.
+A frozen LLM is a **snapshot of the internet-ish text** it was trained on, plus whatever fits in the prompt. It does **not** know:
 
-They are incredibly smart, but they don't know:
-- Your company's private documentation.
-- The news that happened this morning.
-- The latest version of a library released last month.
+- Private wikis, tickets, or customer records.
+- This morning’s incident postmortem.
+- The exact paragraph of your Terms of Service that legal cares about.
 
-**RAG** is the process of giving that student a **Search Engine**.
+You could **fine-tune** weights on new documents, but that is slow, expensive, and still **stale** the moment the next edit lands.
 
-## How RAG Works (The Pipeline)
+**Retrieval-Augmented Generation (RAG)** instead keeps the model weights fixed and gives the model **fresh evidence** inside the context window every query.
 
-1. **User Query**: A user asks: *"What is our company's policy on remote work in Spain?"*
-2. **Retrieval**: Your system searches your private documents for "remote work Spain."
-3. **Augmentation**: You take the relevant paragraphs found in your docs and **paste them** into the prompt.
-4. **Generation**: You ask the LLM: *"Based on the following context, answer the user's question: [Context...]"*
+<AnalogyBox
+  code="Stack Overflow answer after you paste the error log — evidence first, explanation second"
+  ai="Retrieve chunks → put them above the user question → let the LLM cite and summarize"
+/>
 
-## Why not just Fine-tune?
+## The minimal pipeline
 
-Fine-tuning is like sending the student back to university for another 6 months. It’s expensive, slow, and by the time they graduate, the remote work policy might have changed again.
+1. **Ingest** — chunk documents, compute **embeddings**, store vectors + metadata in a vector index (Module 2).
+2. **Retrieve** — embed the user query, **ANN search** for top-k chunks; optionally **re-rank** with a second model.
+3. **Augment** — build a prompt: system instructions + **CONTEXT:** blocks + user question.
+4. **Generate** — model writes an answer conditioned on retrieved text.
 
-RAG is like handing the student a **PDF**. It’s instant, accurate, and provides "Citations" for the answer.
+```typescript
+async function ragAnswer(userQuery: string) {
+  const hits = await vectorIndex.search(await embed(userQuery), { k: 6 });
+  const context = hits.map((h) => `SOURCE: ${h.id}\n${h.text}`).join("\n---\n");
 
-## The Semantic Bridge
-
-We use **Embeddings** (Module 2) to power the Retrieval step. We compare the vector of the user's question to the vectors of all our document chunks to find the most "Semantically Similar" data.
-
-### The Developer's View
-```javascript
-// A simple RAG function
-async function handleQuery(userQuery) {
-  // 1. Search Vector DB for context
-  const context = await vectorDb.similaritySearch(userQuery, 3);
-  
-  // 2. Wrap instructions + context + query
-  const prompt = `
-    Use these docs to answer: ${context}
-    User Question: ${userQuery}
-  `;
-  
-  // 3. Get the answer
-  return await llm.generate(prompt);
+  return llm.chat({
+    messages: [
+      {
+        role: "system",
+        content:
+          "Answer using ONLY the provided context. If insufficient, say you don't know.",
+      },
+      {
+        role: "user",
+        content: `CONTEXT:\n${context}\n\nQUESTION:\n${userQuery}`,
+      },
+    ],
+  });
 }
 ```
 
-> [!INSIGHT]  
-> 90% of "AI Apps" in production today are actually RAG systems. It is the most robust way to build software that is both intelligent and grounded in truth.
+## Why RAG beats “just prompt harder”
 
-Next: How do we break long documents into manageable pieces for the AI? **Chunking Strategies.**
+- **Freshness** — update the index when docs change; no retrain.
+- **Attribution** — return `SOURCE` ids so humans can audit answers.
+- **Cost** — pay embedding + small context per query instead of giant fine-tunes.
+
+## Failure modes (the real engineering)
+
+- **Bad chunks** — naive 512-token splits break tables and APIs across boundaries.
+- **Missing retrieval** — the right paragraph was never embedded or ranked low.
+- **Confident synthesis** — the model stitches unrelated chunks into a lie unless your system prompt forbids it.
+
+<Callout type="warning">
+RAG is not “truth injection.” It is **bias the distribution** toward pasted text. You still need evals, monitoring, and often **tool calls** (SQL, HTTP) for checks the model cannot do by paraphrasing prose.
+</Callout>
+
+## Relationship to fine-tuning
+
+Use **RAG** when knowledge changes often or must be citeable. Use **fine-tuning** (or LoRA) when you need **style**, **format**, or **private skill** that retrieval cannot supply — “how we write incidents,” “our JSON schema,” “brand voice.” Many products combine **both**.
+
+---
+
+## Key takeaways
+
+- RAG = **retrieve → stuff context → generate**.
+- Vector search is the common retrieval primitive, but **hybrid lexical + metadata filters** often win in production.
+- Treat chunking, re-ranking, and abstention prompts as **first-class product work**, not plumbing afterthoughts.
+
+Explore earlier modules for **embeddings**, **vector indexes**, **token limits**, and **prompt structure** — RAG is where they meet.
+
+**Next:** [Chunking strategies →](/tutorials/chunking-strategies)

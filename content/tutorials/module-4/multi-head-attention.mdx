@@ -1,0 +1,50 @@
+---
+title: "Multi-Head Attention: Parallel Search Queries"
+module: 4
+lesson: 4
+slug: "multi-head-attention"
+analogy: "Several analysts researching the same document — each focuses on different angles, then you merge meeting notes"
+prerequisites: ["query-key-value"]
+estimatedTime: "22 min"
+difficulty: "intermediate"
+tags: ["attention", "multi-head", "transformers", "parallelism"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Multiple attention heads run the same attention mechanism on different learned subspaces, concatenate, and project — more representational bandwidth per layer."
+---
+
+## Motivation
+
+One attention map might specialize in **syntax** (subject–verb), another in **coreference**, another in **long-range theme**. **Multi-head attention** instantiates `h` independent `(W_Q, W_K, W_V)` triples on **lower-dimensional slices** of `d_model`, runs attention in parallel, then **concatenates** head outputs and applies `W_O`.
+
+```text
+head_i = Attention(Q W_Q^i, K W_K^i, V W_V^i)
+MultiHead = Concat(head_1…head_h) W_O
+```
+
+<AnalogyBox
+  code="Parallel map-reduce jobs keyed by different shard functions"
+  ai="Heads — parallel attention jobs whose outputs are merged linearly"
+/>
+
+## Parameter accounting
+
+Each head uses smaller `d_k = d_model / h` so total FLOPs stay comparable to one fat head — it is mostly a **reparameterization** that empirically generalizes better.
+
+## Multi-query / grouped-query variants
+
+**MQA** and **GQA** share `K`/`V` across heads to shrink **KV cache** memory during autoregressive decoding — critical for long-context deployment. Math is similar; layout changes for serving.
+
+<Callout type="insight">
+When profiling Transformers, **attention** vs **FFN** dominance flips with sequence length — short prompts: FFN heavy; long prompts: attention and memory bandwidth heavy.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Multi-head = **ensemble of attention patterns** per layer.
+- Heads run in **parallel** — friendly to GPU tiling.
+- Serving-focused models tweak head **KV sharing** — same idea, cheaper cache.
+
+**Next:** [Positional encoding →](/tutorials/positional-encoding)

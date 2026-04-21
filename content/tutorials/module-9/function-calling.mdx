@@ -1,0 +1,46 @@
+---
+title: "Function Calling: Your Model Can Call Your APIs"
+module: 9
+lesson: 3
+slug: "function-calling"
+analogy: "RPC stubs in the prompt — model emits structured JSON, your runtime dispatches HTTP/SQL"
+prerequisites: ["chunking-strategies"]
+estimatedTime: "25 min"
+difficulty: "intermediate"
+tags: ["tools", "function-calling", "agents", "json-schema"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Tool / function calling teaches models to emit machine-parseable tool invocations. Your code executes tools, appends results as messages, and loops until a final answer."
+---
+
+## Control loop
+
+1. Model returns **`tool_calls`** with name + arguments JSON.
+2. Server validates JSON against **JSON Schema**, executes handler.
+3. Append **`tool` role** message with stringified output (or error).
+4. Model continues until it emits a normal assistant message.
+
+<AnalogyBox
+  code="gRPC server reflection — client discovers methods and types at runtime"
+  ai="Tool schemas advertised to the model — it picks which procedure to invoke"
+/>
+
+## Safety
+
+- **Allow-list** tool names server-side.
+- **Timeouts + idempotency** on HTTP tools.
+- **Row limits** on SQL tools — never let the model pass unchecked `LIMIT`.
+
+<Callout type="warning">
+Treat tool arguments like **SQL injection surface** — parameterized queries, no string concat of raw model output into shells.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Function calling = **LLM-authored RPC** with your server as kernel.
+- **Validate + sandbox** every call — the model is not a trusted peer.
+- Log **tool traces** separately from user chat for security review.
+
+**Next:** [AI agents →](/tutorials/ai-agents)

@@ -1,0 +1,59 @@
+---
+title: "Prompt Templates: String Template Literals with Variables"
+module: 6
+lesson: 5
+slug: "prompt-templates"
+analogy: "Handlebars for LLMs — separate layout from dynamic slots for user data"
+prerequisites: ["structured-output"]
+estimatedTime: "15 min"
+difficulty: "beginner"
+tags: ["prompting", "templates", "i18n", "dx"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Centralize prompts in versioned template files with typed variables, escaping, and tests — the same discipline as email templates or SQL builders."
+---
+
+## Anti-pattern
+
+```typescript
+const prompt = "Summarize: " + userText; // injection + formatting chaos
+```
+
+## Pattern
+
+```typescript
+const summarizeTpl = (doc: string, bullets: number) => `
+You are a concise analyst.
+Return exactly ${bullets} bullet points for:
+<<<DOC
+${doc}
+DOC
+`.trim();
+```
+
+Use **real template engines** (Mustache, Handlebars, lit-html) when localization teams get involved.
+
+<AnalogyBox
+  code="Prepared statements separate SQL shape from parameters"
+  ai="Templates separate policy text from user-controlled blobs"
+/>
+
+## Safety
+
+- **Delimit** untrusted text with clear markers (`<<<DOC`) so the model knows boundary.
+- **Escape** XML/JSON if downstream expects structured wrappers.
+- **Redact** PII before inserting into templates — logs will contain expanded prompts.
+
+<Callout type="insight">
+Store templates next to **eval fixtures** in git. PR review on prompt diffs catches accidental tone or schema regressions.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Templates = **reuse + reviewability** for prompts.
+- Always separate **instruction skeleton** from **user payload**.
+- Treat prompt repos like **frontend strings** — lint, snapshot-test, translate.
+
+**Next:** [Prompt chaining →](/tutorials/prompt-chaining)

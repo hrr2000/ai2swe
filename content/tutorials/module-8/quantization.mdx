@@ -1,0 +1,51 @@
+---
+title: "Quantization: Image Compression for Models"
+module: 8
+lesson: 1
+slug: "quantization"
+analogy: "WebP for tensors — fewer bits per weight with tuned codecs (INT8, GPTQ, AWQ)"
+prerequisites: ["finetune-7b-lora"]
+estimatedTime: "20 min"
+difficulty: "intermediate"
+tags: ["quantization", "int8", "gguf", "inference"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Quantization maps FP32/BF16 weights to lower-bit formats to shrink VRAM and bandwidth. PTQ is cheap; QAT is accurate; GPTQ/AWQ target LLM outliers specifically."
+---
+
+## Motivation
+
+A **70B** parameter model at BF16 needs **140 GB** just for weights — multi-GPU or impossible on edge. **INT8** halves; **INT4** quarters (roughly) with clever packing.
+
+## Post-training quantization (PTQ)
+
+Calibrate scale/zero-point on a small **representative batch**, then round weights. Fast, no retrain, but can **hurt perplexity** if done naively on LLMs.
+
+## Quantization-aware training (QAT)
+
+Simulate low-bit ops during training so weights adapt — best accuracy, highest cost.
+
+## LLM-specific PTQ
+
+- **GPTQ** — layer-wise Hessian-informed rounding for 4-bit weights.
+- **AWQ** — protects **salient** weight channels based on activation stats.
+- **GGUF / llama.cpp** stacks — CPU-friendly block quant formats.
+
+<AnalogyBox
+  code="Lossy audio codecs throw imperceptible frequencies first"
+  ai="LLM quants drop least-sensitive bits in weight tensors"
+/>
+
+<Callout type="warning">
+Quant + **LoRA merge** order matters — merge in FP precision, **then** quantize for cleanest results; some pipelines quantize base and keep adapters FP.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Quantization trades **numeric precision** for **memory + throughput**.
+- **PTQ** is default for shipping; **QAT** when metrics regress.
+- Pick format (**GGUF, ONNX, TensorRT-LLM**) based on your **serving runtime**, not vibes.
+
+**Next:** [KV cache →](/tutorials/kv-cache)

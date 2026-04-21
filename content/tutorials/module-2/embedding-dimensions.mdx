@@ -1,0 +1,52 @@
+---
+title: "Embedding Dimensions: Schema Columns for Meaning"
+module: 2
+lesson: 4
+slug: "embedding-dimensions"
+analogy: "Each dimension is a column in a wide table — more columns can store nuance, but cost and noise grow too"
+prerequisites: ["vector-similarity"]
+estimatedTime: "12 min"
+difficulty: "beginner"
+tags: ["embeddings", "dimensionality", "latency", "quality"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Embedding size trades expressiveness against memory, FLOPs, and index RAM. Pick the model family’s native dim unless you have a re-ranking or compression plan."
+---
+
+## What “768-d” means
+
+An embedding is a point in **ℝᵈ**. **d** is the number of coordinates the model allocates per token, sentence, or image patch. More dimensions can represent **more orthogonal factors** simultaneously — but only if training data and objective actually fill that space.
+
+<AnalogyBox
+  code="Database row with d numeric columns vs a single JSON blob"
+  ai="Vector length d — fixed schema width for every embedded object"
+/>
+
+## Engineering costs
+
+| Larger `d` | Consequence |
+| --- | --- |
+| Storage | `N × d × bytes_per_float` in vector DB |
+| Latency | Bigger matmuls in downstream models |
+| ANN RAM | HNSW graphs hold high-D points |
+| Quality | Diminishing returns after a point |
+
+Common API defaults: **768**, **1024**, **1536**, **3072** — tied to specific checkpoints, not arbitrary.
+
+## Matryoshka and truncation
+
+Some models train **nested** dimensions so you can keep the first `k` components and still get a usable (if slightly weaker) vector — useful for **tiered storage** (short vector for recall, long for re-rank).
+
+<Callout type="tip">
+Do not L2-normalize and then blindly **truncate** without checking retrieval quality — you are deleting coordinates the model may rely on. Measure **Recall@k** on a labeled query set.
+</Callout>
+
+---
+
+## Key takeaways
+
+- **d** is a capacity knob with **linear RAM** and **compute** costs.
+- Match the **embedding API’s** output size unless you own the full stack.
+- Evaluate **downstream retrieval** when you change dimensionality.
+
+**Next:** [Sentence & document embeddings →](/tutorials/sentence-embeddings)

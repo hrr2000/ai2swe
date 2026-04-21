@@ -1,0 +1,49 @@
+---
+title: "The GPT Family: Version Releases With Breaking Changes"
+module: 5
+lesson: 4
+slug: "gpt-family"
+analogy: "Major semver bumps — new tokenizer, new context, new tool schema, deprecations"
+prerequisites: ["temperature-and-sampling"]
+estimatedTime: "20 min"
+difficulty: "beginner"
+tags: ["gpt", "openai", "models", "apis"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "OpenAI-style GPT releases differ in context length, modalities, JSON mode, and tool calling. Treat each SKU as a new dependency with its own limits and migration notes."
+---
+
+## What “GPT-4.1” style names hide
+
+Each public **model string** (`gpt-4o-mini`, etc.) bundles:
+
+- **Tokenizer + context window**
+- **Modalities** (text-only vs vision vs audio)
+- **Tool / function calling** format
+- **Rate limits, batch APIs, fine-tuning availability**
+
+<AnalogyBox
+  code="Node LTS lines — same language, different runtime defaults and deprecations"
+  ai="GPT SKUs — read release notes; never assume drop-in parity"
+/>
+
+## Migration checklist
+
+1. **Max tokens / context** — resize prompts.
+2. **Stop sequences** — may differ for chat vs completions legacy endpoints.
+3. **JSON / schema mode** — verify grammar enforcement level.
+4. **Pricing** — per **1M tokens** input vs output often asymmetric.
+
+<Callout type="tip">
+Pin **`model=` string** in config, log **prompt token counts**, and feature-flag upgrades — instant rollback beats silent quality drift.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Model IDs are **contracts** — not interchangeable literals.
+- Read **deprecation timelines** for hosted APIs the way you read platform EOL notices.
+- Maintain an **internal model card** per SKU with eval scores on your tasks.
+
+**Next:** [Open source LLMs →](/tutorials/open-source-llms)

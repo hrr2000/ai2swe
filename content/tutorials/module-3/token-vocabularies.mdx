@@ -1,0 +1,53 @@
+---
+title: "Token Vocabularies: Your Model's Enum"
+module: 3
+lesson: 3
+slug: "token-vocabularies"
+analogy: "Vocab.json is like a generated enum + lookup table — IDs must match training or weights misalign"
+prerequisites: ["byte-pair-encoding"]
+estimatedTime: "12 min"
+difficulty: "beginner"
+tags: ["tokenizer", "vocabulary", "special-tokens", "nlp"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "The vocabulary maps token strings to integer IDs. Size, reserved tokens, and byte fallback define how text becomes tensors for a specific checkpoint."
+---
+
+## What lives in `vocab.json` (conceptually)
+
+- **Token strings** → **integer IDs** (0 … V−1).
+- **Special entries** — pad, unk, bos, eos, chat markers — occupy low or high IDs depending on format.
+- **Unused slots** — some tables reserve space for compatibility across versions.
+
+<AnalogyBox
+  code="OpenAPI enum + x-enum-varnames for codegen"
+  ai="Tokenizer vocab — the only legal symbols the embedding matrix rows correspond to"
+/>
+
+## Vocabulary size tradeoffs
+
+| Larger V | Effect |
+| --- | --- |
+| Fewer tokens per sentence | Shorter contexts, cheaper training |
+| Sparse tail | Rare tokens under-trained |
+| Embedding table rows | `V × d` parameters just for input lookup |
+
+LLMs often sit between **32k** and **256k** vocab entries — not millions like raw Unicode words.
+
+## Byte-level BPE
+
+Falling back to **bytes** guarantees **no unknown symbol** can appear in input — every file is representable. Tradeoff: non-Latin text may consume more tokens than a language-specific tokenizer.
+
+<Callout type="warning">
+Loading weights trained with vocab **V₁** into code that tokenizes with **V₂** silently maps words to **wrong rows** — catastrophic garbage. Pin tokenizer **hash** in model cards.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Vocabulary = **legal token ID space** for a checkpoint.
+- Size affects **sequence length**, **memory**, and **rare token quality**.
+- Always ship **tokenizer + config** with the model — they are part of the binary interface.
+
+**Next:** [Context windows →](/tutorials/context-windows)

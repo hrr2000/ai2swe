@@ -1,0 +1,54 @@
+---
+title: "Monitoring AI Systems: Logs, Metrics, Traces"
+module: 8
+lesson: 5
+slug: "monitoring-ai"
+analogy: "APM for nondeterministic services — RED metrics plus eval hooks and safety classifiers"
+prerequisites: ["streaming-responses"]
+estimatedTime: "22 min"
+difficulty: "intermediate"
+tags: ["observability", "evals", "sre", "llmops"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Track latency histograms, token usage, error taxonomy, tool-call success, and offline drift suites — classic SRE plus LLM-specific quality signals."
+---
+
+## Golden signals (extended)
+
+- **Latency** — TTFT, inter-token latency, total wall clock.
+- **Traffic** — requests/min, tokens/min in vs out.
+- **Errors** — HTTP 5xx, schema parse fails, moderation blocks, rate limits.
+- **Saturation** — GPU util %, queue depth, KV cache pressure.
+
+Add **quality** metrics:
+
+- **Human thumbs** / implicit signals (copy, follow-up).
+- **Automated judges** (careful with bias) on sampled traffic.
+- **Task success** for tool-using agents (did SQL run?).
+
+<AnalogyBox
+  code="Feature flags + metrics on canary cohorts"
+  ai="Shadow traffic to new prompts/models with offline scoring before full rollout"
+/>
+
+## Tracing
+
+OpenTelemetry spans per **LLM call**, **retrieval**, **tool execution**. Propagate `trace_id` across microservices so you can reconstruct one user session.
+
+## Drift
+
+Compare **embedding centroids** of weekly queries vs training baseline; alert when **OOD** traffic spikes.
+
+<Callout type="tip">
+Store **hashed prompts** + **model version** + **sampling params** in structured logs — enough to debug without storing raw PII in cold storage forever.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Extend classic **RED** metrics with **token + eval** dimensions.
+- **Trace** multi-hop agent flows or you will never debug them.
+- **Drift + safety** monitors belong on the same dashboard as CPU graphs.
+
+**Next module:** [RAG: give your AI a search engine →](/tutorials/what-is-rag)

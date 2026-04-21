@@ -1,0 +1,52 @@
+---
+title: "Encoder vs Decoder: Request Handler vs Response Builder"
+module: 4
+lesson: 6
+slug: "encoder-vs-decoder"
+analogy: "Encoder reads and encodes context; decoder autoregressively emits tokens with causal masks"
+prerequisites: ["positional-encoding"]
+estimatedTime: "20 min"
+difficulty: "intermediate"
+tags: ["transformer", "encoder", "decoder", "seq2seq"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Encoder stacks use bidirectional self-attention; decoder stacks mask future tokens. T5 uses both; GPT is decoder-only; BERT is encoder-only."
+---
+
+## Encoder stack
+
+- **Bidirectional** self-attention — every position sees both directions.
+- Great for **classification**, **embedding**, **span filling** (BERT).
+- Not directly used for left-to-right generation without extra heads.
+
+## Decoder stack
+
+- **Causal (autoregressive) mask** — position `t` may not attend to `t+1…`.
+- Outputs a **probability distribution** over next token each step (GPT family).
+
+## Encoder–decoder (original Transformer)
+
+Encoder reads source sentence; decoder attends to encoder outputs via **cross-attention** while generating target sentence (translation, summarization). **T5**, **BART** follow this template.
+
+<AnalogyBox
+  code="HTTP: server parses request (encoder), handler streams response chunks (decoder)"
+  ai="Seq2seq — encode evidence, decode tokens conditioned on it"
+/>
+
+## Decoder-only dominance (2020s)
+
+Scaling **GPT-style** stacks on internet text turned out simpler for **generalist LMs** — one forward pass pattern for pretrain + chat. Encoder–decoder still wins some **structured transduction** niches and smaller-data finetunes.
+
+<Callout type="insight">
+**RAG + decoder-only** approximates encoder–decoder: retrieval pass is your external encoder; LLM is the decoder stitching citations.
+</Callout>
+
+---
+
+## Key takeaways
+
+- **Encoder** = bidirectional understanding.
+- **Decoder** = causal generation.
+- **Encoder–decoder** = two-stack translation architecture; **decoder-only** = today’s default LLM.
+
+**Next:** [BERT vs GPT →](/tutorials/bert-vs-gpt)

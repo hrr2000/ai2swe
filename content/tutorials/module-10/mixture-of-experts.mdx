@@ -1,0 +1,45 @@
+---
+title: "Mixture of Experts: Load Balancer for Neurons"
+module: 10
+lesson: 4
+slug: "mixture-of-experts"
+analogy: "Microservices behind a router — each token activates only a few expert MLPs"
+prerequisites: ["reasoning-models"]
+estimatedTime: "22 min"
+difficulty: "advanced"
+tags: ["moe", "routing", "scale", "mixtral"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "MoE layers replace one giant FFN with N parallel experts and a learned router that sparsely activates top-k experts per token — more parameters, similar FLOPs per token."
+---
+
+## Mechanism
+
+Each token embedding hits a **router** (linear + softmax) producing scores over `E` experts. Only **top-k** experts run their feed-forward blocks; outputs are **weighted summed**.
+
+Result: **total parameter count** explodes (good for knowledge capacity) while **per-token compute** stays closer to dense models of smaller width.
+
+<AnalogyBox
+  code="API gateway sending requests to sharded services based on headers"
+  ai="Router picks specialists — not every expert runs on every token"
+/>
+
+## Engineering implications
+
+- **Memory** still stores all experts — need multi-GPU **tensor parallelism** or **offload**.
+- **Load balancing** — routers can collapse to **expert collapse** if training imbalanced; auxiliary losses encourage uniform use.
+- **Latency variance** — hot experts become bottlenecks without careful scheduling.
+
+<Callout type="tip">
+When benchmarking MoE APIs, test **diverse prompts** — worst-case latency spikes when rare expert combos activate under cold cache conditions.
+</Callout>
+
+---
+
+## Key takeaways
+
+- MoE decouples **parameter capacity** from **per-token FLOPs**.
+- Serving MoE is a **systems problem** — not just a graph rewrite.
+- Great for **frontier knowledge breadth** at similar active compute.
+
+**Next:** [Long-context models →](/tutorials/long-context-models)

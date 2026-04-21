@@ -1,51 +1,62 @@
 ---
 title: "Vector Similarity: Fuzzy Matching at Scale"
-summary: "Measuring the distance between meanings using Cosine Similarity and Euclidean Distance."
 module: 2
 lesson: 3
 slug: "vector-similarity"
-analogy: "Similarity as distance/angle between concept points"
-estimatedTime: "15 min"
-readingTime: "8 min"
+analogy: "Similarity metrics as distance measures in embedding space — pick the geometry that matches your signal"
+prerequisites: ["word-embeddings"]
+estimatedTime: "18 min"
+difficulty: "intermediate"
+tags: ["cosine", "euclidean", "inner-product", "ann"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Cosine similarity compares direction; L2 compares distance. At scale, exact brute force gives way to approximate nearest-neighbor indexes — same UX, sublinear search."
 ---
 
-# Vector Similarity
+## Why not `===` for text?
 
-If every concept is a point on a map, then "Searching" is just a task of finding the **Nearest Point**.
+Exact string match cannot find “**automobile**” when the user typed “**car**.” Embeddings lift text into ℝⁿ so **nearby points ≈ similar meaning**. A retriever’s job is: given query vector `q`, find database vectors `{d_i}` with smallest distance / largest similarity.
 
-In traditional programming, string matching is binary:
-```javascript
-"apple" === "apple" // true
-"apple" === "orange" // false
+## Cosine similarity — direction matters
+
+```text
+cos_sim(a, b) = (a · b) / (||a|| ||b||)
 ```
 
-In AI, we use **Vector Similarity** to find out *how close* two things are.
+- **1** — same direction (often “same topic” for normalized sentence embeddings).
+- **0** — orthogonal (unrelated in first-order geometry).
+- **-1** — opposite direction (rare for text, but possible).
 
-## 1. Cosine Similarity (The Gold Standard)
+Cosine **ignores magnitude** after normalization — useful when short queries match long documents that point the same way in embedding space.
 
-Cosine similarity measures the **Angle** between two vectors. It doesn't care how long the vectors are; it only cares which way they are pointing.
+## Euclidean (L2) distance — “as the crow flies”
 
-- **1.0**: Pointing exactly the same way (Perfect Semantic Match).
-- **0.0**: Perpendicular (Completely Unrelated).
-- **-1.0**: Pointing opposite ways (Opposite Meaning).
+```text
+d₂(a, b) = ||a − b||₂
+```
 
-This is perfect for text because a long document and a short summary might have different "lengths" (vector magnitudes) but point in the same "meaning direction."
+Magnitude matters: doubling a vector can move it far in L2 even if direction is unchanged. Vision models sometimes use L2 on **unnormalized** features; text pipelines often **L2-normalize** first so cosine and squared L2 rankings align.
 
-## 2. Euclidean Distance (L2)
+## Dot product — when lengths encode importance
 
-This measures the **Straight Line distance** between two points. It’s the "as the crow flies" distance.
+If you **do not** normalize, a longer vector can have a larger inner product simply because it is bigger. Some systems intentionally use **dot product attention** or unnormalized scores — just know what geometry you are buying.
 
-If you have two vectors `[1, 2]` and `[4, 6]`, the Euclidean distance is the length of the hypotenuse connecting them. This is often used for Image embeddings where the "intensity" of the signal matters.
+<Callout type="tip">
+Start with **cosine** for semantic text retrieval with sentence embeddings. If results look off, verify **normalization**, **embedding model choice**, and **chunking** before you blame the metric.
+</Callout>
 
-## The Engineering Problem: Scale
+## Brute force vs ANN
 
-If you have 100,000 documents, calculating the Cosine Similarity for every single one of them whenever a user types a search query is slow (`O(n)`). 
+Exact search is **O(N)** per query — fine for thousands of rows, painful for tens of millions. **Approximate nearest neighbors (ANN)** — HNSW, IVF, LSH families — precompute a graph or partition structure so each query touches only a **small neighborhood** of candidates.
 
-In production, we use **ANN (Approximate Nearest Neighbors)**. 
+Recall@k may dip slightly vs brute force; latency and RAM win orders of magnitude.
 
-Instead of checking every document, we pre-organize the map into "neighborhoods." When a query comes in, we only check the documents in the nearest neighbor buckets. This is how Google and Netflix search millions of items in milliseconds.
+---
 
-> [!TIP]
-> When building a RAG (Retrieval-Augmented Generation) system, **Cosine Similarity** is almost always the correct metric to start with.
+## Key takeaways
 
-Now that we can measure distance, let's understand why we need 768 or 1536 dimensions to define a single word. **Embedding Dimensions.**
+- **Cosine** ≈ directional match; **L2** ≈ geometric distance; **dot product** mixes direction and length.
+- Normalize vectors when you want cosine-like behavior from inner products.
+- Production search uses **ANN indexes** (pgvector IVFFlat/HNSW, Pinecone, Milvus, …) under the hood.
+
+**Next:** [Embedding dimensions →](/tutorials/embedding-dimensions)

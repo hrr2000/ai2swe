@@ -1,0 +1,45 @@
+---
+title: "Guardrails: Input Validation for AI"
+module: 9
+lesson: 6
+slug: "guardrails"
+analogy: "WAF + CSP for prompts — block, rewrite, or route to safer models before tokens hit the GPU"
+prerequisites: ["mcp-protocol"]
+estimatedTime: "18 min"
+difficulty: "intermediate"
+tags: ["safety", "moderation", "pii", "guardrails"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Layer regex, classifiers, and policy prompts around LLMs: detect injection, strip secrets, enforce topic allow-lists, and escalate adversarial traffic to deny-by-default paths."
+---
+
+## Defense in depth
+
+1. **Transport auth** — OAuth, mTLS, org scoping.
+2. **Input hygiene** — max length, Unicode normalization, profanity filters where legally required.
+3. **Prompt injection detectors** — separate lightweight model or rules spotting `ignore previous instructions`.
+4. **Output filters** — PII redaction, code static analysis before returning to user.
+5. **Human escalation** queue for edge cases.
+
+<AnalogyBox
+  code="Edge middleware validating request signatures before controllers run"
+  ai="Guardrails — cheap checks before expensive LLM forward passes"
+/>
+
+## Jailbreak reality
+
+No filter is perfect. Combine **system policies**, **tool allow-lists**, and **monitoring** instead of promising “100% safe AI.”
+
+<Callout type="warning">
+Never rely on **another LLM** as your sole security boundary unless its false positive rate is acceptable for revenue — dual-model costs add up.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Guardrails are **product + security engineering**, not a checkbox.
+- **Log near-misses** to refine rules without exposing user content broadly.
+- Pair technical filters with **usage policies** and **legal review**.
+
+**Next:** [Hands-on: RAG chatbot over your codebase →](/tutorials/build-rag-chatbot)

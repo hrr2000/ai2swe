@@ -1,0 +1,51 @@
+---
+title: "Image Generation: Lossy Decompression From Noise"
+module: 10
+lesson: 2
+slug: "image-generation-diffusion"
+analogy: "Git reverse patch from static — start at random noise, apply learned denoising steps until a photo appears"
+prerequisites: ["vision-language-models"]
+estimatedTime: "22 min"
+difficulty: "intermediate"
+tags: ["diffusion", "stable-diffusion", "generative", "multimodal"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Diffusion models learn a score field that removes Gaussian noise across timesteps. Classifier-free guidance trades diversity for prompt adherence — same knobs engineers tune for brand-safe assets."
+---
+
+## Forward noising process
+
+Training samples images `x₀`, adds noise across schedule `t` → `T` until almost pure Gaussian. The network learns to **predict noise** (or velocity) to reverse the corruption.
+
+## Sampling loop
+
+Start from `x_T ~ Normal`, iteratively denoise with learned updates — dozens to hundreds of steps depending on scheduler (**DDIM**, **DPM-Solver++**, etc.).
+
+<AnalogyBox
+  code="Iterative image restore filter in graphics editors — but parameters are learned"
+  ai="Diffusion sampling — apply denoise operator until perceptual quality emerges"
+/>
+
+## Guidance
+
+**Classifier-free guidance** scales the conditional vs unconditional score difference — higher scale → **prompt lock-in** but **artifact risk** (oversaturated skin, extra limbs).
+
+## Product concerns
+
+- **Copyright** — training data provenance matters for enterprise adoption.
+- **Latency** — real-time apps need distilled few-step models (SDXL Turbo, latent consistency models).
+- **Safety filters** — NSFW classifiers on prompts and latents.
+
+<Callout type="warning">
+Generated **faces of real people** or **fake IDs** create fraud surfaces — policy + watermarking + provenance metadata (C2PA) are shipping requirements, not science fair extras.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Diffusion = **iterative denoise** generative family dominating image gen.
+- **Schedulers + guidance** are hyperparameters with visible UX impact.
+- Ship with **legal + safety** review, not just cool demos.
+
+**Next:** [Reasoning models →](/tutorials/reasoning-models)

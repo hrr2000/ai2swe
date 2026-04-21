@@ -1,53 +1,67 @@
 ---
 title: "Self-Attention: A Database JOIN on Relevance"
-summary: "How tokens calculate their relationship to every other token in the sequence."
 module: 4
 lesson: 2
 slug: "self-attention"
-analogy: "Relational JOINs for meaning relevance"
-estimatedTime: "25 min"
-readingTime: "12 min"
+analogy: "Each position issues a query against all keys, then blends values — a differentiable, content-addressable lookup"
+prerequisites: ["why-transformers"]
+estimatedTime: "28 min"
+difficulty: "intermediate"
+tags: ["attention", "qkv", "transformers", "nlp"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Self-attention reweights information across positions: queries score keys, softmax yields mixing weights, values are aggregated — parallelizable and the heart of modern LLMs."
 ---
 
-# Self-Attention
+## The core problem
 
-If the **Transformer** is the brain of modern AI, **Self-Attention** is its most powerful cognitive function.
+Language is **non-local**. In *“The animal didn’t cross the street because **it** was too tired,”* resolving **it** requires long-range context. Convolutions with small kernels or RNNs with finite hidden state struggle when dependencies skip far.
 
-In traditional natural language processing, we treated sentences like a linked list. To understand the word "it" in the sentence *"The animal didn't cross the street because it was too tired,"* a standard model would struggle to know if "it" refers to the animal or the street.
+**Self-attention** lets **every token attend to every token** in one layer (subject to masking in decoders — more in advanced lessons).
 
-**Self-Attention** solves this by letting every word look at every other word simultaneously.
+## Q, K, V — three projections per token
 
-## The Database Analogy: A Join on Relevance
+For each position `i`, we form three vectors from the hidden state `x_i`:
 
-Think of Self-Attention as a **Relational Database SQL JOIN**. 
+- **Query `Q_i`** — “what am I looking for?”
+- **Key `K_j`** — “what do I advertise as available at position j?”
+- **Value `V_j`** — “if you pick me, here is the vector I contribute.”
 
-When the model processes the word "it":
-1. It creates a **Query** ($Q$): "What am I referring to?"
-2. It looks at all other words as **Keys** ($K$): "Street," "Animal," "Tired," "Cross."
-3. It calculates a **Score** based on how well the Query matches each Key.
-   - Match(`it`, `animal`) ➔ **High Score** (Animals get tired).
-   - Match(`it`, `street`) ➔ **Low Score** (Streets don't get tired).
+Scores come from a **compatibility function**, usually scaled dot-product:
 
-Finally, it retrieves the **Value** ($V$) of the highest-scoring match and mixes it into the representation of the word "it."
+```text
+s_ij = (Q_i · K_j) / √d_k
+```
 
-## Why is it "Self"?
+**Softmax** over `j` turns scores into weights `α_ij` that sum to 1. The output at `i` is the weighted sum `Σ_j α_ij V_j`.
 
-It’s called **Self**-Attention because the words within the *same* sentence are attending to each other. We aren't looking at an external database; the sentence *is* the database.
+<AnalogyBox
+  code="SQL: SELECT SUM(value * weight) FROM neighbors JOIN relevance USING (id)"
+  ai="Attention: softmax(QKᵀ) V — blend rows of V according to learned relevance"
+/>
 
-### The Math (The Simple Version)
-The model represents each word as three separate vectors:
-- **Query**: What I'm looking for.
-- **Key**: What I have to offer.
-- **Value**: The actual information to share.
+## Why “self”?
 
-Calculating attention is basically: 
-`Softmax((Q * K) / scale) * V`
+Keys, queries, and values all come from the **same sequence**. Cross-attention (encoder–decoder stacks) instead lets one sequence attend into another — useful when decoding while reading a source sentence.
 
-## Parallelism: The Killer Feature
+## Multi-head attention
 
-Because this process doesn't rely on the previous word to finish, we can run the attention calculation for "The," "Animal," "Street," and "It" all at once on different GPU cores. This is why Transformers are so much faster to train than anything that came before.
+One attention head might track **syntax** (subject–verb), another **coreference**, another **long-range theme**. **Multi-head** means multiple independent `(W_Q, W_K, W_V)` projections run in parallel; outputs are concatenated and mixed by another linear map.
 
-> [!INSIGHT]  
-> Self-Attention is the reason AI can understand context. It’s what gives the model "Focus." Without it, every word would be an island.
+## Complexity and masking
 
-Next: The API that facilitates this exchange. **Query, Key, Value.**
+Dense self-attention costs **O(T²)** in sequence length for the attention matrix unless you adopt a sparse or linear variant. **Causal masking** in GPT-style decoders zeros out attention to future tokens so position `i` cannot peek ahead when generating left-to-right.
+
+<Callout type="tip">
+When you read `softmax(QKᵀ/√d)V`, mentally say: **normalize similarities into mixing weights, then take a convex combination of value vectors.** Everything else is engineering to make that stable at scale.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Self-attention = **content-based routing** between positions using learned Q/K/V projections.
+- **Softmax** makes the routing **differentiable** and sparse-ish (sharp or flat depending on logits).
+- **Multi-head** + **residuals** + **FFN sublayers** = the standard Transformer block recipe.
+
+**Next:** [Query, key, value →](/tutorials/query-key-value)

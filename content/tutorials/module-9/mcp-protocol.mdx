@@ -1,0 +1,48 @@
+---
+title: "MCP: The USB Standard for AI Tools"
+module: 9
+lesson: 5
+slug: "mcp-protocol"
+analogy: "HID over USB — one host protocol; peripherals expose capabilities descriptors"
+prerequisites: ["ai-agents"]
+estimatedTime: "22 min"
+difficulty: "intermediate"
+tags: ["mcp", "tools", "integration", "agents"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Model Context Protocol standardizes how hosts expose filesystem, HTTP, and custom tools to clients — fewer bespoke adapters per IDE or agent runtime."
+---
+
+## Problem it solves
+
+Every editor and agent framework reinvented **tool wiring** — ad-hoc JSON, bespoke auth, inconsistent error surfaces. **MCP** defines a **host ↔ server** contract so tools plug in uniformly.
+
+## Mental model
+
+- **MCP server** — implements resources (files, URLs) and tools (functions).
+- **MCP host** — IDE or agent orchestrator that launches servers, passes credentials, streams results to the model loop.
+
+<AnalogyBox
+  code="Language Server Protocol unified editor intelligence"
+  ai="MCP — similar layering for tool/data access in AI hosts"
+/>
+
+## Engineering notes
+
+- Run MCP servers as **separate processes** with least-privilege OS users.
+- Version **tool schemas**; hosts should tolerate unknown tools gracefully.
+- Combine MCP with **OAuth device flow** for SaaS tools instead of embedding API keys in prompts.
+
+<Callout type="tip">
+Adopt MCP internally even if models do not speak it natively — your **agent runtime adapter** can translate MCP tool listings into OpenAI `tools[]` JSON.
+</Callout>
+
+---
+
+## Key takeaways
+
+- MCP reduces **N×M integrations** between tools and hosts.
+- Treat servers like **microservices** — auth, rate limits, logging.
+- Standardization accelerates **desktop AI** adoption more than cloud-only APIs.
+
+**Next:** [Guardrails →](/tutorials/guardrails)

@@ -1,0 +1,49 @@
+---
+title: "Open Source LLMs: The Linux of AI"
+module: 5
+lesson: 5
+slug: "open-source-llms"
+analogy: "Distro choices — same upstream ideas, different licenses, weights, and community packaging"
+prerequisites: ["gpt-family"]
+estimatedTime: "20 min"
+difficulty: "intermediate"
+tags: ["open-source", "llama", "mistral", "licensing"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Open weights let you self-host, inspect artifacts, and fine-tune — but licenses, safety filters, and hardware requirements vary wildly across families."
+---
+
+## Why teams choose open weights
+
+- **Air-gapped** or regulated environments without third-party API egress.
+- **Customization** — LoRA, full finetune, speculative decoding stacks.
+- **Cost model** — capex hardware vs per-token opex tradeoff at high volume.
+
+## Families you will meet
+
+- **Llama** (Meta) — permissive-ish community license with usage restrictions; huge ecosystem.
+- **Mistral / Mixtral** — strong European vendor + open drops.
+- **Qwen, Gemma, Olmo** — research- and product-friendly variants with different terms.
+
+<AnalogyBox
+  code="Linux distros shipping the same kernel with different package managers"
+  ai="HF repos sharing Transformer ideas with different weights, prompts, and evals"
+/>
+
+## License literacy
+
+“Open” ≠ **public domain**. Check **commercial use**, **attribution**, **export control**, and **redistribution** of derivatives. Legal + security sign-off before shipping customer features.
+
+<Callout type="caution">
+Downloading **GGUF** from random mirrors is like pulling **Docker images** from unverified registries — supply-chain risk. Prefer official org repos and **hash verification**.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Open weights unlock **self-host + fine-tune** workflows.
+- **License + safety + eval** are part of the technical decision.
+- Treat checkpoints like **dependencies** — pin versions, scan provenance.
+
+**Next:** [The Gemini family →](/tutorials/gemini-family)

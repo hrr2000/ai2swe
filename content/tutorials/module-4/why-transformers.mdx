@@ -1,43 +1,66 @@
 ---
-title: "Why Transformers Won"
-summary: "Parallel compute vs sequential processing. Why the GPU loves the Transformer."
+title: "Why Transformers Beat Everything Else"
 module: 4
 lesson: 1
 slug: "why-transformers"
-analogy: "Sequential (Linked List) vs Parallel (Multi-core) processing"
-estimatedTime: "18 min"
-readingTime: "9 min"
+analogy: "RNNs as a serial for-loop; Transformers as batched matmuls that GPUs were built to chew through"
+prerequisites: ["tokenizer-playground"]
+estimatedTime: "22 min"
+difficulty: "intermediate"
+tags: ["transformers", "attention", "parallelism", "history"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Transformers replaced recurrence with self-attention so whole sequences train in parallel — unlocking the hardware scaling that made LLMs economically feasible."
 ---
 
-# Why Transformers Won
+## The bottleneck: recurrence
 
-For years, the AI world relied on RNNs (Recurrent Neural Networks) to read text. 
-
-Think of an RNN as a `while` loop that reads an array of words one by one.
+**RNNs** (and LSTMs/GRUs) read tokens **left-to-right**, maintaining a hidden state vector `h_t`:
 
 ```javascript
-let memory = "";
-for (let word of document) {
-  memory = process(word, memory); // Have to wait for the previous word to finish!
+let h = zeros(dim);
+for (const token of sequence) {
+  h = f(token, h); // step t waits on step t−1
 }
 ```
 
-The problem? **You cannot parallelize this.** A GPU has 10,000 cores designed to do math simultaneously, but the `for` loop forces the GPU to process the sequence sequentially. It took months to train models on single books.
+That `for` loop is **serial**. A GPU with thousands of cores mostly **idles**, because timestep `t` cannot start until `t−1` finishes. Training on long corpora was painfully slow — and harder to scale across devices.
 
-## Enter the Transformer
+## The idea: attention instead of recurrence
 
-In 2017, Google researchers published "Attention Is All You Need." They proposed the Transformer architecture, which completely bypasses the `for` loop.
+The 2017 paper **“Attention Is All You Need”** proposed the **Transformer**: stack **self-attention** blocks so each position can **aggregate information from every other position** using weighted sums, with **no inherent sequential dependency inside a layer**.
 
-Instead of reading a sentence left-to-right, a Transformer loads the *entire sentence simultaneously* across all GPU cores. It replaces sequential memory with a mechanism called **Self-Attention**.
+In practice, implementations fuse operations into giant matrix multiplies — exactly what **tensor cores** excel at.
 
-A Transformer evaluates how every word connects to every *other* word at the exact same time.
+<AnalogyBox
+  code="Linked list traversal — one pointer chase per node"
+  ai="Self-attention layer — all pairwise interactions updated in parallel within the layer"
+/>
 
-```javascript
-// A Transformer loads the entire array matrix in one parallel operation
-const contextMatrix = gpu.parallelComputeAttention(entireDocumentArray);
-```
+## Why this unlocked LLM scaling
 
-### The Result
-Because computation was no longer blocked by sequence order, researchers could suddenly throw millions of GPUs at the problem at once. 
+Once depth and width became primarily **big batched GEMMs**, researchers could:
 
-This architectural switch to highly parallel compute is precisely why GPT-1, GPT-2, GPT-3, and ChatGPT were suddenly possible. The hardware could finally be maxed out.
+- Train on **far more data** in wall-clock time.
+- Use **mixed precision**, **model parallelism**, and **pipeline parallelism** patterns borrowed from HPC.
+- Build **deeper** stacks (dozens of layers) without vanishing-gradient pathologies that plagued deep RNNs.
+
+The architectural bet matched the **hardware bet** — NVIDIA-scale GPUs — and the flywheel spun.
+
+## What Transformers are *not*
+
+They are not “more human-like memory.” They are a **parameterized, differentiable program** with strong **inductive biases** (multi-head mixing, position info, MLP sublayers). Their success is an engineering-science combo: **data + scale + attention + optimization tricks**.
+
+<Callout type="insight">
+**Self-attention** is the core novelty; everything else (FFNs, residuals, LayerNorm, positional schemes) is how we make deep stacks **trainable** and **stable**.
+</Callout>
+
+---
+
+## Key takeaways
+
+- RNNs were **sequential**; Transformers are **parallel-in-length** within layers.
+- Hardware utilization flipped from “bad fit” to “great fit” for GPUs/TPUs.
+- The revolution is **compute structure + scale**, not a single magical equation.
+
+**Next:** [Self-attention →](/tutorials/self-attention)

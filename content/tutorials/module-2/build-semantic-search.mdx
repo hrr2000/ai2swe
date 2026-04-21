@@ -1,0 +1,72 @@
+---
+title: "Hands-On: Build a Semantic Search Engine"
+module: 2
+lesson: 7
+slug: "build-semantic-search"
+analogy: "Mini Google: embed corpus offline, ANN index online, cosine in the hot path"
+prerequisites: ["vector-databases"]
+estimatedTime: "35 min"
+difficulty: "advanced"
+tags: ["semantic-search", "embeddings", "tutorial", "hands-on"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Wire an embedding API, normalize vectors, index them, and serve top-k search — the skeleton every RAG retriever shares."
+---
+
+## Goal
+
+Given a **corpus** of strings and a **query**, return the `k` most semantically similar documents using embeddings + cosine similarity.
+
+## Steps
+
+1. **Choose an embedding model** — same vendor for index and query or you break geometry.
+2. **Offline job** — embed every document; store `(id, text, vector)` in Postgres/pgvector, SQLite-vss, or a hosted vector DB.
+3. **Normalize** — if using inner product on L2-normalized vectors, it equals cosine similarity.
+4. **Index** — HNSW / IVF for scale; brute force OK for &lt;50k rows in prototypes.
+5. **Online query** — embed query, `top_k` ANN search, optionally **re-rank** top 50 with a cross-encoder.
+
+<AnalogyBox
+  code="Build search: crawl, index, query"
+  ai="Embed, store, ANN retrieve — same three-stage pipeline"
+/>
+
+## Minimal TypeScript shape
+
+```typescript
+type Row = { id: string; text: string; vec: Float32Array };
+
+function cosine(a: Float32Array, b: Float32Array) {
+  let d = 0, na = 0, nb = 0;
+  for (let i = 0; i < a.length; i++) {
+    d += a[i] * b[i]; na += a[i] * a[i]; nb += b[i] * b[i];
+  }
+  return d / (Math.sqrt(na) * Math.sqrt(nb));
+}
+
+function search(queryVec: Float32Array, rows: Row[], k: number) {
+  return rows
+    .map((r) => ({ id: r.id, text: r.text, score: cosine(queryVec, r.vec) }))
+    .sort((x, y) => y.score - x.score)
+    .slice(0, k);
+}
+```
+
+Swap the inner loop for your DB’s `<=>` operator when you graduate from RAM.
+
+<Callout type="warning">
+**Never** embed queries with a different model than documents unless you run a **mapping** or re-index. Mixed models are worse than keyword search.
+</Callout>
+
+## Eval
+
+Curate 50–200 `(query, relevant_ids)` pairs. Track **Recall@10** and **MRR**. If metrics are weak, fix **chunking** before you swap embedding dimensions.
+
+---
+
+## Key takeaways
+
+- Semantic search = **embed + store + nearest neighbor**.
+- **Same model** for index and query; normalize consistently.
+- Measure **retrieval metrics**; do not eyeball cosine scores.
+
+**Next module:** [Tokenization fundamentals →](/tutorials/tokenization-fundamentals)

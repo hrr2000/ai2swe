@@ -1,53 +1,70 @@
 ---
 title: "Prompt Structure: System, User, Assistant (HTTP Headers)"
-summary: "Formatting your messages so the model clearly understands its role and your task."
 module: 6
 lesson: 1
 slug: "prompt-structure"
-analogy: "Chat roles as HTTP Headers and Request Body"
-estimatedTime: "15 min"
-readingTime: "8 min"
+analogy: "Roles as separation of concerns — policy vs payload vs replayed state"
+prerequisites: ["emergent-abilities"]
+estimatedTime: "18 min"
+difficulty: "beginner"
+tags: ["prompting", "chat-api", "system-message", "llm"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Structured chat messages let you pin behavior in system instructions, isolate user data, and replay assistant turns. Providers compile them into a single token sequence with a chat template."
 ---
 
-# Prompt Structure
+## APIs expect structure, not vibes
 
-As a developer, you understand that **Format Matters**. You wouldn't send a raw string to a REST API and expect it to know what you want; you send a JSON object with specific headers.
+Modern endpoints accept **arrays of messages** rather than a single free-form string. Even when the wire format hides it, the model ultimately consumes **tokens** — and the tokenizer plus **chat template** decides how roles become literal text with special tokens.
 
-When talking to a model like GPT-4 or Claude, you use the **Chat Completion Format**.
+<AnalogyBox
+  code="HTTP: middleware sets policy, body carries payload, cookies carry session"
+  ai="Chat: system sets policy, user carries ask+data, assistant slots replay history"
+/>
 
-## The Three Pillars
+## Roles in plain language
 
-A standard prompt is an array of messages, each with a defined **Role**. 
+### `system`
 
-### 1. The System Message (The Config)
- think of this as the **Global Configuration** or the **Docker Image Definition**. 
-It sets the personality, rules, and constraints.
-> *"You are a world-class security auditor. Only report critical vulnerabilities. Do not explain basics."*
+Long-lived instructions: safety policy, tone, output schema (“return JSON with keys …”), tool-calling rules. Keep it **stable** across turns so the model does not have to re-learn your constraints from noise.
 
-### 2. The User Message (The Request)
-This is the **Request Body**. It contains the specific data or question you want the model to process right now.
-> *"Review this React component for XSS flaws: [Code...]"*
+### `user`
 
-### 3. The Assistant Message (The Response / History)
-This is the **Application State**. It contains the previous responses from the AI. By including these, you give the model "Memory" of what has already happened in the conversation.
+The evolving task: questions, pasted logs, files (as text or attachments depending on API). If you need the model to **quote** something, put that material here (or in a tool result) rather than hiding it in system text where some models deprioritize it.
 
-## Why use this structure?
+### `assistant`
 
-If you just put all your instructions in one giant user message, the model can get confused between your **Instruction** and your **Data**. 
-
-By using the `system` role, you give your instructions higher "authority" in the model's attention mechanism.
+Prior model outputs you want the model to treat as **ground truth context** for the next reply. Also where some tool pipelines place **synthetic** assistant messages (e.g., “Calling function X…”).
 
 ```typescript
-// Correct programmatic prompt
-const messages = [
-  { role: "system", content: "You are a Python expert." },
-  { role: "user", content: "Find the bug in this script: [Script...]" },
-  { role: "assistant", content: "The bug is on line 12. You forgot to..." },
-  { role: "user", content: "Now rewrite it using a generator." }
+const messages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
+  { role: "system", content: "You are a senior Go reviewer. No more than 6 bullets." },
+  { role: "user", content: "Review this handler for context leaks:\n\n```go\n…\n```" },
+  { role: "assistant", content: "1) ctx.Done() not checked …" },
+  { role: "user", content: "Patch only the ctx cancellation issue." },
 ];
 ```
 
-> [!TIP]  
-> The `system` message is where you define **Output Formats**. For example: *"Always output your response as a JSON object with 'code' and 'explanation' keys."*
+## Why splitting beats one blob
 
-Next: The difference between giving no examples and some examples. **Zero-Shot vs. Few-Shot.**
+- **Attention allocation** — models are trained with chat formats; roles help separate **policy** from **evidence**.
+- **Caching** — some providers can cache stable **system** prefixes to cut cost/latency on long policies (verify per vendor).
+- **Eval harnesses** — fixtures are easier when instructions and data are separate columns in your dataset.
+
+<Callout type="insight">
+The literal string the model sees is **`apply_chat_template(messages)`** — not your JSON array. Different families (Llama, Qwen, GPT) use different separators. For local models, **always** use the tokenizer’s official template helper.
+</Callout>
+
+## Tool and multimodal messages
+
+Many stacks add **`tool`** / **`function`** roles or structured content blocks (image bytes, audio). The pattern stays: **ordered messages** with a schema the runtime understands.
+
+---
+
+## Key takeaways
+
+- Treat prompts as **message lists**, not monoliths — roles are API design.
+- **System** = durable policy; **user** = task + data; **assistant** = prior turns to condition on.
+- The on-wire JSON is compiled to **tokens** — debugging means inspecting that compilation.
+
+**Next:** [Zero-shot vs few-shot →](/tutorials/zero-shot-prompting)

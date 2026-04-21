@@ -1,62 +1,102 @@
 ---
 title: "Set Up Your AI Playground"
-summary: "Installing the local context: Why every engineer needs an Ollama or a local LLM setup."
 module: 0
 lesson: 4
 slug: "setup-your-ai-playground"
-analogy: "Ollama as Docker for AI Models"
-estimatedTime: "20 min"
-readingTime: "10 min"
+analogy: "Ollama as a local model runtime — like Docker, but for pulling and serving LLM weights"
+prerequisites: ["ai-development-lifecycle"]
+estimatedTime: "22 min"
+difficulty: "beginner"
+tags: ["ollama", "local-llm", "dev-environment", "tools"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Run open weights on your machine for fast iteration, private prompts, and pinned versions — without burning API credits on every experiment."
 ---
 
-# Set Up Your AI Playground
+## Why you want a local playground
 
-As a developer, you don't build apps directly in production. You have a local development environment. AI is no different.
+Hosted APIs (Gemini, OpenAI, Anthropic, etc.) are excellent for production and for many experiments. A **local playground** still earns a place on your machine because it gives you:
 
-While APIs like OpenAI and Anthropic are great for production, you need a **Local Playground** to experiment without burning through credits or leaking sensitive code.
+- **Tight feedback loops** — no network hop for every token when you are iterating on prompts or scripts.
+- **Privacy** — paste internal snippets, logs, or schemas without sending them to a third party (check your employer’s policy either way).
+- **Reproducibility** — pin `model:tag` the way you pin Docker images or npm versions.
+- **Offline-ish work** — once weights are pulled, you can keep going on a plane or when an API has an incident.
 
-## The Tool: Ollama
+<Callout type="tip">
+Use **hosted APIs** when you want frontier capability with zero ops. Use **local models** when you want control, cost predictability on bulk jobs, or air-gapped experimentation.
+</Callout>
 
-In 2026, **Ollama** remains the gold standard for local LLM orchestration. Think of it as **Docker for AI Models**.
+## Ollama: pull, run, call
 
-### How to Install
+**[Ollama](https://ollama.com/)** downloads model weights and exposes a small local HTTP API. Think of it as a runtime that knows how to load a GGUF (or similar) bundle and execute inference.
 
-If you're on a modern dev machine (Mac, Linux, or Windows), run this in your terminal:
+### Install
+
+**macOS / Linux** — from a shell:
 
 ```bash
-# Get Ollama
 curl -fsSL https://ollama.com/install.sh | sh
+```
 
-# Pull a lightweight "coding" model
+**Windows** — use the installer from [ollama.com/download](https://ollama.com/download), or if you use **winget**:
+
+```bash
+winget install Ollama.Ollama
+```
+
+After install, confirm the daemon is up (it typically listens on port **11434**).
+
+### Pull a sensible first model
+
+Model names encode rough size. On **16 GB** unified memory or system RAM, start with **7B–8B** class models; on **32 GB+** you can explore larger quantizations.
+
+```bash
+ollama pull qwen2.5-coder:7b
 ollama run qwen2.5-coder:7b
 ```
 
-## Why Local? (The Engineer's Perspective)
+The `run` command opens a REPL-style chat in the terminal — quickest way to sanity-check hardware and latency.
 
-1. **Zero Latency**: No network round-trips. Your code completion happens at the speed of your GPU.
-2. **Infinite Context**: You can feed it your entire local repository folder without worrying about data privacy policies.
-3. **Reproducibility**: You can pin a specific model version (e.g., `llama3.1:8b`) just like you pin a package in `package.json`.
-
-## Your First "Local API" Call
-
-Ollama spins up a local server on port `11434`. You can interact with it using a standard `curl` or any HTTP client:
+## Call it like any HTTP service
 
 ```javascript
-// Calling your local AI "Microservice"
-const response = await fetch('http://localhost:11434/api/generate', {
-  method: 'POST',
+const response = await fetch("http://localhost:11434/api/generate", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    model: 'qwen2.5-coder:7b',
-    prompt: 'Write a TypeScript function to sort an array of vectors.',
-    stream: false
-  })
+    model: "qwen2.5-coder:7b",
+    prompt:
+      "Write a TypeScript function that clamps a number between min and max. One short paragraph, then code only.",
+    stream: false,
+  }),
 });
 
 const data = await response.json();
 console.log(data.response);
 ```
 
-> [!IMPORTANT]
-> Local models are restricted by your hardware. If you have 16GB of RAM, stick to "7B" or "8B" models (7-8 billion parameters). These are the "Small Standard" of the AI world.
+For chat-style payloads, `/api/chat` accepts `messages: [{ role, content }, ...]` — same mental model as cloud APIs, different base URL.
 
-Now that you have your own local "Mainframe," let's learn how to actually talk to it.
+## Hardware reality check
+
+- **RAM / VRAM** caps the largest weights you can load; quantizations (Q4, Q8) trade quality for size.
+- **CPU inference** is fine for short prompts; **GPU** matters when you iterate heavily or serve others.
+- **Context length** still applies — stuffing an entire monorepo into one prompt may be slow or impossible on small models.
+
+<Callout type="caution">
+“Runs locally” does not mean “runs well on every laptop.” If generation is glacial, shrink the model, shorten the context, or move that workload to a GPU box and keep Ollama there.
+</Callout>
+
+## Optional: editor and agent integration
+
+Many editors and CLI tools can target Ollama’s OpenAI-compatible surface or native endpoints. The pattern is always: **same roles, same JSON, different `baseURL`**. That is why this lesson sits in Module 0 — it is ordinary integration work.
+
+---
+
+## Key takeaways
+
+- Ollama is a **local inference runtime** with a simple HTTP API.
+- Pick model size to match **RAM/VRAM**; start with a **7B–8B** coding model on typical dev laptops.
+- Treat `model:tag` as a **versioned dependency** you pin per project.
+
+**Next:** [Your first prompt (roles and state) →](/tutorials/your-first-prompt)

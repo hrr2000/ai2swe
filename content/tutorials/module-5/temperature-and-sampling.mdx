@@ -1,0 +1,54 @@
+---
+title: "Temperature & Sampling: Controlling Randomness"
+module: 5
+lesson: 3
+slug: "temperature-and-sampling"
+analogy: "Random number seed + noise scale on a procedural generator — same model, different creativity dial"
+prerequisites: ["next-token-prediction"]
+estimatedTime: "15 min"
+difficulty: "beginner"
+tags: ["sampling", "temperature", "top-p", "inference"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "After logits come a distribution. Temperature sharpens or flattens it; top-k and top-p truncate unlikely tails — engineering knobs on the same softmax sampler."
+---
+
+## From logits to draws
+
+The model outputs **logits** `z` over the vocabulary. The next token is sampled (or taken argmax) from:
+
+```text
+p = softmax(z / T)
+```
+
+**T** is **temperature**. `T → 0` approaches **argmax** (greedy / near-deterministic). `T > 1` spreads mass → more creative, more typo-prone.
+
+<AnalogyBox
+  code="Gaussian blur radius on a heatmap before picking the peak pixel"
+  ai="Temperature — blur or sharpen the probability landscape before sampling"
+/>
+
+## Top-k and nucleus (top-p)
+
+- **Top-k** — zero out all but the k largest logits before softmax. Prevents ultra-rare tail tokens.
+- **Top-p (nucleus)** — keep the smallest set of highest-probability tokens whose cumulative mass ≥ p; discard the long tail dynamically.
+
+Production APIs often combine **temperature + top_p** with vendor-specific defaults.
+
+<Callout type="warning">
+**Greedy decoding** can loop (“the the the”). **Sampling** can hallucinate facts. For **tool JSON**, lower temperature and validate with a schema parser — never trust raw text as code.
+</Callout>
+
+## Determinism for tests
+
+Set **seed**, use **greedy**, disable sampling — regression-test prompts. For user-facing chat, expose **temperature** as an advanced setting with sane bounds.
+
+---
+
+## Key takeaways
+
+- **Temperature** rescales logits before softmax.
+- **Top-k / top-p** cap tail risk from huge vocabs.
+- Pick decoding policy per **task**: creative writing ≠ SQL generation.
+
+**Next:** [The GPT family →](/tutorials/gpt-family)

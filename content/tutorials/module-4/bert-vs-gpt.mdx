@@ -1,0 +1,54 @@
+---
+title: "BERT vs GPT: Classifier vs Generator"
+module: 4
+lesson: 7
+slug: "bert-vs-gpt"
+analogy: "BERT fills blanks on a worksheet; GPT continues the essay"
+prerequisites: ["encoder-vs-decoder"]
+estimatedTime: "20 min"
+difficulty: "intermediate"
+tags: ["bert", "gpt", "mlm", "causal-lm"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "BERT is masked language modeling with bidirectional context — great for embeddings and classification. GPT is causal LM — great for generation and chat."
+---
+
+## BERT (Encoder-only)
+
+**Pretraining task:** Masked Language Modeling (MLM) — hide random tokens, predict them using **both sides** of context. Also next-sentence prediction in original paper (later often dropped).
+
+**Strengths:** sentence embeddings, NER, retrieval encoders, understanding benchmarks.
+
+**Weakness:** not natively a **generator** — you add task heads or decode heuristically.
+
+## GPT (Decoder-only)
+
+**Pretraining task:** predict **next token** left-to-right with causal mask.
+
+**Strengths:** coherent long-form generation, chat, code completion.
+
+**Weakness:** no built-in bidirectional token representation in one forward pass — though **prefix** context is fully visible to later prefix tokens (left context only).
+
+<AnalogyBox
+  code="Static analysis (read whole file) vs REPL line-by-line execution"
+  ai="BERT-style vs GPT-style — different information flow shapes different skills"
+/>
+
+## When to use which pattern today
+
+- Need **rich sentence encoder** for search? Fine-tune **encoder** or use modern **E5/BGE** (often encoder or encoder-decoder hybrids).
+- Need **assistant** that writes? **Decoder-only** ecosystem (tooling, RLHF, APIs) is largest.
+
+<Callout type="tip">
+Many “GPT” APIs internally use **system + tool** scaffolding — architecture family name ≠ product feature set.
+</Callout>
+
+---
+
+## Key takeaways
+
+- **BERT** ≈ bidirectional denoising autoencoder for text.
+- **GPT** ≈ causal autoregressive LM.
+- Product choices follow **task + ecosystem**, not religion.
+
+**Next:** [Hands-on: attention in 50 lines →](/tutorials/build-attention-scratch)

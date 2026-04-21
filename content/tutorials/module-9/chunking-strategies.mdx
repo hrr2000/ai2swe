@@ -1,0 +1,51 @@
+---
+title: "Chunking: Paginating Your Knowledge Base"
+module: 9
+lesson: 2
+slug: "chunking-strategies"
+analogy: "Git diff hunks — boundaries determine whether blame points to the right lines"
+prerequisites: ["what-is-rag"]
+estimatedTime: "18 min"
+difficulty: "intermediate"
+tags: ["rag", "chunking", "retrieval", "nlp"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Chunk size, overlap, and structure-aware splits decide retrieval recall. Treat chunking as schema design — bad splits cannot be fixed by a better embedding model alone."
+---
+
+## Goals
+
+Each chunk should be **semantically self-contained** enough to answer a user question without needing distant paragraphs — yet small enough to fit **context + leave room** for the answer.
+
+## Fixed-size windows
+
+Split every `N` tokens with `overlap` tokens repeated — trivial, fast, terrible across **Markdown headings**, **JSON**, or **legal clause** boundaries.
+
+## Structure-aware splits
+
+- Respect **Markdown `#` headers** — keep sections together until max length exceeded.
+- **Code** — split on function/class boundaries using tree-sitter.
+- **Tables** — never slice mid-row if numeric answers depend on headers.
+
+<AnalogyBox
+  code="Pagination in PDF viewers — break at page breaks vs mid-sentence"
+  ai="Chunking policy — choose readable boundaries vs arbitrary token counts"
+/>
+
+## Metadata
+
+Attach `source_path`, `heading`, `commit_sha`, `page` to each chunk for **citations** and debugging.
+
+<Callout type="tip">
+Run **k-fold eval** over chunk sizes on a labeled query set — the winning `N` is empirical, not universal.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Chunking quality caps **RAG ceiling** — invest before buying bigger models.
+- **Overlap** reduces boundary misses but increases index size — tune deliberately.
+- Pair text chunks with **rich metadata** for filters (`tenant_id`, `language`).
+
+**Next:** [Function calling →](/tutorials/function-calling)

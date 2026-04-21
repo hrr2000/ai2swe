@@ -1,0 +1,63 @@
+---
+title: "Zero-Shot vs Few-Shot: No Examples vs Test Cases"
+module: 6
+lesson: 2
+slug: "zero-shot-prompting"
+analogy: "Unit tests included in the prompt — demonstrations are fixtures the model pattern-matches"
+prerequisites: ["prompt-structure"]
+estimatedTime: "15 min"
+difficulty: "beginner"
+tags: ["prompting", "few-shot", "in-context-learning", "eval"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Zero-shot relies on instructions alone. Few-shot adds input–output pairs in the prompt so the model infers the format — paying tokens for a differentiable spec."
+---
+
+## Zero-shot
+
+Only natural-language instructions:
+
+```text
+Translate JSON keys from camelCase to snake_case. Return JSON only.
+{ "userName": "Ada" }
+```
+
+Works when the task is **common in pretraining** and your instructions are crisp.
+
+## Few-shot (in-context learning)
+
+Add **2–8 demonstrations** — pairs of `(input, ideal output)` before the real input:
+
+```text
+Q: hi → A: bonjour
+Q: thanks → A: merci
+Q: see you → A:
+```
+
+The model continues the pattern. You are not updating weights; you are **steering attention** with exemplars.
+
+<AnalogyBox
+  code="Copy-paste sample rows into a spreadsheet before filling the last row"
+  ai="Few-shot — pattern completion over pasted examples"
+/>
+
+## Tradeoffs
+
+| Few-shot | Cost |
+| --- | --- |
+| Better format adherence | More **tokens** + latency |
+| Stabilizes edge formats | Risk of **accidental bias** from chosen examples |
+
+<Callout type="tip">
+Curate few-shots like **testdata/** in a repo — version them, diversify edge cases, and never let them contain **secrets** (PII, keys) because they echo in logs.
+</Callout>
+
+---
+
+## Key takeaways
+
+- **Zero-shot** for simple, well-pretrained tasks.
+- **Few-shot** when format is exotic or metrics jump measurably.
+- Demonstrations are **prompt tokens**, not training — budget them.
+
+**Next:** [Chain-of-thought →](/tutorials/chain-of-thought)

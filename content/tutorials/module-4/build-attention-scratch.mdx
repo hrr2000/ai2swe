@@ -1,0 +1,61 @@
+---
+title: "Hands-On: Build Attention in 50 Lines"
+module: 4
+lesson: 8
+slug: "build-attention-scratch"
+analogy: "Implement your own middleware once — then you trust the framework black box"
+prerequisites: ["bert-vs-gpt"]
+estimatedTime: "45 min"
+difficulty: "advanced"
+tags: ["attention", "numpy", "pytorch", "hands-on"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "A minimal scaled dot-product attention in NumPy or PyTorch teaches shapes, masking, and softmax stability — the fastest way to stop fearing the equation."
+---
+
+## Specification
+
+Input `X ∈ ℝ^{T×d}` — `T` tokens, `d` model dim. Learned weights `W_Q, W_K, W_V ∈ ℝ^{d×d}` (single-head for brevity).
+
+```python
+import torch
+import torch.nn.functional as F
+
+def attention(x, Wq, Wk, Wv, causal=True):
+    # x: (T, d)
+    T = x.shape[0]
+    Q = x @ Wq
+    K = x @ Wk
+    V = x @ Wv
+    scores = (Q @ K.T) / (Q.shape[-1] ** 0.5)  # (T, T)
+    if causal:
+        mask = torch.triu(torch.ones(T, T, device=x.device), diagonal=1).bool()
+        scores = scores.masked_fill(mask, float("-inf"))
+    attn = F.softmax(scores, dim=-1)
+    return attn @ V  # (T, d)
+```
+
+<AnalogyBox
+  code="Write your own `Promise.all` once to learn concurrency"
+  ai="Write attention once to learn tensor dance"
+/>
+
+## Exercises
+
+1. **Numerical stability** — replace `-inf` mask with large negative for float16.
+2. **Dropout** — `F.dropout(attn, p=0.1, training=True)` on weights row-wise.
+3. **Multi-head** — reshape `d` → `h × (d/h)` and run `h` attentions in parallel (`einsum`).
+
+<Callout type="warning">
+Production uses **flash attention** kernels — different memory pattern. Your scratch version teaches **correctness**, not **speed**.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Shapes `T×T` attention matrix make **quadratic** cost obvious.
+- **Causal mask** is one `triu` boolean tensor.
+- Implement once, then read **FlashAttention** papers with confidence.
+
+**Next module:** [What makes a model large? →](/tutorials/what-makes-a-model-large)

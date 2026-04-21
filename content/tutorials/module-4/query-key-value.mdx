@@ -1,0 +1,62 @@
+---
+title: "Query, Key, Value: The REST API of Attention"
+module: 4
+lesson: 3
+slug: "query-key-value"
+analogy: "GET with query params against a key/value store — softmax picks which values blend"
+prerequisites: ["self-attention"]
+estimatedTime: "20 min"
+difficulty: "intermediate"
+tags: ["attention", "qkv", "transformers", "linear-algebra"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Q, K, V are three learned linear projections of the hidden state. Attention scores queries against keys, then values are mixed — all implementable as batched matrix multiplies."
+---
+
+## Not mystical letters
+
+For each position `t`, the hidden vector `x_t` is projected:
+
+```text
+Q_t = W_Q x_t,   K_t = W_K x_t,   V_t = W_V x_t
+```
+
+`W_Q`, `W_K`, `W_V` are **weight matrices** learned during training — same idea as any other linear layer, just three parallel heads before the attention mix.
+
+<AnalogyBox
+  code="REST: query string + resource key → server returns representation"
+  ai="Attention: Q matches K addresses; server returns weighted blend of V payloads"
+/>
+
+## Attention in one line
+
+```text
+Attention(Q, K, V) = softmax(Q Kᵀ / √d_k) V
+```
+
+- `QKᵀ` scores every position against every position.
+- `√d_k` scaling keeps softmax from saturating when dimensions grow.
+- Multiply by `V` mixes row vectors according to those weights.
+
+## Shapes (batch-first mental model)
+
+```text
+Q, K, V: (batch, seq_len, d_model) after projection reshaped into heads
+Scores: (batch, heads, seq_len, seq_len)
+```
+
+Frameworks **fuse** the head dimension with batch for GEMM efficiency — the math you carry in your head stays the same.
+
+<Callout type="tip">
+When you **freeze** a model but **LoRA-tune** attention, it is almost always these `W_Q`, `W_K`, `W_V`, `W_O` matrices people adapt — biggest leverage per parameter for language tasks.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Q/K/V are **learned linear projections**, not hand-designed features.
+- **Scaled dot-product** attention is the default block inside Transformers.
+- Implementation is **matmul + softmax + matmul** — deeply optimized on GPUs.
+
+**Next:** [Multi-head attention →](/tutorials/multi-head-attention)

@@ -1,47 +1,62 @@
 ---
 title: "Backpropagation: Reverse Git Blame"
-summary: "Attributing error back through the network layers to find which 'functions' need changing."
 module: 1
 lesson: 6
 slug: "backpropagation"
-analogy: "Error attribution as reverse git blame"
-estimatedTime: "22 min"
-readingTime: "12 min"
+analogy: "Chain rule as attributing a bug up the call stack — each frame asks how much it moved the final output"
+prerequisites: ["loss-functions"]
+estimatedTime: "24 min"
+difficulty: "intermediate"
+tags: ["backprop", "gradients", "chain-rule", "training"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Backprop applies the chain rule backward through the graph to get ∂loss/∂w for every weight. It computes gradients; optimizers consume them to update weights."
 ---
 
-# Backpropagation: Reverse Git Blame
+## The problem it solves
 
-When a bug hits production, your first step as a developer is to find out **who caused it**. You might use `git blame` to see which line of code was last modified before the error appeared.
+After a forward pass you know the **loss**. You want **partial derivatives** of that loss with respect to **every parameter** — millions or billions of them. Writing those formulas by hand is impossible. **Reverse-mode automatic differentiation** (popularly called **backpropagation** in neural nets) automates it.
 
-**Backpropagation** is exactly this process for a Neural Network. 
+<AnalogyBox
+  code="git blame on the final crash — walk backward through commits to see contribution"
+  ai="reverse AD — walk backward through ops to attribute ∂loss/∂tensor for each edge"
+/>
 
-## The Step-by-Step
+## Graph picture
 
-1. **Forward Pass**: You run the data (Input) through the layers and get a result (Output).
-2. **Calculate Loss**: You compare the result to the truth (The unit test).
-3. **The Reverse Walk**: We take the "Loss" and walk **backwards** through the layers of the network.
+Build a **directed acyclic graph** while executing the forward pass:
 
-At every layer, the algorithm asks: 
-> "How much did *this* specific layer contribute to the error at the end?"
+- **Leaves** — constants, parameters `W`, inputs `x`.
+- **Interior nodes** — `matmul`, `relu`, `softmax`, etc.
 
-## Why "Reverse"?
+Each node knows how to compute **local gradients** (how its outputs wiggle when its inputs wiggle). The chain rule stitches those into **global** `∂loss/∂tensor`.
 
-In the **Forward Pass**, data flows from Layer 1 ➔ Layer 2 ➔ Layer 3.
-In **Backpropagation**, the "error signal" flows from Layer 3 ➔ Layer 2 ➔ Layer 1.
+## Reverse pass intuition
 
-### The "Blame" Assignment
+1. Seed `∂loss/∂loss = 1`.
+2. Visit nodes from output toward inputs (reverse topological order).
+3. For each node, apply the **chain rule** to propagate gradients to parents.
 
-If Layer 3 is a simple middleware that passes data through, it gets very little "blame." But if Layer 1 was the stage that misidentified a circle as a square, it gets assigned a high "blame" score.
+Matmul example sketch: if `Y = XW`, then `∂L/∂X = (∂L/∂Y) @ Wᵀ` and `∂L/∂W = Xᵀ @ (∂L/∂Y)` — structure matters less than the takeaway: **linear ops route gradients** similarly to how they route activations.
 
-Mathematically, we calculate the **Gradient** (the slope) of each weight. We are finding out:
-- Should this weight be **larger**? 
-- Should this weight be **smaller**? 
+## Memory trade-off
 
-## Calculus: Under the Hood
+Reverse-mode AD stores activations from the forward pass (or recomputes with checkpointing) because backward formulas need them. Big models + long sequences ⇒ **VRAM for training** ≫ inference — another reason training and serving are different jobs.
 
-The reason why "Backprop" works is because every layer in a neural network is a differentiable function. Because we know the math of each layer, we can use the **Chain Rule** from calculus to "chain" the error all the way back to the very first pixel of input.
+<Callout type="tip">
+Frameworks hide backprop behind `.backward()`. Your job is to choose **losses**, **architectures**, and **batch shapes** that keep gradients **finite** and **non-vanishing** — monitoring gradient norms is normal in serious training runs.
+</Callout>
 
-> [!IMPORTANT]
-> Backpropagation doesn't *fix* the weights. It just *calculates* the error for each weight. To actually apply the fix, we use **Optimizer / Gradient Descent**, which we will cover next.
+## Backprop does not update weights
 
-Backpropagation is the **"Root Cause Analysis" (RCA)** of AI. It tells us exactly which parameters are the "buggy" ones.
+It **computes** `∇_θ L`. The **optimizer** (SGD, Adam, …) actually applies updates — covered next with **gradient descent**.
+
+---
+
+## Key takeaways
+
+- Backprop = **reverse-mode AD** through the computation graph.
+- It yields **∂loss/∂parameter** for all parameters in one backward sweep.
+- Implementation is a solved problem in PyTorch/JAX/TensorFlow — conceptual understanding helps you debug **exploding/vanishing** gradients and shape errors.
+
+**Next:** [Gradient descent →](/tutorials/gradient-descent)

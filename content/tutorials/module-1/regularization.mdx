@@ -1,0 +1,55 @@
+---
+title: "Regularization: Linting for Neural Nets"
+module: 1
+lesson: 11
+slug: "regularization"
+analogy: "ESLint rules for weights — gently penalize complexity so the model stays readable to validation data"
+prerequisites: ["overfitting"]
+estimatedTime: "15 min"
+difficulty: "intermediate"
+tags: ["regularization", "dropout", "weight-decay", "early-stopping"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Regularization biases training toward simpler solutions: L2 weight decay, dropout, noise, and early stopping are the usual production levers."
+---
+
+## L2 regularization (“weight decay”)
+
+Add a penalty proportional to `||θ||²` to the loss:
+
+```text
+L' = L + (λ/2) ||θ||²
+```
+
+Updates shrink weights toward zero unless data strongly needs them. In **AdamW**, decoupled **weight decay** applies directly to weights each step — the modern default in Transformer fine-tuning.
+
+## Dropout
+
+During training, randomly **zero** hidden units with probability `p`. Forces redundant representations — no single neuron can carry the whole job. At inference, use **eval mode** so dropout is disabled and scales are compensated (or use inverted dropout).
+
+<AnalogyBox
+  code="Randomly commenting out helper functions during dev so no single helper becomes a god object"
+  ai="Dropout — stochastic depth so the network cannot rely on one fragile path"
+/>
+
+## Early stopping
+
+Stop training when **validation loss** stops improving for `k` checks. Cheap, effective, and prevents the “train forever until you memorize” failure mode.
+
+## Label smoothing
+
+For classification, soften one-hot targets slightly so the model is not infinitely confident on noisy labels — reduces overfitting to annotation mistakes.
+
+<Callout type="tip">
+Regularization strengths (`λ`, `p`, smoothing) are **hyperparameters**. Log-scale sweeps; never copy a blog’s magic numbers without measuring on your **own** val split.
+</Callout>
+
+---
+
+## Key takeaways
+
+- **L2 / weight decay** shrinks unused weights.
+- **Dropout** adds noise during training; disable in eval.
+- **Early stopping** is free insurance when you lack infinite GPUs.
+
+**Next module:** [Embedding dimensions →](/tutorials/embedding-dimensions)

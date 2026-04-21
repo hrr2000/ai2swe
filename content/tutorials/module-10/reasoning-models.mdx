@@ -1,0 +1,48 @@
+---
+title: "Reasoning Models (o1, o3, DeepSeek R1): Debuggers That Think"
+module: 10
+lesson: 3
+slug: "reasoning-models"
+analogy: "Long-running background job with hidden scratchpad — more test-time compute buys better proofs"
+prerequisites: ["image-generation-diffusion"]
+estimatedTime: "25 min"
+difficulty: "intermediate"
+tags: ["reasoning", "chain-of-thought", "test-time-compute", "eval"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Reasoning-focused models spend extra tokens in hidden or visible scratch space before answering — RL on math/code rewards improves chain quality; APIs expose reasoning effort knobs."
+---
+
+## What changed
+
+Instead of only scaling **parameters**, vendors scaled **inference-time thinking** — allowing models to **draft**, **revise**, and **verify** before emitting final tokens. Training mixes **RL rewards** on verifiable tasks (math proofs, code unit tests).
+
+<AnalogyBox
+  code="Increase CI timeout + run flaky tests thrice with sharding"
+  ai="Reasoning models — spend more FLOPs per user question for higher pass rates"
+/>
+
+## API differences
+
+- **Reasoning effort** or **thinking budget** parameters.
+- **Hidden chain-of-thought** may be unavailable for logging — design observability without violating terms.
+- **Latency** much higher — async UX or background jobs only.
+
+## When to use
+
+- **Competitive programming**, formal logic, multi-step migrations.
+- **Not** for simple FAQ — cheaper models suffice.
+
+<Callout type="insight">
+Combine reasoning models with **deterministic verifiers** — let the LM propose, let `pytest` / `z3` confirm. The stack beats either alone.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Reasoning models buy accuracy with **latency + $/query**.
+- Treat them as **specialized tier**, not default chat.
+- Always add **external verification** when tasks are checkable by code.
+
+**Next:** [Mixture of experts →](/tutorials/mixture-of-experts)

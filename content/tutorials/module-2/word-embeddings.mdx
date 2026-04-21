@@ -1,46 +1,67 @@
 ---
 title: "Word2Vec & GloVe: Semantic Hash Codes"
-summary: "The history of how we taught machines the relationships between words."
 module: 2
 lesson: 2
 slug: "word-embeddings"
-analogy: "Word vectors as semantic hash codes"
-estimatedTime: "20 min"
-readingTime: "10 min"
+analogy: "Co-occurrence statistics compressed into dense vectors — like factorizing a giant sparse spreadsheet"
+prerequisites: ["what-are-embeddings"]
+estimatedTime: "22 min"
+difficulty: "intermediate"
+tags: ["word2vec", "glove", "nlp", "static-embeddings"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Word2Vec and GloVe learned static word vectors from huge unlabeled text by predicting neighbors or factorizing co-occurrence counts — the foundation modern contextual embeddings built on."
 ---
 
-# Semantic Hash Codes
+## Before everything was a Transformer
 
-In the previous lesson, we saw that embeddings are arrays of numbers. But where do these numbers come from? How did we learn that "King" is similar to "Queen"?
+Today you often call an API and get **contextual** embeddings (the same word gets different vectors depending on the sentence). In the 2010s, **static word vectors** were the breakthrough: one fixed vector per **word type** in the vocabulary, learned from billions of tokens of running text.
 
-Before the giant LLMs of 2026, we used two revolutionary algorithms: **Word2Vec** and **GloVe**.
+Two families dominated: **Word2Vec** (2013) and **GloVe** (2014). They are still useful pedagogically — they make the **distributional hypothesis** concrete.
 
-## Word2Vec: You are defined by your neighbors
+> “You shall know a word by the company it keeps.” — J.R. Firth (1957), paraphrased
 
-The core idea of Word2Vec is simple: **A word's meaning is determined by the words that frequently appear around it.**
+## Word2Vec: predict neighbors, learn rows
 
-If you see the word "Gigabyte" in 10,000 documents, it's almost always surrounded by "RAM," "Storage," "Computer," and "Transfer."  The algorithm looks at these neighbors and builds a vector that clusters "Gigabyte" near the vectors for its neighbors.
+Word2Vec trains a shallow network to play a **self-supervised** game on raw text:
 
-### The "Prediction" Game
-Word2Vec trains by playing a game:
-- **Skip-gram**: Given a word, predict its neighbors.
-- **CBOW (Continuous Bag of Words)**: Given some neighbors, predict the missing word.
+- **Skip-gram** — given a center word, predict surrounding context words within a window.
+- **CBOW** — given context words, predict the center word.
 
-By failing and succeeding millions of times, the model builds a map where "Java" is near "Python" because they share similar "neighbor contexts" (like "code," "programming," "developer").
+Wrong predictions produce loss; gradients update **two embedding tables** (center and context). After training, you typically drop the context side and keep the **center embeddings** as your word vectors.
 
-## GloVe: Global Vectors for Word Representation
+Why it works: words with interchangeable contexts (“Python” near “code”, “Java” near “code”) get nudged toward similar rows in the embedding matrix.
 
-While Word2Vec looks at local neighbors, **GloVe** looks at the entire dataset at once. It builds a massive "Co-occurrence Matrix." 
+<AnalogyBox
+  code="Collaborative filtering: users who liked the same movies get similar latent vectors"
+  ai="Words that predict the same neighbors get similar vectors"
+/>
 
-Think of it like a giant spreadsheet where every row and column is a word in the dictionary. Each cell records how many times those two words appeared together in the same document.
+## GloVe: count first, factorize second
 
-GloVe then uses matrix factorization to squish this giant sparse spreadsheet into small, dense vectors (like 300 dimensions).
+**GloVe (Global Vectors)** constructs a huge **co-occurrence matrix** `X_ij` — how often word `i` appears near word `j` across the corpus — then learns low-rank vectors `w_i` and `w_j` so that dot products `w_i · w_j` approximate log counts (with bias terms).
 
-## The Legacy
+You can think of it as **matrix factorization** on a log-smoothed PMI-like objective: global statistics first, then compression into 100–300 dimensions.
 
-Today, we use much more advanced "Transformer-based" embeddings, but modern AI still stands on the shoulders of these two giants. 
+## What you get in practice
 
-> [!NOTE]
-> The biggest limitation of Word2Vec and GloVe? They are **Stateless**. The word "Bank" has the same vector whether you are "sitting on a river bank" or "withdrawing money from a bank." Modern AI fixed this with *Contextual* embeddings.
+- **Linear structure** — famous `king − man + woman ≈ queen` demos worked because the geometry encoded analogy directions.
+- **Tiny models** — a few hundred MB of vectors, trivial by LLM standards.
 
-Next up: How do we measure the distance between these points at production scale? **Vector Similarity.**
+## Limitations (why we moved on)
+
+Static embeddings conflate senses: **“bank”** (river) vs **“bank”** (finance) share one vector. Modern Transformers produce **contextual** representations — the effective embedding is a function of the whole sentence.
+
+<Callout type="insight">
+Word2Vec/GloVe teach you what **embedding rows** are. Transformers teach you what **dynamic, layered representations** are. The scaling story changed; the geometric intuition did not.
+</Callout>
+
+---
+
+## Key takeaways
+
+- **Word2Vec** learns vectors by **predicting local context** (skip-gram / CBOW).
+- **GloVe** learns vectors by **factorizing global co-occurrence** statistics.
+- Both yield **static** word vectors — powerful history, but replaced by contextual models for ambiguous language.
+
+**Next:** [Vector similarity →](/tutorials/vector-similarity)

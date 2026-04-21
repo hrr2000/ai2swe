@@ -1,46 +1,60 @@
 ---
 title: "Context Windows: The Buffer Size of AI"
-summary: "Understanding the RAM limits of an LLM. Why your AI starts forgetting the beginning of the file."
 module: 3
 lesson: 4
 slug: "context-windows"
-analogy: "Context window as L1 Cache or RAM for the model"
-estimatedTime: "18 min"
-readingTime: "9 min"
+analogy: "Fixed-size sliding buffer over the token sequence — like a ring buffer capped by hardware and architecture"
+prerequisites: ["token-vocabularies"]
+estimatedTime: "20 min"
+difficulty: "beginner"
+tags: ["context-length", "attention", "limits", "rag"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "The context window is how many tokens a forward pass can attend to at once. Longer windows help whole-repo tasks; they cost quadratically in vanilla Transformers and still behave unevenly in practice."
 ---
 
-# Context Windows
+## Definition
 
-Imagine you are trying to solve a bug while looking at only 10 lines of code at a time through a small hole. You would eventually lose track of the variables defined at the top of the file.
+The **context window** (or **sequence length limit**) is the maximum number of tokens the model architecture and weights were trained to handle in **one** forward pass — prompt + completion (and any hidden scaffolding) included.
 
-An LLM has the same limitation. The **Context Window** is the maximum number of tokens a model can "see" in a single forward pass.
+Everything beyond that is **truncated**, **summarized**, **retrieved** (RAG), or **windowed** with hacks — the model never “sees” the dropped tokens.
 
-## The RAM of AI
+<AnalogyBox
+  code="Fixed-size byte ring buffer on an embedded device"
+  ai="Transformer activations allocated for T positions — exceed T and something must give"
+/>
 
-Think of the Context Window as the **L1 Cache / RAM** for the model:
-- **Small Context (8k tokens)**: Can read a single file. (Like an old 486 computer).
-- **Medium Context (128k tokens)**: Can read a small codebase or a whole book. (Standard GPT-4o / Claude 3.5).
-- **Large Context (1M+ tokens)**: Can read your entire repository, documentation, and history at once. (Gemini 1.5 Pro).
+## What really fits in “128k”
 
-## What happens when it overflows?
+Marketing numbers are **upper bounds**, not guarantees of equal quality across all positions. Empirical studies (and many engineers’ logs) show **lost-in-the-middle** effects: models may attend strongly to the **beginning** and **end** of huge prompts while missing details buried mid-document.
 
-When you send more tokens than the window allows, the model doesn't usually crash. Instead, it **"forgets."** 
+<Callout type="warning">
+Do not paste 600 pages and assume uniform comprehension. **Structure** matters: headings, bullet lists, repeated task instructions at the end, and smaller well-chosen excerpts beat one giant blob.
+</Callout>
 
-Technically, the older tokens are truncated (popped off the stack) to make room for new ones. If you ask a question about the `System Prompt` you sent 2,000 messages ago, the model will hallucinate because that data is literally no longer in its memory buffer.
+## Why windows were small for so long
 
-## The Performance Cost: Quadratic Scaling
+Vanilla self-attention compares **every token to every other token** — memory and compute scale like **O(T²)** in sequence length (constants matter: hidden size, heads, KV cache). Long-context models need **more VRAM**, **IO bandwidth**, and often **algorithmic tricks** (sparse attention, sliding windows, ring attention, better kernels).
 
-Why isn't every model's context window 10 billion tokens?
+## Engineering strategies
 
-In the standard Transformer architecture, every token has to "look" at every other token. This means if you double the context, the amount of compute needed **quadruples** (`O(n^2)`). 
+| Situation | Strategy |
+| --- | --- |
+| Corpus fits comfortably | Put it inline; keep instructions crisp at top and tail. |
+| Corpus is huge | **RAG** — retrieve top chunks; only those tokens enter context. |
+| Conversation is long | **Summarize** older turns; or drop middle turns; or swap to a long-context model for the rewrite pass. |
+| Codebase tasks | Pair long context with **repo map / file list** tools instead of raw dumping when possible. |
 
-Huge context windows require massive, expensive specialized hardware.
+## KV cache intuition (preview)
 
-### Strategy: RAG vs. Context
-- If your data fits in the context window: **Feed it directly.** It’s more accurate.
-- If your data is too big (e.g., 50GB of logs): **Use RAG** to find the relevant 100 lines and feed *only those* into the window.
+During autoregressive decoding, keys and values from earlier positions can be **cached** so you do not recompute them each new token. Cache size grows with **batch × layers × heads × dim × T** — another reason “more context” hits hardware before it hits marketing slides.
 
-> [!IMPORTANT]
-> Just because a model *can* see 1M tokens doesn't mean it pays attention to all of them equally. Models often suffer from "Middle of the Message" loss, where they remember the start and end of a prompt better than the middle.
+---
 
-Next: Module 4 — The architecture that makes this all possible. **Transformers.**
+## Key takeaways
+
+- Context window = **hard cap** on simultaneous tokens — not “human working memory,” a tensor allocation story.
+- Long prompts cost **quadratic attention** in the naive form; **quality may still taper** mid-window.
+- For big data, prefer **retrieval + structure** over blind stuffing.
+
+**Next:** [Special tokens →](/tutorials/special-tokens)

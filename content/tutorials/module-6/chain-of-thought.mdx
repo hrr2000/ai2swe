@@ -1,0 +1,56 @@
+---
+title: "Chain-of-Thought: console.log() Debugging for AI"
+module: 6
+lesson: 3
+slug: "chain-of-thought"
+analogy: "Ask the intern to show work on the whiteboard — intermediate steps become supervision signal for attention"
+prerequisites: ["zero-shot-prompting"]
+estimatedTime: "18 min"
+difficulty: "intermediate"
+tags: ["chain-of-thought", "reasoning", "prompting", "eval"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "CoT prompts elicit step-by-step rationales before the final answer, improving multi-hop reasoning on capable models — hide or show those steps depending on product trust."
+---
+
+## Pattern
+
+Append instructions like:
+
+> “Think step by step. Put reasoning inside `<think>` tags and the final answer after `####`.”
+
+Models trained with **RL on math** or **synthetic CoT** data respond better than tiny instruct models.
+
+<AnalogyBox
+  code="printf debugging before returning from a recursive function"
+  ai="CoT — externalized scratchpad tokens the model conditions its own answer on"
+/>
+
+## When it helps
+
+- Arithmetic, logic puzzles, **multi-constraint scheduling**.
+- **Code review** where intermediate hypotheses catch bugs.
+
+## When it hurts
+
+- **Latency + tokens** double if you keep reasoning in the user-visible stream.
+- **Overconfidence** — fluent reasoning can justify wrong conclusions.
+
+<Callout type="warning">
+Do not expose raw CoT in **regulated** domains without human review — treat it as **draft internal notes**, not customer-facing truth.
+</Callout>
+
+## Variants
+
+- **Zero-shot CoT** — literally prefix “Let’s think step by step.” (Surprisingly effective on some benchmarks.)
+- **Tree-of-thought / self-consistency** — sample multiple chains, majority vote — costs scale linearly with samples.
+
+---
+
+## Key takeaways
+
+- CoT trades **tokens** for **reliability** on hard reasoning tasks.
+- Structure outputs (**tags**, **JSON**) so you can **strip** reasoning from UX while logging it for debug.
+- Measure on **your** eval suite — not every model benefits equally.
+
+**Next:** [Structured output →](/tutorials/structured-output)

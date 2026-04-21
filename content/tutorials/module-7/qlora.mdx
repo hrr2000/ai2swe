@@ -1,0 +1,48 @@
+---
+title: "QLoRA: LoRA But Memory-Efficient"
+module: 7
+lesson: 4
+slug: "qlora"
+analogy: "Edit a zipped repo with a tiny patch layer — base weights stay 4-bit, adapters stay fp16"
+prerequisites: ["lora"]
+estimatedTime: "20 min"
+difficulty: "advanced"
+tags: ["qlora", "quantization", "finetuning", "memory"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "QLoRA loads the base model in 4-bit NormalFloat, attaches LoRA adapters in higher precision, and uses paged optimizers — enabling 7B+ tuning on one consumer GPU."
+---
+
+## Problem
+
+Even with LoRA, **activations + optimizer states** for a 7B base in fp16 can exceed **24 GB**. **QLoRA** quantizes the **frozen base** aggressively while keeping LoRA paths numerically stable.
+
+## Recipe (conceptual)
+
+1. **4-bit NF4** weights for frozen linear layers — specialized quant format tuned for neural weights.
+2. **Double quant** of quantization constants — squeezes extra bits.
+3. **Paged AdamW** — spill optimizer state to CPU RAM if VRAM spikes (bitsandbytes feature).
+
+<AnalogyBox
+  code="Edit HD photo with adjustment layers while keeping original compressed RAW untouched"
+  ai="QLoRA — heavy frozen weights quantized; trainable adapters high precision"
+/>
+
+## Caveats
+
+- **Throughput** lower than bf16 full fine-tune — you pay for memory wins with time.
+- **Numerical sensitivity** — not every architecture or hyper combo tolerates 4-bit bases; validate loss curves early.
+
+<Callout type="warning">
+Merged **4-bit + LoRA** weights are not magically portable across inference engines — verify **vLLM / llama.cpp** support matrices before promising SLAs.
+</Callout>
+
+---
+
+## Key takeaways
+
+- QLoRA = **4-bit base + LoRA adapters + memory-aware optimizer**.
+- Unlocks **single-GPU** experimentation for many 7B-class models.
+- Always **compare evals** against full-precision LoRA baselines — quantization noise matters on tiny datasets.
+
+**Next:** [Dataset preparation →](/tutorials/dataset-preparation)

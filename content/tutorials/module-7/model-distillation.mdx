@@ -1,0 +1,51 @@
+---
+title: "Model Distillation: Minification for AI"
+module: 7
+lesson: 6
+slug: "model-distillation"
+analogy: "Compile interpreted hot paths to native — student mimics teacher’s soft labels"
+prerequisites: ["dataset-preparation"]
+estimatedTime: "20 min"
+difficulty: "advanced"
+tags: ["distillation", "student-teacher", "compression", "latency"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Distillation trains a smaller student to match a larger teacher’s logits or hidden states — cheaper inference with retained behavior if the mimicry objective is well chosen."
+---
+
+## Response-based distillation
+
+Teacher produces **softmax probabilities** `p_T` over vocabulary; student minimizes **KL(p_T || p_S)** on the same inputs. Dark knowledge in **low-probability** classes carries regularization signal.
+
+## Feature distillation
+
+Match **intermediate representations** (hidden states, attention patterns) — harder to wire but can preserve reasoning traces.
+
+<AnalogyBox
+  code="APM trace of prod service replayed against staging binary to ensure parity"
+  ai="Teacher traces as supervision targets for compressed student"
+/>
+
+## When it ships value
+
+- Need **sub-100ms** latency on CPU/edge.
+- Teacher is **API-bound** (privacy) — distill once, deploy student on-prem.
+
+## Risks
+
+- Student inherits **teacher biases**.
+- **Distribution shift** — if student inputs differ from teacher training mix, mimicry breaks.
+
+<Callout type="tip">
+Pair distillation with **task-specific evals** — perplexity matching ≠ business metric matching.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Distillation compresses **behavior**, not just weights.
+- KL on **soft labels** is the classic objective; feature matching is optional spice.
+- Validate **safety** independently — smaller ≠ safer.
+
+**Next:** [Hands-on: fine-tune 7B with LoRA →](/tutorials/finetune-7b-lora)

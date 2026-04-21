@@ -1,0 +1,47 @@
+---
+title: "Hands-On: Build a RAG Chatbot Over Your Codebase"
+module: 9
+lesson: 7
+slug: "build-rag-chatbot"
+analogy: "IDE symbol index + LM — grep on embeddings, then explain hits"
+prerequisites: ["guardrails"]
+estimatedTime: "60 min"
+difficulty: "advanced"
+tags: ["rag", "hands-on", "codebase", "embeddings"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Walk tree-sitter or ripgrep for files, chunk by function, embed with a code model, store in pgvector, stream answers with citations — the architecture behind many code assistants."
+---
+
+## Pipeline
+
+1. **Index** — walk repo respecting `.gitignore`, hash files, skip binaries.
+2. **Chunk** — prefer **function-level** splits with signature in chunk header.
+3. **Embed** — code embedding model (same for query + doc).
+4. **Retrieve** — top-k chunks + optional **BM25 hybrid**.
+5. **Generate** — system prompt mandates **file:line** citations; stream SSE.
+
+<AnalogyBox
+  code="ctags + cscope fused with semantic search"
+  ai="Repo RAG — lexical + vector signals for developer questions"
+/>
+
+## UX details
+
+- Show **retrieved snippets** in UI disclosure before model paraphrases.
+- **Re-rank** with cross-encoder if quality insufficient.
+- **Refresh index** on git commit webhook.
+
+<Callout type="insight">
+For **monorepos**, namespace chunks by package + owner team metadata so retrieval filters reduce cross-team noise.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Code RAG wins when **chunk boundaries respect syntax**, not naive token cuts.
+- **Citations** are non-negotiable for developer trust.
+- Automate **index rebuilds** like nightly CI artifacts.
+
+**Next module:** [Vision-language models →](/tutorials/vision-language-models)

@@ -1,0 +1,50 @@
+---
+title: "Dataset Preparation: ETL for Training Data"
+module: 7
+lesson: 5
+slug: "dataset-preparation"
+analogy: "dbt models for ML — staged tables, tests, and docs before the training job reads them"
+prerequisites: ["qlora"]
+estimatedTime: "25 min"
+difficulty: "intermediate"
+tags: ["datasets", "etl", "labeling", "quality"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Fine-tuning data is code: dedupe, balance classes, normalize tool JSON, attach metadata, and split by user/time to prevent leakage — garbage rows teach garbage logits."
+---
+
+## Pipeline stages
+
+1. **Collect** — exports from ticketing, chat logs (with consent), synthetic generations.
+2. **Normalize** — strip PII, unify line endings, enforce UTF-8, canonicalize tool names.
+3. **Deduplicate** — MinHash near-dup removal prevents memorization spikes.
+4. **Stratify splits** — group by user or session so **same author** never crosses train/val.
+
+<AnalogyBox
+  code="dbt test + uniqueness constraints before nightly warehouse job"
+  ai="Dataset tests before GPU job — cheaper to fail fast on CPU"
+/>
+
+## Format conventions
+
+Use **JSONL** with explicit keys: `messages`, `tools`, `metadata`. Keep **schema version** field so training code can branch safely.
+
+## Quality metrics
+
+- Labeler **agreement κ**.
+- **Toxicity** / policy violation rate (block upstream).
+- **Length histograms** — avoid empty completions.
+
+<Callout type="insight">
+Budget **10%** of project time for **data visualization** — embedding clusters of failures beat staring at random rows.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Fine-tune quality ≈ **data QA quality**.
+- **Leakage** ruins offline metrics — design splits intentionally.
+- Version datasets like **migrations** — reproducible training requires pinned tables.
+
+**Next:** [Model distillation →](/tutorials/model-distillation)

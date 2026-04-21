@@ -1,44 +1,88 @@
 ---
 title: "The AI Dev Lifecycle (It's Just CI/CD)"
-summary: "Map the standard software development lifecycle to the machine learning pipeline."
 module: 0
 lesson: 3
 slug: "ai-development-lifecycle"
-analogy: "Training as Compiling, Validation as Unit Testing"
-estimatedTime: "15 min"
-readingTime: "7 min"
+analogy: "Training as compiling, validation as tests, inference as production traffic"
+prerequisites: ["data-as-source-code"]
+estimatedTime: "18 min"
+difficulty: "beginner"
+tags: ["mlops", "pipeline", "training", "inference", "fundamentals"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Map familiar SDLC stages to ML: data prep, training runs, offline evaluation, deployment, and monitoring — same loop, different artifacts."
 ---
 
-# The AI Dev Lifecycle
+## The Loop You Already Know
 
-Every software engineer knows the golden loop:
+Most teams already run a loop like this:
 
-1. **Write Code**
-2. **Run Unit Tests**
-3. **Compile / Build**
-4. **Deploy to Prod**
-5. **Monitor Logs**
+1. Change code or config  
+2. Run automated tests  
+3. Build an artifact  
+4. Deploy  
+5. Watch metrics and logs  
 
-The AI lifecycle looks scary because data scientists use words like "Hyperparameter Optimization" and "Inference Pipelines." But it is exactly the same loop, just with different nouns.
+Machine learning projects run the **same loop** — the nouns change, not the rhythm.
 
-## The 1:1 Mapping
+<AnalogyBox
+  code="PR → CI → Docker image → rollout → dashboards"
+  ai="Data change → training job → checkpoint → model endpoint → quality & drift metrics"
+/>
 
-Let's translate the pipeline:
+## Stage-by-stage mapping
 
-### 1. Writing Code ➔ Data Engineering
-Instead of writing functions, you write logic to collect, clean, and format data. "ETL" (Extract, Transform, Load) pipelines are the new IDEs.
+### 1. Writing behavior → **Data work**
 
-### 2. Unit Testing ➔ Validation Split
-You don't write `expect(output).toEqual(true)`. Instead, you hold back 20% of your dataset (the "Validation Set"). If the model succeeds on the 80% but fails on the 20%, it failed its tests (this is called *overfitting*).
+Instead of only editing functions, you spend serious time on **pipelines**: collecting examples, de-duplication, labeling, balancing classes, and documenting what each field means. That is not “data science theater” — it is how you specify requirements when behavior is learned.
 
-### 3. Compiling ➔ Training
-Compiling takes your syntax tree and creates bytecode. Training takes your dataset and runs thousands of iterative mathematical loops to configure the `weights` of the model. Both processes result in a frozen artifact you can ship.
+### 2. Unit tests → **Offline evaluation**
 
-### 4. Shipping ➔ Inference
-When your compiled server runs and accepts an HTTP request, that's called production. When an AI model accepts an HTTP request and outputs a prediction, it's called **Inference**.
+You still need pass/fail gates — they just look like **metrics on held-out data**:
 
-### 5. Monitoring ➔ Drift Detection
-In traditional software, you monitor for 500 server errors. In AI, you monitor for "Data Drift"—is the live data hitting your server drastically different from the data you compiled the model with?
+- Classification: precision, recall, ROC-AUC, calibration.
+- Generation: human eval rubrics, LLM-as-judge (carefully), task-specific scores.
 
-> [!NOTE]
-> Training a model is slow and expensive, just like compiling a massive C++ application. Inference is (relatively) fast.
+The **validation split** (and often a separate **test** split you touch rarely) is your safety net against **overfitting** — the model memorized the training set but fails on new examples, like code that only passes mocked tests.
+
+### 3. Build / compile → **Training**
+
+Training is an expensive, batch job that turns **data + architecture + hyperparameters** into a **checkpoint** (weights). Like a long C++ compile, you want it **reproducible**: pinned data versions, seed control, logged configs (Weights & Biases, MLflow, etc.).
+
+### 4. Deploy → **Inference**
+
+Inference is the **online path**: given a request, load weights (or call an API), run the forward pass, return a prediction. Latency, concurrency, GPU memory, and autoscaling matter here — classic backend engineering.
+
+### 5. Monitor → **Quality + drift**
+
+Production ML adds a few extra monitors:
+
+- **Data drift** — input distributions shifted (new device, new market).
+- **Concept drift** — the mapping from inputs to correct outputs changed (policy rewrite).
+- **Model staleness** — the world moved; time to refresh data or retrain.
+
+<Callout type="warning">
+A model can appear “healthy” (low 500 rate) while silently degrading on business metrics. Track **task-level outcomes**, not only RPC success.
+</Callout>
+
+## Environments: dev, staging, prod
+
+Just like you do not edit prod tables by hand, you do not train in production without guardrails:
+
+| Environment | ML analogue |
+| --- | --- |
+| Local / dev | Notebook or small job on a slice of data |
+| Staging | Full training config on a representative snapshot |
+| Production | Scheduled retrain or human-triggered job with promotion checks |
+
+**Canary** a new checkpoint: route a small fraction of traffic, compare metrics, then roll forward or back.
+
+---
+
+## Key takeaways
+
+- ML work is still **engineering**: versioned artifacts, CI gates, staged rollout, observability.
+- **Training** produces a checkpoint; **inference** serves it — separate SLAs and failure modes.
+- **Evaluation splits** and **monitoring** are how you keep learned behavior honest after ship.
+
+**Next:** [Set up your AI playground →](/tutorials/setup-your-ai-playground)

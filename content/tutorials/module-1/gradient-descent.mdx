@@ -1,54 +1,59 @@
 ---
 title: "Gradient Descent: Binary Search for the Best Config"
-summary: "Iteratively updating model weights to reach the lowest possible error score."
 module: 1
 lesson: 7
 slug: "gradient-descent"
-analogy: "Optimization as walking down a foggy mountain"
-estimatedTime: "20 min"
-readingTime: "11 min"
+analogy: "Following the negative gradient downhill on a high-dimensional loss surface"
+prerequisites: ["backpropagation"]
+estimatedTime: "22 min"
+difficulty: "intermediate"
+tags: ["optimization", "gradient-descent", "learning-rate", "adam"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Gradient descent iteratively nudges weights in the direction that reduces loss. Learning rate, batching, and adaptive optimizers control whether you converge smoothly or diverge."
 ---
 
-# Gradient Descent
+## The update rule
 
-We've assigned the blame via Backpropagation. Now it's time to **Apply the Fix**.
+Given parameters `θ` and loss `L(θ)`, backprop supplies the gradient `∇L(θ)`. **Gradient descent** steps opposite that direction:
 
-In software engineering, if you want to find an item in a sorted array, you use **Binary Search**. You check the middle, see if you're too high or too low, and adjust your next move accordingly.
-
-**Gradient Descent** is the AI equivalent. It is an optimization algorithm used to find the "minimum" error (The bottom of the valley).
-
-## Walking Down the Mountain
-
-Imagine you are standing on a foggy mountain (High Loss/Error). You want to get to the village at the bottom (Low Loss). 
-
-1. **Check the Slope**: You feel the ground with your feet to see which way is "down." (This is the **Gradient** we calculated in Backprop).
-2. **Take a Step**: You take a small step in the direction that goes down.
-3. **Repeat**: You keep doing this until the ground is flat.
-
-## The Goal: Global Minimum
-
-In code, the "Mountain" is actually a multi-dimensional function graph of all your billions of weights. 
-
-```javascript
-// A conceptual loop of Gradient Descent
-while (loss > 0) {
-  const gradient = calculateGradient(weights); // Check the slope
-  weights = weights - (learningRate * gradient); // Take a step down
-  loss = calculateLoss(weights); // Check how far we are
-}
+```text
+θ_{t+1} = θ_t − η ∇L(θ_t)
 ```
 
-### The "Step Size" (Learning Rate)
+`η` (eta) is the **learning rate** — step size. Too large: oscillation or divergence. Too small: progress measured in geological time.
 
-If your "steps" are too big, you might overshoot the village and end up on the other mountain. If your "steps" are too small, it will take years to reach the bottom. 
+<AnalogyBox
+  code="Binary search halves the interval using the sign of error"
+  ai="Gradient descent uses first-order slope info in high-D — not the same algorithm, same 'use local signal to move' spirit"
+/>
 
-Finding the right **Step Size** (or "Learning Rate") is the core challenge of training an AI model.
+## Intuition on a bowl
 
-## Why "Descent"?
+For convex quadratic bowls, with a well-chosen `η`, iterates spiral cleanly to the minimum. Real neural loss surfaces are **non-convex**, riddled with saddle points and flat regions — yet first-order methods work surprisingly well in practice when paired with **momentum**, **batch noise**, and **good initialization** (often from pretraining).
 
-We are "descending" the error curve. When the gradient (the slope) reaches `0`, it means we are at the bottom. We have found the **Optimal Weights**.
+## Stochasticity: mini-batches
 
-> [!NOTE]
-> Every time an AI "Learns," it is simply performing thousands of these "descents" across millions of data points. By the end, the "compiled" weights represent the path of least resistance for that specific set of data.
+Full **batch** gradient descent uses the entire dataset each step — expensive. **Stochastic** GD uses one example; noisy but fast. **Mini-batch** GD averages gradients over `B` examples — the default compromise. That noise can even help **escape sharp minima**.
 
-Next up: Module 2 — How do we turn human concepts like "Love" or "Code" into numbers we can run through this mountain? **Embeddings.**
+## AdamW and friends
+
+Plain SGD is still used, but **Adam / AdamW** (adaptive per-parameter learning rates with momentum) dominate transformer fine-tuning defaults. You still tune a global LR and weight decay; the optimizer handles per-parameter scaling of updates.
+
+<Callout type="warning">
+There is no universal LR. Changes in batch size, precision (fp16/bf16), depth, and loss scaling all shift stability. Treat LR schedules like **capacity planning** — log sweeps, not guesses.
+</Callout>
+
+## When gradient descent is not the whole story
+
+RL, discrete search, and some discrete structured prediction problems need other tools. But for differentiable deep nets, **autograd + AdamW + cosine schedule** is the modern bread and butter.
+
+---
+
+## Key takeaways
+
+- **Gradient descent** reduces loss by stepping opposite `∇L`.
+- **Learning rate** is the primary stability knob; **batch size** trades noise vs cost.
+- Advanced optimizers adapt step sizes, but they do not remove the need for **careful tuning** and **evaluation**.
+
+**Next module:** [What are embeddings? →](/tutorials/what-are-embeddings)

@@ -1,50 +1,61 @@
 ---
 title: "Next-Token Prediction: AI Is Just Autocomplete"
-summary: "Strip away the hype: At its core, an LLM is the world's most sophisticated probability engine."
 module: 5
 lesson: 2
 slug: "next-token-prediction"
-analogy: "LLMs as sophisticated statistical autocomplete engines"
-estimatedTime: "18 min"
-readingTime: "9 min"
+analogy: "Autoregressive LM as: append one token, shift window, repeat — a for-loop around a forward pass"
+prerequisites: ["what-makes-a-model-large"]
+estimatedTime: "22 min"
+difficulty: "beginner"
+tags: ["llm", "autoregressive", "sampling", "language-modeling"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Decoder-only LLMs factor the joint distribution over tokens as a chain of conditional next-token predictions. Coherent long outputs emerge from many greedy or sampled single-token steps."
 ---
 
-# AI Is Just Autocomplete
+## One objective, many skills
 
-When you use ChatGPT or Claude, it feels like you're talking to a conscious entity. But under the hood, the model is only doing one thing: **Predicting the Next Token.**
+A **causal language model** is trained (very roughly) to minimize **negative log-likelihood** of the next token given all previous tokens across a huge corpus:
 
-It is a statistical engine that has read almost everything ever written by humans and learned the patterns of our language.
+```text
+L = − Σ_t log p(x_t | x_<t ; θ)
+```
 
-## The Statistical Guess
+That single objective — **predict the next token** — forces the network to internalize **grammar**, **facts** (as surface statistics), **API shapes**, and **reasoning patterns** that appear in training text.
 
-If you give an LLM the prompt: *"To be, or not to..."*
-The internal math looks something like this:
-- **be**: 99.8% probability.
-- **eat**: 0.01% probability.
-- **code**: 0.001% probability.
+<AnalogyBox
+  code="Tab completion in your IDE — but trained on the public text of the internet"
+  ai="Same mechanics: probability over a categorical vocabulary at each step"
+/>
 
-The model picks the most likely next word and then... **it starts over**. 
+## How generation works at runtime
 
-It takes the original prompt *plus* the new word it just picked and runs the whole thing through the network again to pick the *next* next word.
+1. Tokenize the prompt → `x_1…x_T`.
+2. Run a forward pass → logits over the vocabulary for position `T` (or each masked position during teacher forcing in training).
+3. Convert logits to a distribution (`softmax`).
+4. Pick the next token (argmax **greedy**, or **sample** with temperature / top-p).
+5. **Append** the token, feed the longer prefix back in, repeat until `EOS` or max length.
 
-## Generating 1 Token at a Time
+Streaming UIs show tokens as they arrive because the server literally emits them **one at a time** from that loop.
 
-This is why AI responses "stream" in character-by-character. The model is literally generating its own input for the next cycle.
+## “Emergent” capabilities
 
-1. **Cycle 1**: *"To be, or not to"* ➔ **"be"**
-2. **Cycle 2**: *"To be, or not to be"* ➔ **","**
-3. **Cycle 3**: *"To be, or not to be,"* ➔ **"that"**
-...and so on.
+Chain-of-thought style behavior, coding, translation — these can arise without explicit supervised heads because **next-token pressure** on diverse data implicitly rewards internal computations that reduce loss. That does **not** mean the model has beliefs or desires; it is still **conditional distribution estimation**.
 
-## Emergent Intelligence
+<Callout type="caution">
+Because the objective is **statistical continuation**, models can **confidently hallucinate** plausible-sounding tokens unsupported by your prompt or the real world. Retrieval (RAG), tools, and verification loops are engineering countermeasures — not optional polish.
+</Callout>
 
-The "Magic" of AI is that simply by getting really, really good at predicting the next word, the model accidentally learned how to **Reason**.
+## Temperature and top-p (preview)
 
-To predict the next word in a complex Python function, the model has to implicitly understand logic, variable scope, and syntax. To predict the next word in a joke, it has to understand irony and timing.
+**Temperature** scales logits before softmax: `T<1` sharpens the distribution (more deterministic), `T>1` flattens it (more random). **Nucleus (top-p)** sampling truncates the tail of unlikely tokens. Both control the **exploration–exploitation** tradeoff during decoding — covered in depth in a dedicated lesson when it ships.
 
-Intelligence, it turns out, is a side-product of perfect pattern matching.
+---
 
-> [!CAUTION]  
-> Because LLMs are just probability engines, they don't actually know "facts." They only know what word *should* come next based on their training data. This is the root cause of **Hallucinations**.
+## Key takeaways
 
-Next: How do we control the randomness of these guesses? **Temperature & Sampling.**
+- LLM generation = **repeated next-token prediction** with the growing prefix as context.
+- Training aligns the model with **human-written continuation statistics**.
+- Reliability issues (hallucination, bias, outdated facts) trace back to **objective and data**, not malice.
+
+**Next:** [Temperature & sampling →](/tutorials/temperature-and-sampling)

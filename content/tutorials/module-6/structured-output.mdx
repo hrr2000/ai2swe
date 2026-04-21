@@ -1,0 +1,47 @@
+---
+title: "Structured Output: Schema-Enforced API Responses"
+module: 6
+lesson: 4
+slug: "structured-output"
+analogy: "JSON Schema validation on the wire — constrain the token stream to a grammar"
+prerequisites: ["chain-of-thought"]
+estimatedTime: "20 min"
+difficulty: "intermediate"
+tags: ["json-schema", "tools", "constrained-decoding", "prompting"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Use response_format / JSON mode / constrained decoding so models emit machine-parseable objects — then validate with zod or pydantic anyway."
+---
+
+## Why strings are not enough
+
+Downstream code wants `{ "action": "refund", "amount": 12.5 }`, not a paragraph that **mentions** a refund. **Structured output** aligns LLM generation with **schemas** your app can consume.
+
+## Techniques
+
+1. **Prompting** — paste JSON Schema into system message; cheapest, leakiest.
+2. **JSON mode** — API bias toward valid JSON tokens; still validate — models can hallucinate keys.
+3. **Constrained decoding** — logits masked so only schema-legal tokens emit (**guidance**, **outlines**, some vendor APIs).
+
+<AnalogyBox
+  code="OpenAPI response validation middleware"
+  ai="Schema-guided generation — reject illegal tokens before they become strings"
+/>
+
+## Always validate
+
+Run **`zod.safeParse`** / **pydantic** after generation. Retry with repair prompt on failure. Log **schema error taxonomy** to improve prompts.
+
+<Callout type="tip">
+For **function calling**, treat tool parameters exactly like HTTP query params — define required fields, enums, and max lengths in the schema the model sees.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Structured output = **smaller integration surface** between LLM and code.
+- Combine **API features** + **runtime validation** — never trust unchecked JSON in prod.
+- Constrained decoding costs **implementation complexity** — adopt when parse failures are expensive.
+
+**Next:** [Prompt templates →](/tutorials/prompt-templates)

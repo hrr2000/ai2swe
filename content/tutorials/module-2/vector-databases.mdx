@@ -1,54 +1,70 @@
 ---
 title: "Vector Databases: Semantic Search Indexes"
-summary: "Why standard SQL databases struggle with vectors and how Vector DBs solve the scale problem."
 module: 2
 lesson: 6
 slug: "vector-databases"
-analogy: "Vector DBs as high-dimensional semantic search indexes"
-estimatedTime: "25 min"
-readingTime: "12 min"
+analogy: "ANN index + metadata filters — like a search engine inverted index, but for float vectors"
+prerequisites: ["sentence-embeddings"]
+estimatedTime: "28 min"
+difficulty: "intermediate"
+tags: ["vector-db", "pgvector", "hnsw", "rag"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Vector databases store embeddings and support fast similarity search, often with metadata filters and hybrid lexical+semantic ranking — the retrieval layer behind most RAG apps."
 ---
 
-# Vector Databases
+## The problem
 
-You have 10 million product descriptions. You convert them all into vectors (Float arrays of length 1536). Now you want to find the top 5 most similar products to a user's search query.
+You embedded **10 million** chunks (1536-d float vectors). A user query becomes another vector. You need the **top-k** nearest neighbors in milliseconds — not a Python `for` loop over NumPy rows.
 
-If you store these in a standard `JSONB` column in PostgreSQL and run a `FOR` loop to check every row, your database will melt. 
+That is what **vector databases** (or vector **extensions** to existing DBs) optimize: **storage + ANN index + query API**.
 
-**Vector Databases** are built explicitly to solve this "Nearest Neighbor" search at massive scale.
+## Core capabilities
 
-## The Core Concept: HNSW
+1. **Vector index** — HNSW, IVF, diskANN variants trade RAM, build time, recall, and QPS.
+2. **Metadata filters** — `WHERE team_id = 7 AND region = 'EU'` **before** or **during** vector search (vendor-specific semantics — read the docs).
+3. **Hybrid search** — combine BM25-style keyword hits with embedding scores; often beats pure semantic on mixed queries.
+4. **CRUD** — embeddings change when documents change; indexes must **update incrementally** or rebuild.
 
-Most vector databases (like Pinecone, Weaviate, or Milvus) use an algorithm called **HNSW** (Hierarchical Navigable Small Worlds). 
+<AnalogyBox
+  code="Elasticsearch: inverted index for tokens"
+  ai="Vector DB: spatial index for points in ℝⁿ (plus your SQL-like filters)"
+/>
 
-Think of it like a **Layered Graph Index**:
-1. **Layer 0**: A dense graph of all your vectors.
-2. **Layer 1**: A sparser "summary" graph of the vectors.
-3. **Layer 2**: Even sparser.
+## HNSW in one paragraph
 
-When you search, the database starting at the top sparse layer to find the right "neighborhood" and then zooms down into the dense layers to find the exact matches. It’s like traveling from a Country map ➔ City map ➔ Street map.
+**Hierarchical Navigable Small World (HNSW)** builds a multi-layer graph. Upper layers are sparse “express highways” for coarse navigation; lower layers are dense for precise neighbors. A query greedy-walks down the layers — much fewer distance computations than brute force.
 
-## Storage vs. Search
+## 2026-ish landscape (patterns, not stock picks)
 
-A Vector Database isn't just an index; it handles the entire lifecycle:
-- **Storage**: Storing the raw vector and its associated metadata (e.g., the original text, the author, the timestamp).
-- **Filtering**: "Find all vectors similar to 'Red Shoes' BUT only if they are in stock." (Combining semantic search with traditional boolean SQL filters).
-- **CRUD**: Updating the vector if the document changes.
+- **Dedicated SaaS** — fully managed ANN + ops (good when you want zero index tuning time).
+- **Open-source servers** — self-host for control and data residency.
+- **pgvector** — keep vectors beside relational rows; fantastic default for **≤ few million** vectors on a well-sized Postgres instance with tuned `lists` / `probes` or HNSW params.
 
-## The 2026 Landscape
-
-1. **Dedicated DBs**: Pinecone (Serverless/SaaS), Weaviate (Open Source), Milvus.
-2. **Extensions**: **pgvector** for PostgreSQL is the most popular choice for engineers who want to keep their data in one place.
-
-### Example Query (pgvector)
 ```sql
--- Find the 5 most similar items using the <=> (cosine distance) operator
-SELECT content FROM items 
-ORDER BY embedding <=> '[0.12, -0.54, ...]' 
-LIMIT 5;
+-- Illustrative pgvector-style query (exact syntax varies by install)
+SELECT id, content
+FROM doc_chunks
+ORDER BY embedding <=> $1::vector  -- distance operator
+LIMIT 8;
 ```
 
-> [!IMPORTANT]
-> If you are building a small project, **pgvector** is usually enough. Only move to a dedicated Vector DB if you are dealing with millions of vectors and need microsecond latency.
+<Callout type="insight">
+Most “vector database” debates are really **index algorithm + filter semantics + ops story** debates. Start simple: **one Postgres** with pgvector and good monitoring; split out when QPS, recall SLAs, or multi-tenant isolation force your hand.
+</Callout>
 
-Next: Module 3 — Before the model can understand meaning, it has to read the text. How does it break strings into pieces? **Tokenization.**
+## What you still must engineer
+
+- **Chunking** — retrieval quality lives or dies on chunk boundaries.
+- **Re-ranking** — retrieve 50 with ANN, **re-rank** to 8 with a cross-encoder or lightweight model.
+- **Evals** — nDCG, MRR, task success on labeled question sets.
+
+---
+
+## Key takeaways
+
+- Vector DBs = **embedding storage + fast approximate nearest neighbors + filters**.
+- **HNSW** is the default mental model for modern ANN graphs.
+- **pgvector** is enough for many products; dedicated systems win at extreme scale or specialized SLAs.
+
+**Next:** [Hands-on: semantic search →](/tutorials/build-semantic-search)

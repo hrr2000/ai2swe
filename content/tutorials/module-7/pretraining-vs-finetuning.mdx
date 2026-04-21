@@ -1,0 +1,53 @@
+---
+title: "Pre-training vs Fine-tuning: Source vs Library"
+module: 7
+lesson: 1
+slug: "pretraining-vs-finetuning"
+analogy: "Pretrain = build the compiler; fine-tune = add a domain-specific stdlib"
+prerequisites: ["prompt-chaining"]
+estimatedTime: "18 min"
+difficulty: "intermediate"
+tags: ["pretraining", "finetuning", "transfer-learning", "llm"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Pre-training teaches broad language and world knowledge from web-scale text. Fine-tuning adapts behavior on smaller curated datasets without relearning Unicode from scratch."
+---
+
+## Pre-training
+
+**Objective:** next-token prediction (or denoising variants) on **trillions** of tokens.
+
+**Output:** base checkpoint with **general competence** — expensive, months of GPU fleet time, rarely done inside product companies.
+
+## Fine-tuning (SFT)
+
+**Objective:** supervised demonstration data `(prompt, ideal response)` to mimic a style, tool format, or policy.
+
+**Cost:** far smaller than pretrain — still needs GPU budget, data QA, and eval harness.
+
+<AnalogyBox
+  code="V8 engine vs your npm package — different lifecycles"
+  ai="Pretrain weights vs task adapters — compose instead of replacing"
+/>
+
+## When to choose which lever
+
+| Need | Start with |
+| --- | --- |
+| New factual knowledge that changes weekly | **RAG** |
+| Style / tone / output schema | **SFT or LoRA** |
+| Safety preference shifts | **RLHF / DPO** (later lessons) |
+
+<Callout type="tip">
+Most teams **prompt + RAG** first, **LoRA** second, **full fine-tune** last — diminishing returns vs operational risk.
+</Callout>
+
+---
+
+## Key takeaways
+
+- **Pre-training** = internet-scale, general-purpose.
+- **Fine-tuning** = domain/task specialization on top.
+- Pick the **cheapest intervention** that moves your eval metrics.
+
+**Next:** [RLHF →](/tutorials/rlhf)

@@ -1,0 +1,58 @@
+---
+title: "Batches & Epochs: Pagination + Loops"
+module: 1
+lesson: 9
+slug: "batches-and-epochs"
+analogy: "Epoch = full table scan; batch size = page size in a paginated ORM query"
+prerequisites: ["learning-rate"]
+estimatedTime: "12 min"
+difficulty: "beginner"
+tags: ["batching", "epochs", "mini-batch", "training"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Training loops chunk data into mini-batches for efficient GPU use and gradient noise. An epoch is one full pass over the training set."
+---
+
+## Mini-batch gradient descent
+
+Rarely do we compute `∇L` on all `N` examples at once — that needs enormous memory. Instead we sample a **batch** of size `B`, average their gradients, and step:
+
+```text
+∇L ≈ (1/B) Σᵢ ∇L(xᵢ; θ)
+```
+
+| Batch size | Effect |
+| --- | --- |
+| Small `B` | Noisy gradients, faster steps per example, more variance |
+| Large `B` | Smoother gradients, better hardware utilization, sharper minima tendencies |
+
+<AnalogyBox
+  code="ORM: `findMany({ take: B, skip: k*B })` in a loop"
+  ai="Training: shuffle dataset, walk it in chunks of B rows per optimizer step"
+/>
+
+## Epoch
+
+One **epoch** means every training example has been used once (modulo sampling with replacement in some setups). Deep networks often need **many epochs** on small datasets, or **fractions of an epoch** per step on internet-scale data where “one pass” is impractical to define literally.
+
+## Iterations vs epochs
+
+```text
+steps_per_epoch = ceil(N / B)
+```
+
+A run of `E` epochs does roughly `E × steps_per_epoch` optimizer updates.
+
+<Callout type="insight">
+**Gradient noise** from small batches can **regularize** training — mild imperfection helps generalization. That is why “largest batch that fits” is not always best validation loss.
+</Callout>
+
+---
+
+## Key takeaways
+
+- **Batch** = parallel slice used for one gradient estimate.
+- **Epoch** = one full coverage of the training set (conceptual unit for schedules and logging).
+- Batch size trades **memory, throughput, noise, and generalization** — profile all four.
+
+**Next:** [Overfitting →](/tutorials/overfitting)

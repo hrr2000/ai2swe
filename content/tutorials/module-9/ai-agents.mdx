@@ -1,0 +1,52 @@
+---
+title: "AI Agents: Autonomous Services With Decision Loops"
+module: 9
+lesson: 4
+slug: "ai-agents"
+analogy: "Event loop + job queue — observe state, pick tool, act, repeat until stop condition"
+prerequisites: ["function-calling"]
+estimatedTime: "28 min"
+difficulty: "advanced"
+tags: ["agents", "orchestration", "planning", "tools"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Agents wrap LLMs in loops with memory, tools, and policies. Reliability comes from constrained planning, budgets, and human checkpoints — not from removing the loop guard."
+---
+
+## Minimal agent architecture
+
+- **Planner** — LLM proposes next tool or final answer.
+- **Executor** — runs tool with sandboxing.
+- **Memory** — scratchpad + retrieval over past steps.
+- **Stop policy** — max steps, max cost, deadline, or explicit `done` tool.
+
+<AnalogyBox
+  code="CI pipeline with manual approval gates for prod deploys"
+  ai="Agents — automate until high-risk step, then require human `approve` tool"
+/>
+
+## Failure classes
+
+- **Infinite loops** — model alternates between two useless tools.
+- **Partial observability** — missing metrics cause wrong tool picks.
+- **Reward hacking** — model satisfies literal metric while violating intent.
+
+## Mitigations
+
+- **Step budgets** + exponential backoff on errors.
+- **Second-opinion model** for high-stakes tool args.
+- **Deterministic verifiers** (unit tests) after code-edit tools.
+
+<Callout type="insight">
+Ship **read-only** agents first (search, summarize). **Write** paths (tickets, deploys) need the same change-management rigor as human operators.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Agents = **LLM + control loop + tools** — not a new fundamental model.
+- **Budgets and verifiers** matter more than clever prompts alone.
+- Design for **abort, resume, audit** from day one.
+
+**Next:** [MCP protocol →](/tutorials/mcp-protocol)

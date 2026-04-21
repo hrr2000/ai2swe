@@ -1,0 +1,52 @@
+---
+title: "Serving Frameworks: Nginx for Your Model"
+module: 8
+lesson: 3
+slug: "serving-frameworks"
+analogy: "Reverse proxy + worker pool — batch requests, schedule GPU kernels, enforce timeouts"
+prerequisites: ["kv-cache"]
+estimatedTime: "25 min"
+difficulty: "intermediate"
+tags: ["vllm", "tensorrt", "triton", "inference"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "vLLM, TensorRT-LLM, Triton, and text-generation-inference wrap kernels for continuous batching, PagedAttention, and multi-LoRA serving — pick based on hardware and SLAs."
+---
+
+## Responsibilities
+
+- **Continuous batching** — pack in-flight decode steps from many users into one GPU wavefront.
+- **PagedAttention** — virtualize KV cache like OS paging to reduce fragmentation.
+- **Autoscaling metrics** — GPU util, queue depth, tokens/sec, P99 latency.
+
+<AnalogyBox
+  code="Kubernetes + Envoy in front of your microservices"
+  ai="Model server — schedules GPU work, exposes gRPC/HTTP, handles backpressure"
+/>
+
+## Popular stacks
+
+| Runtime | Notes |
+| --- | --- |
+| **vLLM** | Python-first, strong community, PagedAttention default |
+| **TensorRT-LLM** | NVIDIA-optimized, great on H100/L40S when you can compile graphs |
+| **Triton Inference Server** | Multi-model routing, C++/Python backends |
+| **llama.cpp / Ollama** | CPU + Apple Silicon friendly, GGUF ecosystem |
+
+## API concerns
+
+Expose **OpenAI-compatible** `/v1/chat/completions` when possible — swap providers without rewriting clients.
+
+<Callout type="insight">
+Measure **time-to-first-token (TTFT)** separately from **tokens/sec** — UX cares about both; batching optimizations trade them off.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Serving frameworks = **schedulers + kernels + HTTP** for LLMs.
+- **Continuous batching** drives GPU efficiency at scale.
+- Standardize on **OpenAI-shaped APIs** internally unless you love vendor lock-in.
+
+**Next:** [Streaming responses →](/tutorials/streaming-responses)

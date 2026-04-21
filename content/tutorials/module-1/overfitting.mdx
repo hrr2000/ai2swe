@@ -1,0 +1,65 @@
+---
+title: "Overfitting: Over-engineering Your Model"
+module: 1
+lesson: 10
+slug: "overfitting"
+analogy: "Memorizing past exam papers instead of learning the subject — perfect on train, weak on the test"
+prerequisites: ["batches-and-epochs"]
+estimatedTime: "18 min"
+difficulty: "intermediate"
+tags: ["overfitting", "generalization", "validation", "bias-variance"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Overfitting is low train error but high validation error: the model fit noise. Detection, prevention, and the bias–variance tradeoff are core ML hygiene."
+---
+
+## Definition
+
+**Overfitting** means your model learned patterns that **do not generalize**:
+
+- **Training loss** keeps dropping.
+- **Validation loss** stalls or rises.
+- Production metrics diverge from offline benchmarks.
+
+Same vibe as code that passes **over-mocked unit tests** but fails in staging — the spec was too narrow.
+
+<AnalogyBox
+  code="Hard-coding answers for each row in a CSV instead of writing a real function"
+  ai="Huge model + small data → weights memorize ids instead of learning structure"
+/>
+
+## Why it happens
+
+- **Too many parameters** relative to data diversity.
+- **Too many training steps** without regularization.
+- **Label noise** or **leakage** (validation too similar to train).
+- **Repeated examples** inflating apparent dataset size.
+
+## What to do
+
+1. **More real data** — best fix when feasible.
+2. **Data augmentation** — synthetic diversity (careful: preserve labels).
+3. **Regularization** — weight penalties, dropout, early stopping.
+4. **Smaller model** or **fewer steps** — capacity control.
+5. **Better validation protocol** — stratified splits, group splits so related items never cross boundaries.
+
+<Callout type="warning">
+**Tuning on the test set** is organizational overfitting. Hold out a **test** set you touch once, or use nested cross-validation for honest error bars.
+</Callout>
+
+## Bias–variance snapshot
+
+- **High bias** — underfits (train and val both bad).
+- **High variance** — overfits (train great, val bad).
+
+The art is landing in the **valley** where capacity matches problem complexity.
+
+---
+
+## Key takeaways
+
+- Watch **train vs val curves**, not train alone.
+- Prefer **data + process** fixes before exotic architectures.
+- Guard your **test set** like production credentials.
+
+**Next:** [Regularization →](/tutorials/regularization)

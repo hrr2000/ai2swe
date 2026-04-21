@@ -1,0 +1,53 @@
+---
+title: "LoRA: Monkey-Patching Your Model"
+module: 7
+lesson: 3
+slug: "lora"
+analogy: "Git patch on attention weights — low-rank deltas instead of rewriting the whole repo"
+prerequisites: ["rlhf"]
+estimatedTime: "25 min"
+difficulty: "advanced"
+tags: ["lora", "peft", "finetuning", "efficiency"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "LoRA freezes base weights and trains small rank-decomposed matrices A,B into attention projections — huge VRAM savings with strong task performance when rank r is tuned."
+---
+
+## Idea
+
+Instead of updating full `W ∈ ℝ^{d×d}`, maintain:
+
+```text
+W' = W + ΔW,   ΔW = B A,   B ∈ ℝ^{d×r}, A ∈ ℝ^{r×d},   r ≪ d
+```
+
+Train only **A, B** per targeted layer (often `q_proj`, `v_proj`). **Merge** `ΔW` into `W` for deployment or keep adapters swappable.
+
+<AnalogyBox
+  code="Feature flags toggling small modules instead of forking the monolith"
+  ai="LoRA adapters — optional low-rank patches hot-swapped per tenant"
+/>
+
+## Why it works
+
+Attention maps lie near **low intrinsic rank** for many task shifts — a few degrees of freedom steer behavior dramatically.
+
+## Practical knobs
+
+- **Rank `r`** — 8, 16, 64… trade quality vs size.
+- **Alpha scaling** — ties effective learning rate of LoRA weights.
+- **Target modules** — more modules = more capacity, more VRAM.
+
+<Callout type="tip">
+Use **Hugging Face PEFT** or **vLLM LoRA serving** to load multiple customer adapters behind one base GPU process — monetization pattern for B2B AI.
+</Callout>
+
+---
+
+## Key takeaways
+
+- LoRA = **low-rank trainable residuals** on frozen backbone.
+- Dominant paradigm for **consumer GPU fine-tunes** of LLMs.
+- Deployment can **merge** or **hot-swap** adapters — pick per release strategy.
+
+**Next:** [QLoRA →](/tutorials/qlora)

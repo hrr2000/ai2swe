@@ -1,0 +1,47 @@
+---
+title: "What Makes a Model 'Large'?"
+module: 5
+lesson: 1
+slug: "what-makes-a-model-large"
+analogy: "Parameter count as lines of config — more knobs, more expressiveness, more RAM"
+prerequisites: ["build-attention-scratch"]
+estimatedTime: "15 min"
+difficulty: "beginner"
+tags: ["llm", "parameters", "scale", "compute"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Size usually means billions of trainable weights plus training tokens and compute. Parameters drive memory; tokens drive data; FLOPs drive cost."
+---
+
+## Three axes people blur together
+
+1. **Parameters (N_params)** — count of weights in θ. Marketing “**70B**” refers to this.
+2. **Training tokens** — how many tokens the optimizer saw. Chinchilla scaling laws emphasize **balancing** params and data.
+3. **Inference compute** — depends on architecture, context length, batch, precision, and KV cache — not captured by parameter count alone.
+
+<AnalogyBox
+  code="Binary size + install footprint + CPU hours to compile"
+  ai="Weights + corpus + training FLOPs — three different budgets"
+/>
+
+## Memory intuition
+
+Rough **weight-only** model RAM at FP16: `2 bytes × N_params`. **7B** ≈ 14 GB before optimizer states, activations, or KV cache. Quantization (4-bit) shrinks footprint for inference.
+
+## Why bigger helps — until it doesn’t
+
+More parameters → lower training loss ceilings on fixed data **if** you also scale data and regularization well. Diminishing returns + **inference costs** push teams toward **Mixture-of-Experts** and **distillation** for production.
+
+<Callout type="tip">
+Compare models at **similar task suites** (your eval harness), not leaderboard trivia. A smaller model + RAG often beats a larger model alone on **grounded** QA.
+</Callout>
+
+---
+
+## Key takeaways
+
+- **Billions of parameters** ≈ model “width/depth capacity.”
+- **Training tokens** and **compute** complete the scaling picture.
+- Deployment cares about **VRAM, latency, and $/query** — derive from profiling, not parameter count alone.
+
+**Next:** [Next-token prediction →](/tutorials/next-token-prediction)

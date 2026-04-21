@@ -1,0 +1,51 @@
+---
+title: "Hands-On: Build a Tokenizer Visualizer"
+module: 3
+lesson: 6
+slug: "tokenizer-playground"
+analogy: "Lex / yacc debug output — colorize token spans so PMs and engineers agree on cost"
+prerequisites: ["special-tokens"]
+estimatedTime: "30 min"
+difficulty: "intermediate"
+tags: ["tokenizer", "ui", "hands-on", "debugging"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "A tiny web or CLI tool that highlights token boundaries and counts — indispensable when arguing about prompt cost or why JSON exploded in length."
+---
+
+## Features
+
+1. **Live tokenize** — call Hugging Face `AutoTokenizer` in Python backend, or `tiktoken` WASM in browser (bundle size tradeoff).
+2. **Highlight spans** — map token offsets back to UTF-16/UTF-8 string indices carefully (emoji and combining characters bite).
+3. **Counters** — token count, byte count, approximate USD if you plug in model pricing.
+4. **Diff two prompts** — show which prefix is shared (for cache visualization).
+
+<AnalogyBox
+  code="Syntax highlighter in an IDE"
+  ai="Token highlighter — educates humans about what the LM actually sees"
+/>
+
+## Minimal React idea
+
+- `textarea` for input.
+- `useEffect` debounced → `POST /api/tokenize` → returns `{ tokens: { text, id }[] }`.
+- Render by walking the original string with cumulative offsets from tokenizer `offset_mapping` if available.
+
+<Callout type="insight">
+Expose **per-token IDs** in dev builds only — IDs can leak rare tokens users typed. Gate behind auth in production tools.
+</Callout>
+
+## Stretch goals
+
+- Side-by-side two models’ tokenizations.
+- Export **CSV** of token frequencies across a corpus for merge analysis.
+
+---
+
+## Key takeaways
+
+- Visualization kills debates about **“one word”** vs **five tokens**.
+- Offsets are **Unicode-hard** — use library mapping, not regex alone.
+- Ship this internally before you ship a pricing estimator to customers.
+
+**Next module:** [Why Transformers won →](/tutorials/why-transformers)

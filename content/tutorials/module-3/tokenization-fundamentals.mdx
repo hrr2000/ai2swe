@@ -1,59 +1,75 @@
 ---
 title: "Tokenization: AI's Lexer"
-summary: "Why LLMs don't read words, but 'tokens' — the building blocks of language."
 module: 3
 lesson: 1
 slug: "tokenization-fundamentals"
-analogy: "Tokenization as a compiler's Lexer stage"
-estimatedTime: "15 min"
-readingTime: "8 min"
+analogy: "Tokenizer as a lexer — maps UTF-8 bytes or text into an integer sequence the embedding table can index"
+prerequisites: ["your-first-prompt"]
+estimatedTime: "20 min"
+difficulty: "beginner"
+tags: ["tokenizer", "bpe", "tokens", "nlp"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Models consume token IDs, not raw strings. Tokenizers compress frequent substrings into single IDs — shaping cost, context use, and multilingual behavior."
 ---
 
-# Tokenization: The Lexer
+## Text must become integers
 
-Before a compiler can understand your C++ or JavaScript code, it passes through a **Lexer**. The lexer breaks the raw character stream into meaningful chunks called **Tokens**.
+Neural nets run on tensors of numbers. A **tokenizer** is the deterministic program that converts:
 
-```javascript
-// Input
-const x = 5;
-
-// Lexer Output (Tokens)
-[Keyword("const"), Identifier("x"), Operator("="), Literal(5), Punctuation(";")]
+```text
+raw string → [token_id_1, token_id_2, …, token_id_T]
 ```
 
-AI models work the exact same way. Before text hits the Neural Network layers, it passes through a **Tokenizer**.
+Those integers index **rows of an embedding matrix** (or feed into more complex input pipelines in multimodal models).
 
-## Why not just use "Words"?
+<AnalogyBox
+  code="Lexer: char stream → (KEYWORD, IDENT, OP) tuples"
+  ai="Tokenizer: Unicode string → vocabulary IDs the model was trained with"
+/>
 
-If we used words as our base unit, the AI's dictionary would be infinite. What about misspellings? What about new words like "rizz"? What about complex languages like German where words are joined together?
+## Why not “one token per word”?
 
-If we used characters (`a`, `b`, `c`), the AI would be too slow. It would have to learn that `t + h + e` equals "the" every single time.
+Natural language is messy:
 
-## Byte-Pair Encoding (BPE)
+- **Out-of-vocabulary** — new slang (“**rizz**”), typos, chemical names.
+- **Morphology** — German compounds, Turkish agglutination — word-level vocab explodes.
+- **Multilingual** — shared subword units help rare languages.
 
-Modern tokenizers use **BPE**. It starts with individual characters and merges the most frequent pairs into single tokens.
+## Why not “one token per character”?
 
-- **"The"** might be 1 token.
-- **"Tokenization"** might be 2 tokens: `Token` + `ization`.
-- **"asdfghjkl"** might be 9 tokens (individual characters) because it's rare.
+Sequences get **long**, attention and memory costs grow with length, and models waste capacity learning that `t+h+e` spells “the” from scratch.
 
-## The Developer's Rule of Thumb
+## Byte-Pair Encoding (BPE) — the usual answer
 
-In production, you are billed by **Tokens**, not words.
-**1,000 tokens ≈ 750 words.**
+**BPE** (and unigram LM variants) start from characters or bytes and **iteratively merge** the most frequent pairs in a corpus. The merges define a vocabulary of substrings:
 
-### The "Emoji" and "Whitespace" Tax
-Because common words are optimized into single tokens, they are "cheap." But emojis, complex whitespace (like deep Python indentation), and rare characters take up many tokens.
+- Frequent words → **one** token each (`" the "` often compresses well).
+- Rare words → **several** subword tokens (`Token` + `ization`).
+- Rare characters or emoji → can consume **many** tokens.
 
-```javascript
-// This is 1 token
-"hello"
+<Callout type="tip">
+When you estimate cost, measure with the **provider tokenizer** (or `tiktoken`, `sentencepiece`, etc.). Rules of thumb like “4 chars ≈ 1 token” break on code, JSON, Chinese, or emoji-heavy UI copy.
+</Callout>
 
-// This might be 3+ tokens
-"🚀🔥✨"
-```
+## Billing, limits, and UX
 
-> [!CAUTION]
-> If your code uses extremely deep indentation (12+ levels), you are wasting your model's "memory" (Context Window) on whitespace tokens.
+APIs price in **tokens**; context windows cap **T**. That makes tokenization a **product constraint**:
 
-Next: How many of these tokens can the AI "hold in its head" at once? **Context Windows.**
+- Pretty-printed JSON is longer than minified JSON — same semantics, higher bill.
+- Deep indentation in pasted logs burns whitespace tokens.
+- **Same English sentence** can tokenize differently across GPT vs Llama families — do not hard-code offsets from another model’s tokenizer.
+
+## Special tokens
+
+Vocabularies reserve IDs for **control symbols**: start/end of sequence, padding, unknown, user/assistant markers in chat templates. Models only see integers — chat formatting is **tokenizer + template code**, not magic.
+
+---
+
+## Key takeaways
+
+- Tokenizers are **versioned programs** paired with checkpoints — always ship them together.
+- **Subword** methods balance vocabulary size, OOV robustness, and sequence length.
+- Token counts drive **money, latency, and whether your prompt fits** — profile them like payload size.
+
+**Next:** [BPE: text compression as tokenization →](/tutorials/byte-pair-encoding)

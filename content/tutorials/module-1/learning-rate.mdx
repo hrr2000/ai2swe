@@ -1,0 +1,63 @@
+---
+title: "Learning Rate: Step Size Matters"
+module: 1
+lesson: 8
+slug: "learning-rate"
+analogy: "Step size on a hike in fog — too big and you overshoot the valley; too small and you never arrive"
+prerequisites: ["gradient-descent"]
+estimatedTime: "10 min"
+difficulty: "intermediate"
+tags: ["optimization", "learning-rate", "schedules", "training"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "The learning rate scales every weight update. It is the single most sensitive hyperparameter in classical SGD and still matters with AdamW when fine-tuning."
+---
+
+## What it controls
+
+Gradient descent uses:
+
+```text
+θ ← θ − η · ∇L(θ)
+```
+
+**η (learning rate)** scales how far you move opposite the gradient. Backprop only tells you **direction** and **relative steepness**; η decides how aggressively you trust that signal on this step.
+
+<AnalogyBox
+  code="PID controller gain — higher gain reacts faster but oscillates"
+  ai="Learning rate — larger steps converge faster until they diverge or chatter"
+/>
+
+## Failure modes
+
+| Symptom | Likely cause |
+| --- | --- |
+| Loss **NaNs** or explodes | η too large, bad init, or unstabilized mixed precision |
+| Loss **crawls** | η too small, or gradients vanishing elsewhere |
+| Loss **bounces** | η too large on a noisy mini-batch landscape |
+
+## Schedules and warmup
+
+**Warmup** — start with a tiny η, ramp to base over a few hundred steps — stabilizes Transformer training when gradients are spiky early.
+
+**Cosine decay** — smoothly reduce η so the optimizer takes **large exploratory steps early** and **tiny polishing steps late**.
+
+**One-cycle / restarts** — periodic η spikes can help escape flat regions (less common in LLM pretrain, more in vision sweeps).
+
+<Callout type="tip">
+When you **double batch size**, some teams scale η linearly (Goyal et al. style heuristics) up to a point. Always verify on a **dev split** — there is no law of physics here, only empirical stability.
+</Callout>
+
+## AdamW still has a “learning rate”
+
+Adaptive optimizers rescale per-parameter updates, but the **global LR** still sets overall step magnitude and interacts with **weight decay**. Fine-tuning LLMs often uses surprisingly small peak LRs (e.g. `1e-5` to `3e-4` range) compared to classical vision nets — consult recipes for your base checkpoint.
+
+---
+
+## Key takeaways
+
+- **η** scales all updates — first knob when loss is unstable.
+- Use **schedules + warmup** for deep Transformers and large batches.
+- Treat published recipes as **starting points**; your data and batch size change the optimum.
+
+**Next:** [Batches & epochs →](/tutorials/batches-and-epochs)

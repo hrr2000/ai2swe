@@ -1,0 +1,49 @@
+---
+title: "Special Tokens: Reserved Keywords"
+module: 3
+lesson: 5
+slug: "special-tokens"
+analogy: "Reserved keywords and sentinel values in a programming language — parsers treat them differently"
+prerequisites: ["context-windows"]
+estimatedTime: "12 min"
+difficulty: "beginner"
+tags: ["tokenizer", "special-tokens", "chat-template", "nlp"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "PAD, BOS, EOS, UNK, mask, and chat-role tokens steer model behavior. Chat templates inject them — raw user strings never reach the transformer alone."
+---
+
+## Common special tokens
+
+| Token role | Purpose |
+| --- | --- |
+| **PAD** | Batch packing — ignored in attention via mask |
+| **BOS / EOS** | Sequence boundaries for generation |
+| **UNK** | Rare in byte-BPE; legacy flag for unknown |
+| **MASK** | MLM training (BERT) — predict hidden token |
+| **SEP** | Separate segments in dual-sentence tasks |
+
+Modern decoder-only models add **turn markers**: `<|im_start|>user`, `<|assistant|>`, etc. — exact strings differ per family.
+
+<AnalogyBox
+  code="`#ifdef`, `__attribute__`, YAML `---` document separators"
+  ai="Special tokens — structural control characters in token space"
+/>
+
+## Chat templates
+
+Providers compile `messages[]` → **one** token sequence by inserting special tokens and role labels. If you hand-roll strings, you may **accidentally omit** a stop sequence the model was fine-tuned to expect — breaking safety or tool formats.
+
+<Callout type="tip">
+Use **`tokenizer.apply_chat_template`** (Transformers) or vendor SDK helpers. Diff the rendered tokens when switching model versions — silent template drift is real.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Special tokens carry **structure**, not natural language.
+- **Chat formatting** is tokenizer + template code — part of the API contract.
+- Changing templates without retraining can **move loss cliffs** — treat as breaking changes.
+
+**Next:** [Hands-on: tokenizer visualizer →](/tutorials/tokenizer-playground)

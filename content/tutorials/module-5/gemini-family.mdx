@@ -1,0 +1,49 @@
+---
+title: "The Gemini Family: Google's Model Tiers"
+module: 5
+lesson: 6
+slug: "gemini-family"
+analogy: "Instance sizes on a cloud SKU table — Flash vs Pro maps to latency/cost/quality"
+prerequisites: ["open-source-llms"]
+estimatedTime: "15 min"
+difficulty: "beginner"
+tags: ["gemini", "google", "multimodal", "apis"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Gemini tiers target different latency and reasoning budgets. Multimodal inputs and long context are first-class — always read the model card for limits and pricing."
+---
+
+## Tier mental model
+
+- **Flash / Flash-Lite** — high QPS, lower cost, great for classification, extraction, chat guardrails.
+- **Pro** — heavier reasoning, coding, multi-step tool use when latency allows.
+- **Ultra (when offered)** — frontier quality for the hardest evals — premium slot.
+
+Names change with releases — bind integrations to **stable endpoint IDs** where possible.
+
+<AnalogyBox
+  code="RDS `db.t4g.micro` vs `db.r6g.4xlarge` — same SQL surface, different ceilings"
+  ai="Gemini SKUs — same API shape, different depth and multimodal stacks"
+/>
+
+## Multimodal first-class
+
+Many Gemini models accept **image, audio, video, PDF** parts interleaved with text in the **content** array. Your client code must **MIME-type** payloads and respect per-file size caps.
+
+## Grounding and tools
+
+Google stacks **Search grounding**, **Maps**, **code execution**, etc., as optional flags — feature-gate them in product because billing and latency differ from plain text completion.
+
+<Callout type="tip">
+Use **Google AI Studio** for quick probes, then move to **Vertex AI** for enterprise IAM, VPC-SC, and consolidated billing — same models, different control plane.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Pick **Flash vs Pro** from **latency + quality** requirements, not branding.
+- Multimodal = more **client-side validation** (size, type, PII redaction).
+- Read **quota + region** docs before you architect synchronous user paths.
+
+**Next:** [Emergent abilities →](/tutorials/emergent-abilities)

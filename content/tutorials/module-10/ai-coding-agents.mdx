@@ -1,0 +1,50 @@
+---
+title: "AI Coding Agents: Devin, OpenHands, and the Future"
+module: 10
+lesson: 6
+slug: "ai-coding-agents"
+analogy: "Junior dev with shell + browser + ticket queue — autonomy bounded by CI and code review"
+prerequisites: ["long-context-models"]
+estimatedTime: "25 min"
+difficulty: "intermediate"
+tags: ["agents", "coding", "devtools", "future-of-work"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Coding agents loop LLM calls with repo tools, terminals, and browsers. Reliability hinges on sandboxes, deterministic tests, and human review — the IDE becomes an orchestration surface."
+---
+
+## Anatomy
+
+- **Planner** proposes file edits + shell commands.
+- **Sandbox** runs commands in Docker VMs or WASM microVMs.
+- **Verifier** runs `lint`, `typecheck`, `test` after each patch attempt.
+- **Human** merges PR after diff review.
+
+<AnalogyBox
+  code="GitHub Actions workflow_dispatch with manual approval for prod"
+  ai="Agents — automate branch work, keep humans on merge permissions"
+/>
+
+## What actually shipped (pattern)
+
+Products converge on **IDE-integrated** agents (Cursor, Copilot Workspace, Jules) with **repo-indexed RAG**, **multi-file diffs**, and **policy hooks** (no `rm -rf /`).
+
+## Risks
+
+- **Secret exfiltration** via prompt injection in dependencies.
+- **License contamination** when agents paste unknown snippets.
+- **Flaky tests** causing infinite “fix” loops — budget steps.
+
+<Callout type="tip">
+Treat agent output like **any contributor PR**: CODEOWNERS, required reviewers, signed commits, SBOM scanning — same supply chain, faster author.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Agents = **tools + policy + LLM** in a dev sandbox.
+- **CI is the ground truth** — never ship agent patches without automated checks.
+- Human **review culture** scales better than chasing fully autonomous merges.
+
+**Next:** [What's next in 2026+ →](/tutorials/whats-next)

@@ -1,0 +1,60 @@
+---
+title: "Streaming Responses: SSE + WebSockets for AI"
+module: 8
+lesson: 4
+slug: "streaming-responses"
+analogy: "NDJSON over HTTP — flush partial tokens as they are sampled so UX feels instant"
+prerequisites: ["serving-frameworks"]
+estimatedTime: "20 min"
+difficulty: "intermediate"
+tags: ["sse", "websocket", "streaming", "ux"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Server-Sent Events carry token deltas over a long-lived HTTP response; WebSockets add duplex chat. Cancel propagation stops burning GPU on abandoned tabs."
+---
+
+## Why stream
+
+Autoregressive models emit **one token at a time**. Buffering the full completion before flush adds **seconds** of dead air. **Streaming** improves perceived latency and lets UIs render Markdown incrementally.
+
+## SSE pattern
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/event-stream
+Cache-Control: no-cache
+
+data: {"token":"The"}
+data: {"token":" quick"}
+```
+
+Browser `EventSource` or `fetch` + `ReadableStream` consumers parse lines. Easy behind **HTTP/2** multiplexing.
+
+## WebSockets
+
+Use when **client** must send edits mid-generation (barge-in voice UX) or for **tool** loops with bidirectional frames.
+
+<AnalogyBox
+  code="Progressive JPEG rendering vs waiting for full PNG"
+  ai="Streaming tokens — progressive disclosure of the answer"
+/>
+
+## Production details
+
+- **Heartbeat comments** (`: ping`) keep proxies from closing idle streams.
+- **AbortController** on the client should propagate to **server cancel** tokens so GPU work stops.
+- **Backpressure** — slow clients should not unbounded-buffer server RAM.
+
+<Callout type="warning">
+Log **aggregated** streams, not every token line, in high QPS services — log volume becomes the bottleneck.
+</Callout>
+
+---
+
+## Key takeaways
+
+- **SSE** is simplest for one-way token streaming over HTTP.
+- **WebSockets** when you need duplex control messages.
+- Wire **cancellation** end-to-end — politeness to your GPU fleet.
+
+**Next:** [Monitoring AI systems →](/tutorials/monitoring-ai)

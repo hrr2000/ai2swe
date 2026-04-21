@@ -1,0 +1,48 @@
+---
+title: "1M+ Token Models: Process Your Entire Codebase"
+module: 10
+lesson: 5
+slug: "long-context-models"
+analogy: "mmap huge files — OS + model architecture changes so attention/memory can span GB-class contexts"
+prerequisites: ["mixture-of-experts"]
+estimatedTime: "18 min"
+difficulty: "intermediate"
+tags: ["long-context", "attention", "gemini", "rag"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Million-token contexts combine hardware, sparse or linear attention variants, and better position embeddings — still need careful UX because attention fades mid-prompt and cost is real."
+---
+
+## Why it matters
+
+You can **paste** entire repos, PDFs, or multi-hour transcripts — reducing round trips through retrieval for some workflows.
+
+## How it is possible
+
+- **IO-aware attention** implementations (ring attention, sequence parallelism).
+- **Better position codes** (YaRN, NTK-aware RoPE scaling).
+- **Sparse / sliding** local-global hybrids in some architectures.
+
+<AnalogyBox
+  code="BigQuery scanning a PB table — technically possible, watch billing"
+  ai="1M context — feasible, expensive, not always the best retrieval substitute"
+/>
+
+## Reality check
+
+- **Needle-in-haystack** evals still show **recall cliffs** deep in context.
+- **Cost** scales super-linearly with length for dense attention — read pricing tables.
+
+<Callout type="insight">
+Use **RAG + medium context** for factual grounding, **long context** for cross-file reasoning once snippets are already local — hybrid beats either extreme alone.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Long context unlocks **new UX** (whole-repo questions) but not omniscience.
+- **Cost + recall** still push teams toward retrieval.
+- Benchmark on **your** documents — marketing numbers are upper bounds.
+
+**Next:** [AI coding agents →](/tutorials/ai-coding-agents)

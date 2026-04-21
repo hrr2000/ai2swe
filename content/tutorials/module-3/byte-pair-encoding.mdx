@@ -1,0 +1,54 @@
+---
+title: "BPE: Text Compression as Tokenization"
+module: 3
+lesson: 2
+slug: "byte-pair-encoding"
+analogy: "Huffman-like merge table — frequent pairs become single symbols until you hit vocab budget"
+prerequisites: ["tokenization-fundamentals"]
+estimatedTime: "20 min"
+difficulty: "intermediate"
+tags: ["bpe", "tokenizer", "subword", "nlp"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "BPE builds a vocabulary by iteratively merging the most frequent adjacent symbol pairs — same idea as compression, optimized for LM training on open-vocabulary text."
+---
+
+## The problem BPE solves
+
+Character vocab → **long** sequences. Word vocab → **huge** tables and infinite OOV. **Subword** tokenization splits the difference: frequent words stay whole; rare words decompose into learnable pieces.
+
+## Algorithm sketch
+
+1. Start with **symbols** = bytes or UTF-8 code units (robust to any Unicode).
+2. Count **adjacent pairs** in a large corpus.
+3. **Merge** the most frequent pair into a new symbol; repeat until you hit target vocabulary size `V`.
+4. **Encode** new text by greedily applying the merge table longest-first (implementation details vary — SentencePiece vs GPT-style).
+
+<AnalogyBox
+  code="Run-length + dictionary compression building a codebook from data"
+  ai="BPE merge list — data-driven codebook for token IDs"
+/>
+
+## Why GPT-style tokenizers differ
+
+Training corpora, **pre-tokenization** (regex splits), and **byte-level** fallbacks change the merge statistics. That is why `cl100k_base` ≠ `llama` tokenizer — **never** mix tokenizers across a pipeline.
+
+## Gotchas
+
+- **Whitespace** merges into weird tokens — affects code indentation cost.
+- **Case** — uncased merges share `hello` / `Hello` statistics differently than cased models.
+- **Numbers** — long digit strings may explode into many single-digit tokens unless pre-split.
+
+<Callout type="tip">
+Inspect merges with `tiktoken` or the Hugging Face `tokenizer.convert_ids_to_tokens` — debugging generation bugs often starts at **token boundaries**, not characters.
+</Callout>
+
+---
+
+## Key takeaways
+
+- BPE = **data-driven merges** up to a fixed vocab size.
+- Explains **subwords**, **rare word splits**, and **stable OOV** handling.
+- Tokenizer choice is a **versioned asset** — store it with the checkpoint.
+
+**Next:** [Token vocabularies →](/tutorials/token-vocabularies)

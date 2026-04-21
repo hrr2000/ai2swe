@@ -1,20 +1,24 @@
 ---
 title: "Data is the New Source Code"
-summary: "Why CSV files and JSON arrays replace lines of logic."
 module: 0
 lesson: 2
 slug: "data-as-source-code"
-analogy: "Datasets as source code, Training as compiling"
-estimatedTime: "10 min"
-readingTime: "5 min"
+analogy: "Datasets as source code, training as compiling"
+prerequisites: ["ai-is-just-software"]
+estimatedTime: "14 min"
+difficulty: "beginner"
+tags: ["fundamentals", "datasets", "training", "mental-model"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "In ML, labeled examples and constraints replace hand-written branches. Your dataset is the spec; training is the compiler; weights are the binary you ship."
 ---
 
-# Data Is the New Source Code
+## From Rules to Examples
 
-As a software engineer, you are used to writing business logic explicitly:
+As a software engineer, you express behavior with explicit control flow:
 
 ```javascript
-// Traditional Engineering
+// Rule-based engineering
 function detectSpam(email) {
   if (email.subject.includes("FREE MONEY")) return true;
   if (email.sender === "unknown") return true;
@@ -22,14 +26,13 @@ function detectSpam(email) {
 }
 ```
 
-This works until edge cases explode. What if the subject says "F r e e M 0 n e y"? You add more `if` statements. This is **Rule-Based Programming**, and it scales poorly.
+That works until the world moves. Attackers obfuscate text (`F r e e M 0 n e y`), languages and encodings multiply, and product rules change weekly. You end up maintaining a fragile tree of special cases — **rule-based programming** — that never quite closes the gap.
 
-## The Paradigm Shift
+## The Shift: Examples as the Source of Truth
 
-In AI, you don't write the `if` statements. Instead, you provide a massive array of inputs and desired outputs, and the machine **compiles the logic** for you. 
+In supervised learning, you still write software (data loaders, model code, evaluation), but the *behavioral specification* is often a large set of **input → desired output** pairs:
 
 ```json
-// AI Engineering (The "Source Code")
 [
   { "input": "Get free money now!", "label": "spam" },
   { "input": "Meeting at 9am?", "label": "ham" },
@@ -37,10 +40,60 @@ In AI, you don't write the `if` statements. Instead, you provide a massive array
 ]
 ```
 
-In this new paradigm:
-- **Datasets** are your source code.
-- **Model Training** is your compiler.
-- **Weights & Biases** are your compiled binary binary.
+Think of that file the way you think of tests and fixtures:
 
-> [!TIP]
-> If your AI model is outputting garbage, your "code" isn't broken—your *dataset* is buggy. You "debug" an AI model by cleaning its data, not by rewriting its internal logic.
+| Traditional stack | ML stack |
+| --- | --- |
+| Hand-written `if` / `switch` | **Dataset** (examples + labels) |
+| Compiler / bundler | **Training job** (optimizer + loss) |
+| Binary / container image | **Checkpoint** (architecture + weights) |
+| Unit tests on functions | **Metrics** on held-out data (precision, BLEU, win-rate) |
+
+<AnalogyBox
+  code="You commit logic as source files; CI proves behavior with tests."
+  ai="You commit behavior as data; training discovers weights that satisfy that data — within limits."
+/>
+
+## What “Debugging” Looks Like
+
+When production misbehaves, you trace code paths. When a model misbehaves, you often trace **data**:
+
+- **Label noise** — wrong or ambiguous labels teach the wrong thing.
+- **Coverage gaps** — the model never saw “invoice fraud that looks like a refund.”
+- **Train/serve skew** — features at inference time differ from training (classic bug class).
+
+<Callout type="insight">
+If outputs are systematically wrong, assume **data or evaluation** before you assume “the network is broken.” Neural code is differentiable; bad objectives or dirty examples are just as common as bad hyperparameters.
+</Callout>
+
+## Beyond Classification
+
+The same pattern applies far beyond spam:
+
+- **Ranking** — pairs of `(query, document, relevance score)`.
+- **Summarization** — `(article, bullet summary)`.
+- **Code** — `(repo context, failing test, patch)` in instruction-tuning corpora.
+
+The artifact changes; the idea does not: **curated data defines what “good” means.**
+
+## Guardrails Still Exist
+
+Data does not remove engineering judgment. You still need:
+
+- **Schema** — consistent fields, versioning, PII handling.
+- **Splits** — train / validation / test, with no leakage across them.
+- **Monitoring** — drift when live traffic no longer matches training.
+
+<Callout type="tip">
+Treat your dataset like a codebase: review diffs, run linters, track provenance, and pin versions the same way you pin dependencies.
+</Callout>
+
+---
+
+## Key takeaways
+
+- **Datasets** encode intent; **training** searches for weights that realize that intent.
+- Garbage in, garbage out — **data quality** is the first place to look when quality drops.
+- Shipping a model is shipping **weights + architecture**, analogous to shipping a compiled artifact.
+
+**Next:** [The AI dev lifecycle (CI/CD for models) →](/tutorials/ai-development-lifecycle)

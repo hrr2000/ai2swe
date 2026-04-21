@@ -1,0 +1,49 @@
+---
+title: "Vision-Language Models: APIs That See"
+module: 10
+lesson: 1
+slug: "vision-language-models"
+analogy: "REST payloads with image/jpeg parts — same chat completion loop, richer content array"
+prerequisites: ["build-rag-chatbot"]
+estimatedTime: "20 min"
+difficulty: "intermediate"
+tags: ["multimodal", "vision", "vlm", "gemini"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "VLMs interleave image patches or encoded frames with text tokens inside one transformer stack — enabling OCR, UI understanding, and visual QA with the same tool ecosystem as LLMs."
+---
+
+## Data flow
+
+Images are resized, patchified, linearly projected, then fed as a **sequence of visual tokens** alongside text tokens. Positional schemes (2D RoPE variants, learned grid embeddings) preserve spatial locality.
+
+<AnalogyBox
+  code="Base64 image in Markdown rendered inline with prose"
+  ai="Message parts array — text + image bytes become one forward pass"
+/>
+
+## Engineering checklist
+
+- **Resize policy** — extreme aspect ratios distort small text; preserve min side length for OCR.
+- **Token budget** — high-res images consume **thousands** of tokens — downscale intentionally.
+- **Safety** — faces, IDs, and sensitive screenshots need the same redaction pipeline as text.
+
+## Use cases
+
+- **Receipt / invoice** extraction.
+- **UI automation** — locate buttons from screenshots.
+- **Visual diffing** — compare diagrams across releases.
+
+<Callout type="tip">
+For **charts**, pair VLMs with **structured tool output** (e.g., ask model to emit Vega-Lite JSON) instead of trusting rasterized pixels alone.
+</Callout>
+
+---
+
+## Key takeaways
+
+- VLMs = **shared attention** over fused vision + language tokens.
+- Image resolution maps to **cost and latency** — profile before UX promises.
+- Treat pixels like **PII** — log policies must redact screenshots.
+
+**Next:** [Image generation & diffusion →](/tutorials/image-generation-diffusion)

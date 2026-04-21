@@ -1,0 +1,47 @@
+---
+title: "Sentence & Document Embeddings"
+module: 2
+lesson: 5
+slug: "sentence-embeddings"
+analogy: "Pooling or encoder forward pass — compress variable-length text into one fixed vector"
+prerequisites: ["embedding-dimensions"]
+estimatedTime: "15 min"
+difficulty: "intermediate"
+tags: ["sentence-embeddings", "mean-pooling", "retrieval", "nlp"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Sentence embeddings summarize whole utterances for semantic search. They come from encoder models, CLS tokens, or pooled token vectors — each with tradeoffs."
+---
+
+## Beyond bag-of-words
+
+Static **word** vectors cannot represent a full sentence’s compositional meaning. **Sentence embeddings** map an entire string (or multi-paragraph doc chunk) to one vector — ideal for **RAG**, **dedup**, and **clustering**.
+
+## Common recipes
+
+1. **Encoder transformer + CLS** — take the `[CLS]` hidden state after the final layer (BERT-style).
+2. **Mean / max pooling** over token embeddings — simple, strong baselines when using last-layer token vectors.
+3. **Contrastive sentence encoders** — models like E5, BGE, or GTE trained with **duplicate / entailment / query–passage** pairs so cosine similarity matches human judgment.
+
+<AnalogyBox
+  code="reduce() over an array of per-field scores to one KPI number"
+  ai="pooling or dedicated head — many tokens in, one vector out"
+/>
+
+## Documents vs sentences
+
+Long docs exceed context limits — you **chunk** first, embed each chunk, and retrieve at chunk granularity. “Document embedding” without chunking is usually **lossy compression** of the first `T` tokens only.
+
+<Callout type="insight">
+The best embedding model for **English FAQ search** may lose on **multilingual** or **code** tasks. Maintain a small **benchmark suite** per domain instead of chasing leaderboard #1.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Sentence embeddings power **semantic retrieval** at the utterance or chunk level.
+- Pooling vs dedicated sentence models is a **quality vs simplicity** tradeoff.
+- Long docs require **chunking** before embedding — embedding is not magic compression.
+
+**Next:** [Vector databases →](/tutorials/vector-databases)

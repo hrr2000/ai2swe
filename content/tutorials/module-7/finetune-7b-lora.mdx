@@ -1,0 +1,52 @@
+---
+title: "Hands-On: Fine-tune a 7B Model With LoRA"
+module: 7
+lesson: 7
+slug: "finetune-7b-lora"
+analogy: "Ship a forked npm package with a scoped patch — base tarball untouched, adapter.json layered"
+prerequisites: ["model-distillation"]
+estimatedTime: "60 min"
+difficulty: "advanced"
+tags: ["hands-on", "lora", "peft", "gpu"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Wire Hugging Face Transformers + PEFT + TRL on a JSONL instruction dataset: pick rank, target modules, train, merge or serve adapters — the standard hobbyist-to-pro pipeline."
+---
+
+## Hardware baseline
+
+- **24 GB** consumer GPU — QLoRA on 7B is realistic.
+- **40 GB+** — bf16 LoRA without 4-bit base is smoother.
+
+## Steps
+
+1. **Pick base** — e.g. `mistralai/Mistral-7B-Instruct-v0.3` (verify license).
+2. **Format data** — ShareGPT / ChatML JSONL with `messages` array.
+3. **Tokenize** with official chat template (`tokenizer.apply_chat_template`).
+4. **Attach LoRA** via `PeftModel.from_pretrained` or `LoraConfig` targeting `q_proj`, `k_proj`, `v_proj`, `o_proj`.
+5. **Train** with `SFTTrainer` (TRL) — watch **eval loss** + **held-out win-rate**.
+6. **Export** — `merge_and_unload()` for single-file deploy or keep adapter weights.
+
+<AnalogyBox
+  code="Docker multi-stage build: slim runtime image with only compiled artifacts"
+  ai="Merged LoRA weights — single artifact for inference servers"
+/>
+
+## Sanity checks
+
+- **Generate before/after** on the same prompts — qualitative diff should match intent.
+- **Run safety eval** — fine-tunes can **uncage** refusals if dataset biased.
+
+<Callout type="warning">
+Never train on **secrets** — adapters memorize API keys seen in fine-tune rows. Scan with `gitleaks` pre-ingest.
+</Callout>
+
+---
+
+## Key takeaways
+
+- **TRL + PEFt** is the fastest path from JSONL to LoRA weights.
+- Track **GPU memory**, **tokens/sec**, **eval loss** in one dashboard row per run.
+- Decide early whether you **merge** adapters or **hot-load** them in serving.
+
+**Next module:** [Quantization →](/tutorials/quantization)

@@ -1,0 +1,51 @@
+---
+title: "Prompt Chaining: Function Composition for AI"
+module: 6
+lesson: 6
+slug: "prompt-chaining"
+analogy: "Pipeline of pure(ish) functions — each LLM call is a stage with typed I/O"
+prerequisites: ["prompt-templates"]
+estimatedTime: "22 min"
+difficulty: "intermediate"
+tags: ["orchestration", "langchain", "pipelines", "llm"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Break big asks into ordered LLM + tool steps: extract → verify → transform → answer. Easier to test, cheaper, and more reliable than one giant prompt."
+---
+
+## Motivation
+
+Single prompts that try to **research, calculate, format JSON, and write email** in one shot tend to fail silently. **Chains** isolate responsibilities:
+
+1. **Extract entities** → JSON.
+2. **Call tools** (SQL, HTTP) with those entities.
+3. **Summarize** tool JSON into human language.
+
+<AnalogyBox
+  code="ETL pipeline with checkpoints — not one 5k-line main()"
+  ai="LLM chains — compose small tasks with explicit interfaces"
+/>
+
+## Orchestration patterns
+
+- **Sequential** — output of stage `n` becomes input of `n+1`.
+- **Router** — cheap classifier model picks which heavy prompt to run.
+- **Parallel fan-out** — summarize ten docs concurrently, merge with reduce step.
+
+## Observability
+
+Assign **trace IDs**, log **per-stage tokens + latency**, persist **intermediate JSON** for replay. This is standard microservice hygiene applied to LLM stages.
+
+<Callout type="warning">
+Each hop adds **failure modes** — define retry/backoff policies and **fallback copy** when a stage returns empty JSON.
+</Callout>
+
+---
+
+## Key takeaways
+
+- Chains trade **orchestration code** for **reliability**.
+- Strong **schemas between stages** beat prose handoffs.
+- Instrument everything — LLM pipelines are distributed systems without TCP.
+
+**Next module:** [Pre-training vs fine-tuning →](/tutorials/pretraining-vs-finetuning)

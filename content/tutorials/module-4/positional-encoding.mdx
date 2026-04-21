@@ -1,0 +1,56 @@
+---
+title: "Positional Encoding: Array Indexes for AI"
+module: 4
+lesson: 5
+slug: "positional-encoding"
+analogy: "Adding a coordinate channel so permutation-invariant self-attention knows word order"
+prerequisites: ["multi-head-attention"]
+estimatedTime: "15 min"
+difficulty: "intermediate"
+tags: ["positional-encoding", "transformers", "rope", "sinusoidal"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Self-attention is permutation-invariant without position info. Sinusoidal, learned, and RoPE schemes inject order — RoPE dominates modern decoder LLMs."
+---
+
+## The issue
+
+Attention treats input tokens as a **set** unless you tell it otherwise — reorder words, you get the same pairwise dot products (before masking). **Position information** must be added or multiplied in.
+
+## Classic: sinusoidal (Transformer paper)
+
+Add fixed sine/cosine curves of different frequencies to embedding vectors:
+
+```text
+PE(pos, 2i)   = sin(pos / 10000^(2i/d))
+PE(pos, 2i+1) = cos(pos / 10000^(2i/d))
+```
+
+Smooth, extrapolates modestly beyond train length (in theory), no extra learned params.
+
+## Learned absolute positions
+
+Learn an embedding table `E[pos]` like token embeddings — simple, but **length extrapolation** beyond `T_max` fails unless you resize weights.
+
+## RoPE (Rotary Position Embedding)
+
+Used in LLaMA, GPT-NeoX, many modern LLMs — **rotate** pairs of dimensions in Q and K by a position-dependent angle. Relative distances encode cleanly; extrapolation tricks (NTK scaling) adjust bases at inference.
+
+<AnalogyBox
+  code="Augment each log line with a UTC timestamp before deduping"
+  ai="Positions tag tokens so attention knows which came first"
+/>
+
+<Callout type="tip">
+When you read “**context length extension**” marketing, look for **RoPE scaling** or **YaRN** — math changes to frequencies, not just “more RAM.”
+</Callout>
+
+---
+
+## Key takeaways
+
+- Without positional info, attention is **order-blind**.
+- **Sinusoidal** = analytic; **learned** = flexible but brittle to longer T.
+- **RoPE** is the modern default for autoregressive LMs — learn the API, not every trig identity.
+
+**Next:** [Encoder vs decoder →](/tutorials/encoder-vs-decoder)

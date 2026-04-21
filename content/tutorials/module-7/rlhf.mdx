@@ -1,0 +1,48 @@
+---
+title: "RLHF: A/B Testing With Human Preference Data"
+module: 7
+lesson: 2
+slug: "rlhf"
+analogy: "Product analytics on pairwise ratings — reward model learns the scorecard, policy optimizes against it"
+prerequisites: ["pretraining-vs-finetuning"]
+estimatedTime: "25 min"
+difficulty: "advanced"
+tags: ["rlhf", "preference", "alignment", "reward-model"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "RLHF trains a reward model from human rankings, then uses RL (often PPO) to nudge the policy toward higher rewards while a KL penalty keeps it near the reference model."
+---
+
+## Three stages (classic recipe)
+
+1. **SFT** — imitation learning on demonstrations (assistant behavior baseline).
+2. **Reward modeling (RM)** — humans pick better answer A vs B; train `r(x, y)` to predict preference.
+3. **RL fine-tune** — maximize `E[r]` subject to **KL divergence** vs SFT policy so answers stay coherent.
+
+<AnalogyBox
+  code="Train a linter with human code review labels, then CI fails builds that violate learned style"
+  ai="RM = learned preference linter; RL pushes logits toward passing it"
+/>
+
+## Why KL control
+
+Pure RL on a learned reward **overfits** — the model hacks the reward with gibberish high scores. KL to the reference LM keeps **token distribution** recognizable.
+
+## Modern alternatives
+
+- **DPO / IPO** — optimize preferences **without** explicit RL loops; simpler stability in small teams.
+- **RLAIF** — replace human labels with stronger model judgments (still debatable quality).
+
+<Callout type="warning">
+RLHF infrastructure is **not** a weekend project — budget MLOps, label ops, and red-team loops comparable to shipping a payments service.
+</Callout>
+
+---
+
+## Key takeaways
+
+- RLHF aligns models to **human taste**, not just likelihood.
+- **Reward hacking** is real — KL penalties and diverse evals mitigate.
+- Consider **DPO-class** methods before building PPO clusters in-house.
+
+**Next:** [LoRA →](/tutorials/lora)

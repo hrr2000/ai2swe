@@ -1,0 +1,47 @@
+---
+title: "Emergent Abilities: Features That Appear at Scale"
+module: 5
+lesson: 7
+slug: "emergent-abilities"
+analogy: "Nonlinear phase change — adding one floor doesn’t help until the whole skyscraper stands"
+prerequisites: ["gemini-family"]
+estimatedTime: "20 min"
+difficulty: "intermediate"
+tags: ["scaling", "emergence", "evals", "research"]
+lastUpdated: "2026-04-22"
+published: true
+summary: "Some behaviors (chain-of-thought style math, multi-step tool use) only show up past certain scale — metrics jump nonlinearly. Still debate how 'emergent' vs measurement artifact."
+---
+
+## What people mean
+
+Plot **model size** on the x-axis and **task accuracy** on the y-axis. Some benchmarks stay flat until a **threshold**, then jump — colloquially called **emergence**.
+
+Examples folks cite: **few-shot ICL**, **instruction following**, **multi-hop reasoning** under CoT prompting.
+
+<AnalogyBox
+  code="Latency cliff when you cross a GC generation boundary — smooth code until it isn’t"
+  ai="Emergent metrics — sudden jumps that surprise linear extrapolation"
+/>
+
+## Skepticism is healthy
+
+Recent work argues some “emergence” is **metric choice** (nonlinear transforms of smooth underlying loss) or **sparse discrete scores**. Regardless, **product teams** observe real cliffs when upgrading model tiers — treat them as empirical facts even if theory debates continue.
+
+## Engineering takeaway
+
+Do not assume **small model + clever prompt** replicates **large model behavior** on hard tasks. Maintain **tiered eval suites** so you know which features require which backbone.
+
+<Callout type="insight">
+Emergence thinking justifies **budget for bigger models** on the hardest 5% of tickets — while RAG + small models handle the long tail cheaply.
+</Callout>
+
+---
+
+## Key takeaways
+
+- **Nonlinear capability jumps** happen across scales — plan evals, not vibes.
+- Debates continue on **definition** of emergence — shipping decisions shouldn’t wait on philosophy.
+- Mix **tiers + tools + retrieval** instead of betting everything on one frontier model.
+
+**Next module:** [Prompt structure →](/tutorials/prompt-structure)
