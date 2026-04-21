@@ -76,8 +76,7 @@ async function TutorialContent({ slug }: { slug: string }) {
       {/* Header */}
       <header className={styles.articleHeader}>
         <div className={styles.metaRow}>
-          <span className="text-subtle text-sm">⏱ {tutorial.estimatedTime}</span>
-          <span className="text-subtle text-sm">· {tutorial.readingTime}</span>
+          <span className="text-subtle text-sm">⏱ {tutorial.readingTime}</span>
         </div>
 
         <h1 className={styles.title}>{tutorial.title}</h1>

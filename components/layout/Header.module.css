@@ -8,6 +8,12 @@
   background: transparent;
   transition: background var(--transition-slow), border-color var(--transition-slow);
   border-bottom: 1px solid transparent;
+  overflow: visible;
+}
+
+.headerOpen {
+  background: var(--bg-primary) !important;
+  height: auto !important;
 }
 
 .header.scrolled {
@@ -80,42 +86,57 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 0;
   position: relative;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999999;
 }
 
 .menuLine,
 .menuLine::before,
 .menuLine::after {
   display: block;
-  width: 22px;
+  width: 20px;
   height: 2px;
-  background: var(--text-heading);
-  border-radius: 2px;
+  background: var(--text-primary);
+  border-radius: 4px;
   transition: all var(--transition-base);
   position: absolute;
-  left: 7px;
+  left: 8px;
 }
 
 .menuLine { top: 17px; }
 .menuLine::before { content: ''; top: -7px; }
 .menuLine::after  { content: ''; top: 7px; }
 
-.menuLine.menuOpen { background: transparent; }
-.menuLine.menuOpen::before { transform: rotate(45deg); top: 0; }
-.menuLine.menuOpen::after  { transform: rotate(-45deg); top: 0; }
+.menuOpen .menuLine { background: transparent; }
+.menuOpen .menuLine::before { transform: rotate(45deg); top: 0; }
+.menuOpen .menuLine::after  { transform: rotate(-45deg); top: 0; }
 
-/* Mobile menu */
+/* Mobile menu - Extreme Z-index Full Screen Overlay */
 .mobileMenu {
+  position: fixed;
+  inset: 0;
   background: var(--bg-primary);
-  border-top: 1px solid var(--border-subtle);
-  padding: 2rem;
+  padding: 6rem 2rem 2rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
+  z-index: 999999;
+  animation: fadeIn 0.3s ease both;
+  overflow-y: auto;
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Removal of unused slide animations */
+.backdrop { display: none; }
 
 .mobileNavLink {
   padding: 0.5rem 0;

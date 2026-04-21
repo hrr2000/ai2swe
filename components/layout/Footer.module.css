@@ -91,13 +91,25 @@
   color: var(--text-tertiary);
 }
 
+@media (max-width: 1024px) {
+  .inner { padding-left: 2rem; padding-right: 2rem; }
+}
+
 @media (max-width: 768px) {
   .inner {
     grid-template-columns: 1fr;
     gap: 3rem;
+    padding: 3rem 1.25rem;
   }
   .links {
     grid-template-columns: repeat(2, 1fr);
   }
   .footer { margin-top: 4rem; }
+}
+
+@media (max-width: 480px) {
+  .links {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
 }

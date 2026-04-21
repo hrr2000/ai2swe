@@ -21,7 +21,7 @@ export default function Header() {
   }, []);
 
   return (
-    <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
+    <header className={`${styles.header} ${scrolled || menuOpen ? styles.scrolled : ""} ${menuOpen ? styles.headerOpen : ""}`}>
       <div className={styles.inner}>
         <Link href="/" className={styles.logo} aria-label="ai2swe home">
           <span className={styles.logoText}>
@@ -42,12 +42,12 @@ export default function Header() {
             Start Learning
           </Link>
           <button
-            className={styles.menuBtn}
+            className={`${styles.menuBtn} ${menuOpen ? styles.menuOpen : ""}`}
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
             aria-expanded={menuOpen}
           >
-            <span className={`${styles.menuLine} ${menuOpen ? styles.menuOpen : ""}`} />
+            <span className={styles.menuLine} />
           </button>
         </div>
       </div>
@@ -69,7 +69,7 @@ export default function Header() {
             href="/tutorials"
             className="btn btn-primary"
             onClick={() => setMenuOpen(false)}
-            style={{ marginTop: "0.5rem" }}
+            style={{ marginTop: "1rem", width: "100%" }}
           >
             Start Learning
           </Link>

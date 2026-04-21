@@ -260,9 +260,61 @@
   }
 }
 
+@media (max-width: 768px) {
+  .header {
+    padding: 6rem 0 4rem;
+    margin-bottom: 3rem;
+  }
+}
+
 @media (max-width: 640px) {
-  .module { padding-left: 2.5rem; }
-  .lessonsList { grid-template-columns: 1fr; }
-  .moduleTitle { font-size: 1.5rem; }
-  .header h1 { font-size: 2.5rem; }
+  .header {
+    padding: 4rem 0 3rem;
+  }
+  .pathContainer {
+    padding-left: 1.25rem;
+  }
+  .pathLine {
+    left: 0;
+  }
+  .module { 
+    padding-left: 2rem; 
+  }
+  .moduleNode {
+    left: -9px;
+    width: 20px;
+    height: 20px;
+  }
+  .lessonsList { 
+    grid-template-columns: 1fr; 
+  }
+  .moduleTitle { 
+    font-size: 1.5rem; 
+  }
+  .header h1 { 
+    font-size: 2.25rem; 
+  }
+  .modules {
+    gap: 4rem;
+  }
+  .moduleHeader {
+    margin-bottom: 1.5rem;
+  }
+  .moduleFooter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .moduleDesc {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header h1 {
+    font-size: 2rem;
+  }
+  .subtitle {
+    font-size: 1rem;
+  }
 }

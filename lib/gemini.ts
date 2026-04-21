@@ -18,7 +18,15 @@ export const structuredModel = genAI.getGenerativeModel({
     responseMimeType: "application/json",
   },
 });
-
+// General purpose generation
+export async function generateText(prompt: string, options: { model?: string } = {}): Promise<string> {
+  const modelToUse = options.model === "gemini-flash-1.5" || options.model === "gemini-2.0-flash" 
+    ? textModel 
+    : textModel;
+  
+  const result = await modelToUse.generateContent(prompt);
+  return result.response.text();
+}
 // ─── Blog Rewriting ───────────────────────────────────────────────────────────
 
 const REWRITE_SYSTEM_PROMPT = `You are a technical writer for "ai2swe", a platform that explains AI to software engineers.

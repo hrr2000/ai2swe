@@ -116,3 +116,28 @@
   0% { transform: rotateX(90deg) scale(0.9); opacity: 0.5; }
   100% { transform: rotateX(90deg) scale(1.1); opacity: 0.8; }
 }
+
+@media (max-width: 480px) {
+  .scene {
+    width: 200px;
+    height: 200px;
+  }
+  .face {
+    width: 150px;
+    height: 150px;
+    top: 25px;
+    left: 25px;
+  }
+  .front  { transform: translateZ(75px); }
+  .back   { transform: rotateY(180deg) translateZ(75px); }
+  .right  { transform: rotateY(90deg) translateZ(75px); }
+  .left   { transform: rotateY(-90deg) translateZ(75px); }
+  .top    { transform: rotateX(90deg) translateZ(75px); }
+  .bottom { transform: rotateX(-90deg) translateZ(75px); }
+  
+  .shadow {
+    width: 150px;
+    left: 25px;
+    bottom: -20px;
+  }
+}
