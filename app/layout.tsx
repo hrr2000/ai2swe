@@ -5,8 +5,8 @@ import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
   title: {
-    default: "AI Teachers — AI Concepts for Software Engineers",
-    template: "%s | AI Teachers",
+    default: "ai2swe — AI Concepts for Software Engineers",
+    template: "%s | ai2swe",
   },
   description:
     "Learn transformers, LLMs, embeddings, and every AI concept from 2022–2026 — explained through software engineering analogies. No math, just code.",
@@ -17,22 +17,22 @@ export const metadata: Metadata = {
     "machine learning software engineers",
     "embeddings tutorial",
     "prompt engineering",
-    "AI blog",
+    "ai2swe",
   ],
-  authors: [{ name: "AI Teachers" }],
-  creator: "AI Teachers",
+  authors: [{ name: "ai2swe" }],
+  creator: "ai2swe",
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://aiteachers.dev",
-    siteName: "AI Teachers",
-    title: "AI Teachers — AI Concepts for Software Engineers",
+    url: "https://ai2swe.dev",
+    siteName: "ai2swe",
+    title: "ai2swe — AI Concepts for Software Engineers",
     description:
       "Learn AI from zero to hero using software engineering analogies. No math, just code.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI Teachers",
+    title: "ai2swe",
     description: "AI explained for software engineers. No math, just code.",
   },
   robots: {

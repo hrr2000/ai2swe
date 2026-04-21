@@ -23,9 +23,9 @@ export default function Header() {
   return (
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
       <div className={styles.inner}>
-        <Link href="/" className={styles.logo} aria-label="AI Teachers home">
+        <Link href="/" className={styles.logo} aria-label="ai2swe home">
           <span className={styles.logoText}>
-            AI<span className={styles.logoAccent}>Teachers</span>
+            ai<span className={styles.logoAccent}>2swe</span>
           </span>
         </Link>
 

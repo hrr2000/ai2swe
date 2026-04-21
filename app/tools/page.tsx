@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
-  title: "AI Development Stack 2026 | AI Teachers",
+  title: "AI Development Stack 2026 | ai2swe",
   description: "A chronological guide from beginner plugins to expert autonomous CLI agents.",
 };
 

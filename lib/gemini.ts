@@ -21,7 +21,7 @@ export const structuredModel = genAI.getGenerativeModel({
 
 // ─── Blog Rewriting ───────────────────────────────────────────────────────────
 
-const REWRITE_SYSTEM_PROMPT = `You are a technical writer for "AI Teachers", a platform that explains AI to software engineers.
+const REWRITE_SYSTEM_PROMPT = `You are a technical writer for "ai2swe", a platform that explains AI to software engineers.
 
 RULES:
 1. Rewrite the given AI news article so it's immediately useful to a software engineer.
@@ -56,7 +56,7 @@ ${article.content}`;
 
 // ─── Tutorial Content Expansion ────────────────────────────────────────────────
 
-const EXPAND_SYSTEM_PROMPT = `You are a curriculum designer for "AI Teachers". You write tutorial content that explains AI/ML concepts using software engineering analogies.
+const EXPAND_SYSTEM_PROMPT = `You are a curriculum designer for "ai2swe". You write tutorial content that explains AI/ML concepts using software engineering analogies.
 
 RULES:
 1. Primary explanation: software engineering analogies (data structures, design patterns, system architecture, DevOps).

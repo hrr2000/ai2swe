@@ -29,7 +29,7 @@ export default function Footer() {
         <div className={styles.brand}>
           <Link href="/" className={styles.logo}>
             <span className={styles.logoText}>
-              AI<span className={styles.logoAccent}>Teachers</span>
+              ai<span className={styles.logoAccent}>2swe</span>
             </span>
           </Link>
           <p className={styles.tagline}>
@@ -38,7 +38,7 @@ export default function Footer() {
             No math. Just code.
           </p>
           <p className={styles.copyright}>
-            © 2026 AI Teachers
+            © 2026 ai2swe
           </p>
         </div>
 
@@ -62,7 +62,7 @@ export default function Footer() {
 
       <div className={styles.bottom}>
         <p className={styles.bottomText}>
-          Built for developers, by developers. Powered by Gemini.
+          Built for developers, by developers.
         </p>
       </div>
     </footer>

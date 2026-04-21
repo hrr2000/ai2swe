@@ -2,7 +2,7 @@ import styles from "./page.module.css";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Editor IDE | AI Teachers",
+  title: "Admin Dashboard | ai2swe",
 };
 
 export default function AdminEditorPage() {
