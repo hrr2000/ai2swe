@@ -1,0 +1,61 @@
+---
+title: "RAG: Give Your AI a Search Engine"
+summary: "How to combine a frozen model with fresh, private data without expensive retraining."
+module: 9
+lesson: 1
+slug: "what-is-rag"
+analogy: "RAG as an Open-Book Exam (Model + Database)"
+estimatedTime: "22 min"
+readingTime: "11 min"
+---
+
+# Retrieval-Augmented Generation (RAG)
+
+An AI model is like a brilliant student who graduated with a PhD in 2024 but has been **locked in a room without internet** ever since.
+
+They are incredibly smart, but they don't know:
+- Your company's private documentation.
+- The news that happened this morning.
+- The latest version of a library released last month.
+
+**RAG** is the process of giving that student a **Search Engine**.
+
+## How RAG Works (The Pipeline)
+
+1. **User Query**: A user asks: *"What is our company's policy on remote work in Spain?"*
+2. **Retrieval**: Your system searches your private documents for "remote work Spain."
+3. **Augmentation**: You take the relevant paragraphs found in your docs and **paste them** into the prompt.
+4. **Generation**: You ask the LLM: *"Based on the following context, answer the user's question: [Context...]"*
+
+## Why not just Fine-tune?
+
+Fine-tuning is like sending the student back to university for another 6 months. It’s expensive, slow, and by the time they graduate, the remote work policy might have changed again.
+
+RAG is like handing the student a **PDF**. It’s instant, accurate, and provides "Citations" for the answer.
+
+## The Semantic Bridge
+
+We use **Embeddings** (Module 2) to power the Retrieval step. We compare the vector of the user's question to the vectors of all our document chunks to find the most "Semantically Similar" data.
+
+### The Developer's View
+```javascript
+// A simple RAG function
+async function handleQuery(userQuery) {
+  // 1. Search Vector DB for context
+  const context = await vectorDb.similaritySearch(userQuery, 3);
+  
+  // 2. Wrap instructions + context + query
+  const prompt = `
+    Use these docs to answer: ${context}
+    User Question: ${userQuery}
+  `;
+  
+  // 3. Get the answer
+  return await llm.generate(prompt);
+}
+```
+
+> [!INSIGHT]  
+> 90% of "AI Apps" in production today are actually RAG systems. It is the most robust way to build software that is both intelligent and grounded in truth.
+
+Next: How do we break long documents into manageable pieces for the AI? **Chunking Strategies.**

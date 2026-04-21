@@ -1,75 +1,53 @@
 .wrapper {
   position: relative;
-  margin: 1.5em 0;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-subtle);
+  margin: 3rem 0;
+  border: 1px solid var(--border-default);
   overflow: hidden;
-  background: var(--bg-code);
+  background: var(--bg-primary);
 }
 
 .topBar {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1rem;
-  background: rgba(255, 255, 255, 0.03);
-  border-bottom: 1px solid var(--border-subtle);
+  justify-content: space-between;
+  padding: 0.5rem 1.5rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-default);
 }
-
-.dots {
-  display: flex;
-  gap: 5px;
-  margin-right: 0.25rem;
-}
-
-.dots span {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--bg-elevated);
-}
-.dots span:nth-child(1) { background: #ff5f57; }
-.dots span:nth-child(2) { background: #febc2e; }
-.dots span:nth-child(3) { background: #28c840; }
 
 .lang {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  color: var(--text-tertiary);
-  text-transform: lowercase;
-  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .copyBtn {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  margin-left: auto;
   background: none;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
+  border: none;
   color: var(--text-tertiary);
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
   font-size: 0.75rem;
-  padding: 0.25rem 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: color var(--transition-fast);
 }
 
 .copyBtn:hover {
-  color: var(--text-secondary);
-  border-color: var(--border-default);
-  background: var(--bg-elevated);
+  color: var(--text-primary);
 }
 
 .pre {
   margin: 0 !important;
-  padding: 1.25rem 1.5rem !important;
+  padding: 1.5rem !important;
   border-radius: 0 !important;
   border: none !important;
   background: transparent !important;
   overflow-x: auto;
   font-family: var(--font-mono);
   font-size: 0.875rem;
-  line-height: 1.7;
+  line-height: 1.8;
 }

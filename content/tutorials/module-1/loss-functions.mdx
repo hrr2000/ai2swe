@@ -1,0 +1,54 @@
+---
+title: "Loss Functions: AI's Unit Test Assertions"
+summary: "Measuring error to improve the model. If the output isn't what we expected, we calculate the Loss."
+module: 1
+lesson: 5
+slug: "loss-functions"
+analogy: "Loss as a score-based unit test suite"
+estimatedTime: "15 min"
+readingTime: "9 min"
+---
+
+# Loss Functions
+
+In traditional software, we use **Unit Tests** to see if our code works:
+
+```javascript
+// A unit test (Hard Assert)
+test('sums two numbers', () => {
+  expect(sum(2, 2)).toBe(4); // Pass or Fail
+});
+```
+
+A unit test is binary: it either passes or it fails. But AI models deal in probabilities. If an AI predicts there is a `0.78` chance of a cat but the actual image is a dog, it hasn't "failed" like a crashing server—it was just **inaccurate**.
+
+## What is a Loss Function?
+
+A **Loss Function** is a mathematical formula used to measure how "wrong" the model is. It’s like a unit test that returns a score instead of a boolean.
+
+- **Low Loss**: The model is highly accurate (The test suite is green).
+- **High Loss**: The model is making huge mistakes (The test suite is red).
+
+## Why do we need a score?
+
+If you get a `0` on a test, you know you failed, but you don't know *by how much*. 
+
+In AI, the Loss Function calculates a **Gradient**. It doesn't just say "You were wrong"; it says "You were wrong by **20%** in the direction of 'Dog' and **80%** in the direction of 'Cat'."
+
+### Example: Mean Squared Error (MSE)
+
+Imagine you want to predict the price of a house.
+- **Actual Price**: \$500,000
+- **Model Prediction**: \$450,000
+- **The Loss**: The squared difference between the two numbers. 
+
+The goal of AI training is a game of high-score: **We want to minimize the Loss.**
+
+## The Feedback Loop
+
+The Loss value is the most important signal in all of Machine Learning. It provides the "Grade" that allows the model to adjust its parameters. Without a loss function, the AI wouldn't know which way to "step" to improve itself.
+
+> [!TIP]
+> Think of Loss Functions as your **Integration Tests**. They ensure the overall "Flow" of the model converges toward the correct business objective.
+
+Now, how do we use this "Grade" to actually fix the code? That’s called **Backpropagation**.

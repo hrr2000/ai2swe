@@ -1,0 +1,59 @@
+.container {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.container:hover {
+  border-color: var(--accent-blue);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--font-mono);
+}
+
+.percentage {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.track {
+  height: 6px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.fill {
+  height: 100%;
+  background: linear-gradient(to right, var(--accent-blue), #00c2ff);
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 3px;
+}
+
+.meta {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+}

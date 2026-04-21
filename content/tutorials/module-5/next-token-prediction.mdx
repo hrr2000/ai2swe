@@ -1,0 +1,50 @@
+---
+title: "Next-Token Prediction: AI Is Just Autocomplete"
+summary: "Strip away the hype: At its core, an LLM is the world's most sophisticated probability engine."
+module: 5
+lesson: 2
+slug: "next-token-prediction"
+analogy: "LLMs as sophisticated statistical autocomplete engines"
+estimatedTime: "18 min"
+readingTime: "9 min"
+---
+
+# AI Is Just Autocomplete
+
+When you use ChatGPT or Claude, it feels like you're talking to a conscious entity. But under the hood, the model is only doing one thing: **Predicting the Next Token.**
+
+It is a statistical engine that has read almost everything ever written by humans and learned the patterns of our language.
+
+## The Statistical Guess
+
+If you give an LLM the prompt: *"To be, or not to..."*
+The internal math looks something like this:
+- **be**: 99.8% probability.
+- **eat**: 0.01% probability.
+- **code**: 0.001% probability.
+
+The model picks the most likely next word and then... **it starts over**. 
+
+It takes the original prompt *plus* the new word it just picked and runs the whole thing through the network again to pick the *next* next word.
+
+## Generating 1 Token at a Time
+
+This is why AI responses "stream" in character-by-character. The model is literally generating its own input for the next cycle.
+
+1. **Cycle 1**: *"To be, or not to"* ➔ **"be"**
+2. **Cycle 2**: *"To be, or not to be"* ➔ **","**
+3. **Cycle 3**: *"To be, or not to be,"* ➔ **"that"**
+...and so on.
+
+## Emergent Intelligence
+
+The "Magic" of AI is that simply by getting really, really good at predicting the next word, the model accidentally learned how to **Reason**.
+
+To predict the next word in a complex Python function, the model has to implicitly understand logic, variable scope, and syntax. To predict the next word in a joke, it has to understand irony and timing.
+
+Intelligence, it turns out, is a side-product of perfect pattern matching.
+
+> [!CAUTION]  
+> Because LLMs are just probability engines, they don't actually know "facts." They only know what word *should* come next based on their training data. This is the root cause of **Hallucinations**.
+
+Next: How do we control the randomness of these guesses? **Temperature & Sampling.**

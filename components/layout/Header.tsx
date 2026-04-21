@@ -6,6 +6,7 @@ import styles from "./Header.module.css";
 
 const navLinks = [
   { href: "/tutorials", label: "Tutorials" },
+  { href: "/tools", label: "AI Stack" },
   { href: "/blog", label: "AI Blog" },
 ];
 
@@ -23,7 +24,6 @@ export default function Header() {
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
       <div className={styles.inner}>
         <Link href="/" className={styles.logo} aria-label="AI Teachers home">
-          <span className={styles.logoIcon} aria-hidden="true">⬡</span>
           <span className={styles.logoText}>
             AI<span className={styles.logoAccent}>Teachers</span>
           </span>

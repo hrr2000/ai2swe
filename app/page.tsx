@@ -1,19 +1,10 @@
 import Link from "next/link";
-import { getSyllabus } from "@/lib/content";
-import { getAllPosts } from "@/lib/content";
+import { getSyllabus, getAllPosts } from "@/lib/content";
 import styles from "./page.module.css";
+import LightningBackground from "@/components/motion/LightningBackground";
+import Hero3DGraphic from "@/components/motion/Hero3DGraphic";
 
-const FEATURED_MODULES = [0, 1, 4, 9]; // Mental Model, Neural Nets, Transformers, RAG
-
-const colorMap: Record<string, string> = {
-  cyan:    "#06b6d4",
-  blue:    "#3b82f6",
-  violet:  "#8b5cf6",
-  emerald: "#10b981",
-  amber:   "#f59e0b",
-  rose:    "#f43f5e",
-  pink:    "#ec4899",
-};
+const FEATURED_MODULES = [0, 1, 4, 9];
 
 export default async function HomePage() {
   const syllabus = await getSyllabus();
@@ -25,119 +16,92 @@ export default async function HomePage() {
     <div className={styles.page}>
       {/* ─── Hero ─────────────────────────────────────────── */}
       <section className={styles.hero}>
-        <div className={styles.heroGlow} aria-hidden />
-        <div className={`container ${styles.heroContent}`}>
-          <div className={`${styles.heroBadge} animate-fade-in-up`}>
-            <span className={styles.heroBadgeDot} />
-            Updated for 2026 · LLMs · Transformers · Agents
-          </div>
-
-          <h1 className={`${styles.heroTitle} animate-fade-in-up anim-delay-100`}>
-            AI Concepts for<br />
-            <span className="gradient-text">Software Engineers</span>
-          </h1>
-
-          <p className={`${styles.heroSubtitle} animate-fade-in-up anim-delay-200`}>
-            Everything from neural networks to agentic AI — explained using{" "}
-            <strong>hash maps, middleware, and design patterns</strong>
-            , not calculus.
-            <br />Zero math. Just code.
-          </p>
-
-          <div className={`${styles.heroActions} animate-fade-in-up anim-delay-300`}>
-            <Link href="/tutorials" className="btn btn-primary btn-lg">
-              Start Learning Free →
-            </Link>
-            <Link href="/blog" className="btn btn-secondary btn-lg">
-              Read the AI Blog
-            </Link>
-          </div>
-
-          <div className={`${styles.heroStats} animate-fade-in-up anim-delay-400`}>
-            <div className={styles.stat}>
-              <span className={styles.statNum}>70+</span>
-              <span className={styles.statLabel}>Lessons</span>
-            </div>
-            <div className={styles.statDivider} />
-            <div className={styles.stat}>
-              <span className={styles.statNum}>10</span>
-              <span className={styles.statLabel}>Modules</span>
-            </div>
-            <div className={styles.statDivider} />
-            <div className={styles.stat}>
-              <span className={styles.statNum}>0</span>
-              <span className={styles.statLabel}>Math prereqs</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── What You'll Learn ─────────────────────────────── */}
-      <section className={`section ${styles.featureSection}`}>
+        <LightningBackground />
+        
         <div className="container">
-          <div className={styles.sectionHeader}>
-            <h2>Explained the Way You Think</h2>
-            <p className="text-muted">
-              Every concept is mapped to something you already know as an engineer.
-            </p>
-          </div>
+          <div className={`${styles.glassCard} ${styles.heroSplit}`}>
+            <div className={styles.heroContent}>
+              <div className={`${styles.heroBadge} animate-fade-in-up`}>
+                Updated for 2026 · LLMs · Transformers · Agents
+              </div>
 
-          <div className={styles.analogyGrid}>
-            {[
-              { sw: "Middleware chain", ai: "Neural network layers", icon: "⛓️" },
-              { sw: "HashMap lookup", ai: "Embedding search", icon: "🗺️" },
-              { sw: "Lexer / tokenizer", ai: "LLM tokenization", icon: "🔤" },
-              { sw: "DB JOIN on relevance", ai: "Attention mechanism", icon: "🔗" },
-              { sw: "API with function calls", ai: "Tool use / Agents", icon: "🤖" },
-              { sw: "Unit test assertion", ai: "Loss function", icon: "✅" },
-            ].map((item) => (
-              <div key={item.sw} className={styles.analogyCard}>
-                <span className={styles.analogyIcon}>{item.icon}</span>
-                <div className={styles.analogyContent}>
-                  <div className={styles.analogySW}>{item.sw}</div>
-                  <div className={styles.analogyArrow}>→</div>
-                  <div className={styles.analogyAI}>{item.ai}</div>
+              <h1 className={`${styles.heroTitle} animate-fade-in-up anim-delay-100`}>
+                AI Concepts for<br />
+                <span>Software Engineers</span>
+              </h1>
+
+              <p className={`${styles.heroSubtitle} animate-fade-in-up anim-delay-200`}>
+                Everything from neural networks to agentic AI — explained using{" "}
+                <strong>hash maps, middleware, and design patterns</strong>
+                , not calculus.
+                <br />Zero math. Just code.
+              </p>
+
+              <div className={`${styles.heroActions} animate-fade-in-up anim-delay-300`}>
+                <Link href="/tutorials" className="btn btn-primary btn-lg">
+                  Start Learning Free
+                </Link>
+                <Link href="/blog" className="btn btn-ghost btn-lg">
+                  Read the AI Blog
+                </Link>
+              </div>
+
+              <div className={`${styles.heroStats} animate-fade-in-up anim-delay-400`}>
+                <div className={styles.stat}>
+                  <span className={styles.statNum}>70+</span>
+                  <span className={styles.statLabel}>Lessons</span>
+                </div>
+                <div className={styles.stat}>
+                  <span className={styles.statNum}>10</span>
+                  <span className={styles.statLabel}>Modules</span>
+                </div>
+                <div className={styles.stat}>
+                  <span className={styles.statNum}>0</span>
+                  <span className={styles.statLabel}>Math</span>
                 </div>
               </div>
-            ))}
+            </div>
+            
+            <div className={styles.heroGraphicWrapper}>
+               <Hero3DGraphic />
+            </div>
           </div>
         </div>
       </section>
+
+
 
       {/* ─── Featured Modules ──────────────────────────────── */}
       <section className={`section ${styles.modulesSection}`}>
         <div className="container">
           <div className={styles.sectionHeader}>
-            <h2>Start with Any Module</h2>
+            <h2>The Curriculum</h2>
             <p className="text-muted">
               Go in order or jump straight to what you need.
             </p>
           </div>
 
-          <div className={styles.modulesGrid}>
+          <div className={styles.modulesLayout}>
             {featuredModules.map((module) => {
-              const color = colorMap[module.color] ?? "#3b82f6";
-              const publishedCount = module.lessons.filter((l) => l.published).length;
+              const publishedLessons = module.lessons.filter((l) => l.published !== false);
+              const firstLessonSlug = publishedLessons.length > 0 ? `/tutorials/${publishedLessons[0].slug}` : `/tutorials#module-${module.id}`;
+              const publishedCount = publishedLessons.length;
               return (
                 <Link
                   key={module.id}
-                  href={`/tutorials#module-${module.id}`}
-                  className={`card-link ${styles.moduleLink}`}
+                  href={firstLessonSlug}
+                  className={styles.moduleItem}
                 >
-                  <div
-                    className={`card ${styles.moduleCard}`}
-                    style={{ "--module-color": color } as React.CSSProperties}
-                  >
-                    <div className={styles.moduleTop}>
-                      <span className={styles.moduleIcon}>{module.icon}</span>
-                      <span className={styles.moduleNum}>Module {module.id}</span>
-                    </div>
+                  <div className={styles.moduleItemLeft}>
+                    <span className={styles.moduleNum}>Module {module.id.toString().padStart(2, '0')}</span>
                     <h3 className={styles.moduleTitle}>{module.title}</h3>
+                  </div>
+                  <div className={styles.moduleItemRight}>
                     <p className={styles.moduleDesc}>{module.description}</p>
                     <div className={styles.moduleMeta}>
-                      <span className="tag tag-default">{module.lessons.length} lessons</span>
+                      <span className="text-subtle">{module.lessons.length} lessons</span>
                       {publishedCount > 0 && (
-                        <span className="tag tag-emerald">{publishedCount} available</span>
+                        <span className="text-subtle">· {publishedCount} available</span>
                       )}
                     </div>
                   </div>
@@ -147,8 +111,8 @@ export default async function HomePage() {
           </div>
 
           <div className={styles.viewAll}>
-            <Link href="/tutorials" className="btn btn-secondary">
-              View All 10 Modules →
+            <Link href="/tutorials" className="btn btn-secondary btn-lg">
+              View All Modules
             </Link>
           </div>
         </div>
@@ -159,35 +123,30 @@ export default async function HomePage() {
         <section className={`section ${styles.blogSection}`}>
           <div className="container">
             <div className={styles.sectionHeader}>
-              <h2>AI News for Engineers</h2>
-              <p className="text-muted">
-                The latest AI developments, rewritten to cut through the hype.
-              </p>
+              <h2>Engineer-Focused AI News</h2>
             </div>
 
-            <div className={styles.blogGrid}>
+            <div className={styles.blogLayout}>
               {latestPosts.map((post) => (
                 <Link
                   key={post.slug}
                   href={`/blog/${post.slug}`}
-                  className={`card-link ${styles.blogLink}`}
+                  className={styles.blogItem}
                 >
-                  <article className={`card ${styles.blogCard}`}>
+                  <article>
                     <div className={styles.blogMeta}>
-                      <span className="tag tag-violet">{post.category}</span>
-                      <span className="text-subtle text-sm">{post.readingTime}</span>
+                      <span className="text-subtle">{post.readingTime}</span>
                     </div>
                     <h3 className={styles.blogTitle}>{post.title}</h3>
                     <p className={styles.blogSummary}>{post.summary}</p>
                     <div className={styles.blogFooter}>
-                      <span className="text-muted text-sm">
+                      <span className="text-muted">
                         {new Date(post.date).toLocaleDateString("en-US", {
                           year: "numeric",
                           month: "short",
                           day: "numeric",
                         })}
                       </span>
-                      <span className={styles.readMore}>Read →</span>
                     </div>
                   </article>
                 </Link>
@@ -195,7 +154,7 @@ export default async function HomePage() {
             </div>
 
             <div className={styles.viewAll}>
-              <Link href="/blog" className="btn btn-secondary">
+              <Link href="/blog" className="btn btn-ghost btn-lg">
                 Read All Posts →
               </Link>
             </div>
@@ -206,8 +165,7 @@ export default async function HomePage() {
       {/* ─── CTA ───────────────────────────────────────────── */}
       <section className={styles.ctaSection}>
         <div className="container">
-          <div className={styles.ctaCard}>
-            <div className={styles.ctaGlow} aria-hidden />
+          <div className={styles.ctaContent}>
             <h2 className={styles.ctaTitle}>
               Ready to finally understand AI?
             </h2>
@@ -215,7 +173,7 @@ export default async function HomePage() {
               Start with Module 0 — no prerequisites, no math, 12 minutes.
             </p>
             <Link href="/tutorials/ai-is-just-software" className="btn btn-primary btn-lg">
-              Start Lesson 1 — It's Free →
+              Start Lesson 1
             </Link>
           </div>
         </div>

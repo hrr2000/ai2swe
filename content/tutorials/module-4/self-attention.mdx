@@ -1,0 +1,53 @@
+---
+title: "Self-Attention: A Database JOIN on Relevance"
+summary: "How tokens calculate their relationship to every other token in the sequence."
+module: 4
+lesson: 2
+slug: "self-attention"
+analogy: "Relational JOINs for meaning relevance"
+estimatedTime: "25 min"
+readingTime: "12 min"
+---
+
+# Self-Attention
+
+If the **Transformer** is the brain of modern AI, **Self-Attention** is its most powerful cognitive function.
+
+In traditional natural language processing, we treated sentences like a linked list. To understand the word "it" in the sentence *"The animal didn't cross the street because it was too tired,"* a standard model would struggle to know if "it" refers to the animal or the street.
+
+**Self-Attention** solves this by letting every word look at every other word simultaneously.
+
+## The Database Analogy: A Join on Relevance
+
+Think of Self-Attention as a **Relational Database SQL JOIN**. 
+
+When the model processes the word "it":
+1. It creates a **Query** ($Q$): "What am I referring to?"
+2. It looks at all other words as **Keys** ($K$): "Street," "Animal," "Tired," "Cross."
+3. It calculates a **Score** based on how well the Query matches each Key.
+   - Match(`it`, `animal`) ➔ **High Score** (Animals get tired).
+   - Match(`it`, `street`) ➔ **Low Score** (Streets don't get tired).
+
+Finally, it retrieves the **Value** ($V$) of the highest-scoring match and mixes it into the representation of the word "it."
+
+## Why is it "Self"?
+
+It’s called **Self**-Attention because the words within the *same* sentence are attending to each other. We aren't looking at an external database; the sentence *is* the database.
+
+### The Math (The Simple Version)
+The model represents each word as three separate vectors:
+- **Query**: What I'm looking for.
+- **Key**: What I have to offer.
+- **Value**: The actual information to share.
+
+Calculating attention is basically: 
+`Softmax((Q * K) / scale) * V`
+
+## Parallelism: The Killer Feature
+
+Because this process doesn't rely on the previous word to finish, we can run the attention calculation for "The," "Animal," "Street," and "It" all at once on different GPU cores. This is why Transformers are so much faster to train than anything that came before.
+
+> [!INSIGHT]  
+> Self-Attention is the reason AI can understand context. It’s what gives the model "Focus." Without it, every word would be an island.
+
+Next: The API that facilitates this exchange. **Query, Key, Value.**

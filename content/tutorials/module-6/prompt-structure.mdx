@@ -1,0 +1,53 @@
+---
+title: "Prompt Structure: System, User, Assistant (HTTP Headers)"
+summary: "Formatting your messages so the model clearly understands its role and your task."
+module: 6
+lesson: 1
+slug: "prompt-structure"
+analogy: "Chat roles as HTTP Headers and Request Body"
+estimatedTime: "15 min"
+readingTime: "8 min"
+---
+
+# Prompt Structure
+
+As a developer, you understand that **Format Matters**. You wouldn't send a raw string to a REST API and expect it to know what you want; you send a JSON object with specific headers.
+
+When talking to a model like GPT-4 or Claude, you use the **Chat Completion Format**.
+
+## The Three Pillars
+
+A standard prompt is an array of messages, each with a defined **Role**. 
+
+### 1. The System Message (The Config)
+ think of this as the **Global Configuration** or the **Docker Image Definition**. 
+It sets the personality, rules, and constraints.
+> *"You are a world-class security auditor. Only report critical vulnerabilities. Do not explain basics."*
+
+### 2. The User Message (The Request)
+This is the **Request Body**. It contains the specific data or question you want the model to process right now.
+> *"Review this React component for XSS flaws: [Code...]"*
+
+### 3. The Assistant Message (The Response / History)
+This is the **Application State**. It contains the previous responses from the AI. By including these, you give the model "Memory" of what has already happened in the conversation.
+
+## Why use this structure?
+
+If you just put all your instructions in one giant user message, the model can get confused between your **Instruction** and your **Data**. 
+
+By using the `system` role, you give your instructions higher "authority" in the model's attention mechanism.
+
+```typescript
+// Correct programmatic prompt
+const messages = [
+  { role: "system", content: "You are a Python expert." },
+  { role: "user", content: "Find the bug in this script: [Script...]" },
+  { role: "assistant", content: "The bug is on line 12. You forgot to..." },
+  { role: "user", content: "Now rewrite it using a generator." }
+];
+```
+
+> [!TIP]  
+> The `system` message is where you define **Output Formats**. For example: *"Always output your response as a JSON object with 'code' and 'explanation' keys."*
+
+Next: The difference between giving no examples and some examples. **Zero-Shot vs. Few-Shot.**

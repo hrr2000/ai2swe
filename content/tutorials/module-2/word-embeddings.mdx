@@ -1,0 +1,46 @@
+---
+title: "Word2Vec & GloVe: Semantic Hash Codes"
+summary: "The history of how we taught machines the relationships between words."
+module: 2
+lesson: 2
+slug: "word-embeddings"
+analogy: "Word vectors as semantic hash codes"
+estimatedTime: "20 min"
+readingTime: "10 min"
+---
+
+# Semantic Hash Codes
+
+In the previous lesson, we saw that embeddings are arrays of numbers. But where do these numbers come from? How did we learn that "King" is similar to "Queen"?
+
+Before the giant LLMs of 2026, we used two revolutionary algorithms: **Word2Vec** and **GloVe**.
+
+## Word2Vec: You are defined by your neighbors
+
+The core idea of Word2Vec is simple: **A word's meaning is determined by the words that frequently appear around it.**
+
+If you see the word "Gigabyte" in 10,000 documents, it's almost always surrounded by "RAM," "Storage," "Computer," and "Transfer."  The algorithm looks at these neighbors and builds a vector that clusters "Gigabyte" near the vectors for its neighbors.
+
+### The "Prediction" Game
+Word2Vec trains by playing a game:
+- **Skip-gram**: Given a word, predict its neighbors.
+- **CBOW (Continuous Bag of Words)**: Given some neighbors, predict the missing word.
+
+By failing and succeeding millions of times, the model builds a map where "Java" is near "Python" because they share similar "neighbor contexts" (like "code," "programming," "developer").
+
+## GloVe: Global Vectors for Word Representation
+
+While Word2Vec looks at local neighbors, **GloVe** looks at the entire dataset at once. It builds a massive "Co-occurrence Matrix." 
+
+Think of it like a giant spreadsheet where every row and column is a word in the dictionary. Each cell records how many times those two words appeared together in the same document.
+
+GloVe then uses matrix factorization to squish this giant sparse spreadsheet into small, dense vectors (like 300 dimensions).
+
+## The Legacy
+
+Today, we use much more advanced "Transformer-based" embeddings, but modern AI still stands on the shoulders of these two giants. 
+
+> [!NOTE]
+> The biggest limitation of Word2Vec and GloVe? They are **Stateless**. The word "Bank" has the same vector whether you are "sitting on a river bank" or "withdrawing money from a bank." Modern AI fixed this with *Contextual* embeddings.
+
+Next up: How do we measure the distance between these points at production scale? **Vector Similarity.**

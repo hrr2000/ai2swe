@@ -1,0 +1,46 @@
+---
+title: "Context Windows: The Buffer Size of AI"
+summary: "Understanding the RAM limits of an LLM. Why your AI starts forgetting the beginning of the file."
+module: 3
+lesson: 4
+slug: "context-windows"
+analogy: "Context window as L1 Cache or RAM for the model"
+estimatedTime: "18 min"
+readingTime: "9 min"
+---
+
+# Context Windows
+
+Imagine you are trying to solve a bug while looking at only 10 lines of code at a time through a small hole. You would eventually lose track of the variables defined at the top of the file.
+
+An LLM has the same limitation. The **Context Window** is the maximum number of tokens a model can "see" in a single forward pass.
+
+## The RAM of AI
+
+Think of the Context Window as the **L1 Cache / RAM** for the model:
+- **Small Context (8k tokens)**: Can read a single file. (Like an old 486 computer).
+- **Medium Context (128k tokens)**: Can read a small codebase or a whole book. (Standard GPT-4o / Claude 3.5).
+- **Large Context (1M+ tokens)**: Can read your entire repository, documentation, and history at once. (Gemini 1.5 Pro).
+
+## What happens when it overflows?
+
+When you send more tokens than the window allows, the model doesn't usually crash. Instead, it **"forgets."** 
+
+Technically, the older tokens are truncated (popped off the stack) to make room for new ones. If you ask a question about the `System Prompt` you sent 2,000 messages ago, the model will hallucinate because that data is literally no longer in its memory buffer.
+
+## The Performance Cost: Quadratic Scaling
+
+Why isn't every model's context window 10 billion tokens?
+
+In the standard Transformer architecture, every token has to "look" at every other token. This means if you double the context, the amount of compute needed **quadruples** (`O(n^2)`). 
+
+Huge context windows require massive, expensive specialized hardware.
+
+### Strategy: RAG vs. Context
+- If your data fits in the context window: **Feed it directly.** It’s more accurate.
+- If your data is too big (e.g., 50GB of logs): **Use RAG** to find the relevant 100 lines and feed *only those* into the window.
+
+> [!IMPORTANT]
+> Just because a model *can* see 1M tokens doesn't mean it pays attention to all of them equally. Models often suffer from "Middle of the Message" loss, where they remember the start and end of a prompt better than the middle.
+
+Next: Module 4 — The architecture that makes this all possible. **Transformers.**

@@ -1,0 +1,43 @@
+---
+title: "Why Transformers Won"
+summary: "Parallel compute vs sequential processing. Why the GPU loves the Transformer."
+module: 4
+lesson: 1
+slug: "why-transformers"
+analogy: "Sequential (Linked List) vs Parallel (Multi-core) processing"
+estimatedTime: "18 min"
+readingTime: "9 min"
+---
+
+# Why Transformers Won
+
+For years, the AI world relied on RNNs (Recurrent Neural Networks) to read text. 
+
+Think of an RNN as a `while` loop that reads an array of words one by one.
+
+```javascript
+let memory = "";
+for (let word of document) {
+  memory = process(word, memory); // Have to wait for the previous word to finish!
+}
+```
+
+The problem? **You cannot parallelize this.** A GPU has 10,000 cores designed to do math simultaneously, but the `for` loop forces the GPU to process the sequence sequentially. It took months to train models on single books.
+
+## Enter the Transformer
+
+In 2017, Google researchers published "Attention Is All You Need." They proposed the Transformer architecture, which completely bypasses the `for` loop.
+
+Instead of reading a sentence left-to-right, a Transformer loads the *entire sentence simultaneously* across all GPU cores. It replaces sequential memory with a mechanism called **Self-Attention**.
+
+A Transformer evaluates how every word connects to every *other* word at the exact same time.
+
+```javascript
+// A Transformer loads the entire array matrix in one parallel operation
+const contextMatrix = gpu.parallelComputeAttention(entireDocumentArray);
+```
+
+### The Result
+Because computation was no longer blocked by sequence order, researchers could suddenly throw millions of GPUs at the problem at once. 
+
+This architectural switch to highly parallel compute is precisely why GPT-1, GPT-2, GPT-3, and ChatGPT were suddenly possible. The hardware could finally be maxed out.

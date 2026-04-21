@@ -1,0 +1,54 @@
+---
+title: "Vector Databases: Semantic Search Indexes"
+summary: "Why standard SQL databases struggle with vectors and how Vector DBs solve the scale problem."
+module: 2
+lesson: 6
+slug: "vector-databases"
+analogy: "Vector DBs as high-dimensional semantic search indexes"
+estimatedTime: "25 min"
+readingTime: "12 min"
+---
+
+# Vector Databases
+
+You have 10 million product descriptions. You convert them all into vectors (Float arrays of length 1536). Now you want to find the top 5 most similar products to a user's search query.
+
+If you store these in a standard `JSONB` column in PostgreSQL and run a `FOR` loop to check every row, your database will melt. 
+
+**Vector Databases** are built explicitly to solve this "Nearest Neighbor" search at massive scale.
+
+## The Core Concept: HNSW
+
+Most vector databases (like Pinecone, Weaviate, or Milvus) use an algorithm called **HNSW** (Hierarchical Navigable Small Worlds). 
+
+Think of it like a **Layered Graph Index**:
+1. **Layer 0**: A dense graph of all your vectors.
+2. **Layer 1**: A sparser "summary" graph of the vectors.
+3. **Layer 2**: Even sparser.
+
+When you search, the database starting at the top sparse layer to find the right "neighborhood" and then zooms down into the dense layers to find the exact matches. It’s like traveling from a Country map ➔ City map ➔ Street map.
+
+## Storage vs. Search
+
+A Vector Database isn't just an index; it handles the entire lifecycle:
+- **Storage**: Storing the raw vector and its associated metadata (e.g., the original text, the author, the timestamp).
+- **Filtering**: "Find all vectors similar to 'Red Shoes' BUT only if they are in stock." (Combining semantic search with traditional boolean SQL filters).
+- **CRUD**: Updating the vector if the document changes.
+
+## The 2026 Landscape
+
+1. **Dedicated DBs**: Pinecone (Serverless/SaaS), Weaviate (Open Source), Milvus.
+2. **Extensions**: **pgvector** for PostgreSQL is the most popular choice for engineers who want to keep their data in one place.
+
+### Example Query (pgvector)
+```sql
+-- Find the 5 most similar items using the <=> (cosine distance) operator
+SELECT content FROM items 
+ORDER BY embedding <=> '[0.12, -0.54, ...]' 
+LIMIT 5;
+```
+
+> [!IMPORTANT]
+> If you are building a small project, **pgvector** is usually enough. Only move to a dedicated Vector DB if you are dealing with millions of vectors and need microsecond latency.
+
+Next: Module 3 — Before the model can understand meaning, it has to read the text. How does it break strings into pieces? **Tokenization.**

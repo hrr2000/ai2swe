@@ -1,0 +1,62 @@
+---
+title: "Set Up Your AI Playground"
+summary: "Installing the local context: Why every engineer needs an Ollama or a local LLM setup."
+module: 0
+lesson: 4
+slug: "setup-your-ai-playground"
+analogy: "Ollama as Docker for AI Models"
+estimatedTime: "20 min"
+readingTime: "10 min"
+---
+
+# Set Up Your AI Playground
+
+As a developer, you don't build apps directly in production. You have a local development environment. AI is no different.
+
+While APIs like OpenAI and Anthropic are great for production, you need a **Local Playground** to experiment without burning through credits or leaking sensitive code.
+
+## The Tool: Ollama
+
+In 2026, **Ollama** remains the gold standard for local LLM orchestration. Think of it as **Docker for AI Models**.
+
+### How to Install
+
+If you're on a modern dev machine (Mac, Linux, or Windows), run this in your terminal:
+
+```bash
+# Get Ollama
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Pull a lightweight "coding" model
+ollama run qwen2.5-coder:7b
+```
+
+## Why Local? (The Engineer's Perspective)
+
+1. **Zero Latency**: No network round-trips. Your code completion happens at the speed of your GPU.
+2. **Infinite Context**: You can feed it your entire local repository folder without worrying about data privacy policies.
+3. **Reproducibility**: You can pin a specific model version (e.g., `llama3.1:8b`) just like you pin a package in `package.json`.
+
+## Your First "Local API" Call
+
+Ollama spins up a local server on port `11434`. You can interact with it using a standard `curl` or any HTTP client:
+
+```javascript
+// Calling your local AI "Microservice"
+const response = await fetch('http://localhost:11434/api/generate', {
+  method: 'POST',
+  body: JSON.stringify({
+    model: 'qwen2.5-coder:7b',
+    prompt: 'Write a TypeScript function to sort an array of vectors.',
+    stream: false
+  })
+});
+
+const data = await response.json();
+console.log(data.response);
+```
+
+> [!IMPORTANT]
+> Local models are restricted by your hardware. If you have 16GB of RAM, stick to "7B" or "8B" models (7-8 billion parameters). These are the "Small Standard" of the AI world.
+
+Now that you have your own local "Mainframe," let's learn how to actually talk to it.

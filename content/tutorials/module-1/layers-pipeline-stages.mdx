@@ -1,0 +1,41 @@
+---
+title: "Layers Are Pipeline Stages"
+summary: "Understanding Neural Network layers as chained middleware."
+module: 1
+lesson: 2
+slug: "layers-pipeline-stages"
+analogy: "Neural layers as Express.js middleware chain"
+estimatedTime: "18 min"
+readingTime: "8 min"
+---
+
+# Layers Are Pipeline Stages
+
+If you've ever built an Express.js or Laravel application, you understand Neural Networks.
+
+When a network request hits your server, it usually doesn't go straight to the database. It passes through a series of **Middleware functions**.
+
+```javascript
+app.post('/api/data', 
+  authenticateUser,      // Layer 1
+  parseBodyJson,         // Layer 2
+  validateSchema,        // Layer 3
+  saveToDatabase         // Output Layer
+);
+```
+
+Each stage takes the output of the previous stage, modifies it, and hands it to the next.
+
+## Architecture of a Neural Net
+
+A **Neural Network Layer** is exactly this. It is a mathematical function that takes an input (like an image array), transforms it, and passes it to the next layer. 
+
+1. **Input Layer**: The raw `req.body`.
+2. **Hidden Layers**: Your `middleware()`. The first hidden layer might look for edges in an image. The second layer looks for circles. The third looks for wheels.
+3. **Output Layer**: The `res.send()` that returns the final prediction (e.g., "This is a car").
+
+### Why Are They Called "Deep" Neural Networks?
+
+"Deep" Learning simply means there are *many hidden layers* in the pipeline. Instead of 2 or 3 layers, a Deep Network might have 50 or 150 middleware stages. 
+
+Because each stage is chained sequentially, the model can learn highly abstract features. Layer 1 learns pixels. Layer 50 learns the concept of a "Golden Retriever."

@@ -1,0 +1,54 @@
+---
+title: "Gradient Descent: Binary Search for the Best Config"
+summary: "Iteratively updating model weights to reach the lowest possible error score."
+module: 1
+lesson: 7
+slug: "gradient-descent"
+analogy: "Optimization as walking down a foggy mountain"
+estimatedTime: "20 min"
+readingTime: "11 min"
+---
+
+# Gradient Descent
+
+We've assigned the blame via Backpropagation. Now it's time to **Apply the Fix**.
+
+In software engineering, if you want to find an item in a sorted array, you use **Binary Search**. You check the middle, see if you're too high or too low, and adjust your next move accordingly.
+
+**Gradient Descent** is the AI equivalent. It is an optimization algorithm used to find the "minimum" error (The bottom of the valley).
+
+## Walking Down the Mountain
+
+Imagine you are standing on a foggy mountain (High Loss/Error). You want to get to the village at the bottom (Low Loss). 
+
+1. **Check the Slope**: You feel the ground with your feet to see which way is "down." (This is the **Gradient** we calculated in Backprop).
+2. **Take a Step**: You take a small step in the direction that goes down.
+3. **Repeat**: You keep doing this until the ground is flat.
+
+## The Goal: Global Minimum
+
+In code, the "Mountain" is actually a multi-dimensional function graph of all your billions of weights. 
+
+```javascript
+// A conceptual loop of Gradient Descent
+while (loss > 0) {
+  const gradient = calculateGradient(weights); // Check the slope
+  weights = weights - (learningRate * gradient); // Take a step down
+  loss = calculateLoss(weights); // Check how far we are
+}
+```
+
+### The "Step Size" (Learning Rate)
+
+If your "steps" are too big, you might overshoot the village and end up on the other mountain. If your "steps" are too small, it will take years to reach the bottom. 
+
+Finding the right **Step Size** (or "Learning Rate") is the core challenge of training an AI model.
+
+## Why "Descent"?
+
+We are "descending" the error curve. When the gradient (the slope) reaches `0`, it means we are at the bottom. We have found the **Optimal Weights**.
+
+> [!NOTE]
+> Every time an AI "Learns," it is simply performing thousands of these "descents" across millions of data points. By the end, the "compiled" weights represent the path of least resistance for that specific set of data.
+
+Next up: Module 2 — How do we turn human concepts like "Love" or "Code" into numbers we can run through this mountain? **Embeddings.**

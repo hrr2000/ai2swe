@@ -44,11 +44,11 @@
     "color": "violet",
     "lessons": [
       { "slug": "what-are-embeddings", "title": "What Are Embeddings? (Hash Maps to Vector Space)", "lesson": 1, "estimatedTime": "18 min", "difficulty": "beginner", "published": true },
-      { "slug": "word-embeddings", "title": "Word2Vec & GloVe: Semantic Hash Codes", "lesson": 2, "estimatedTime": "20 min", "difficulty": "intermediate", "published": false },
-      { "slug": "vector-similarity", "title": "Vector Similarity: Fuzzy Matching at Scale", "lesson": 3, "estimatedTime": "15 min", "difficulty": "intermediate", "published": false },
+      { "slug": "word-embeddings", "title": "Word2Vec & GloVe: Semantic Hash Codes", "lesson": 2, "estimatedTime": "20 min", "difficulty": "intermediate", "published": true },
+      { "slug": "vector-similarity", "title": "Vector Similarity: Fuzzy Matching at Scale", "lesson": 3, "estimatedTime": "15 min", "difficulty": "intermediate", "published": true },
       { "slug": "embedding-dimensions", "title": "Embedding Dimensions: Schema Columns for Meaning", "lesson": 4, "estimatedTime": "12 min", "difficulty": "beginner", "published": false },
       { "slug": "sentence-embeddings", "title": "Sentence & Document Embeddings", "lesson": 5, "estimatedTime": "15 min", "difficulty": "intermediate", "published": false },
-      { "slug": "vector-databases", "title": "Vector Databases: Semantic Search Indexes", "lesson": 6, "estimatedTime": "25 min", "difficulty": "intermediate", "published": false },
+      { "slug": "vector-databases", "title": "Vector Databases: Semantic Search Indexes", "lesson": 6, "estimatedTime": "25 min", "difficulty": "intermediate", "published": true },
       { "slug": "build-semantic-search", "title": "Hands-On: Build a Semantic Search Engine", "lesson": 7, "estimatedTime": "35 min", "difficulty": "advanced", "published": false }
     ]
   },
@@ -60,10 +60,10 @@
     "icon": "🔤",
     "color": "emerald",
     "lessons": [
-      { "slug": "tokenization-fundamentals", "title": "Tokenization: AI's Lexer", "lesson": 1, "estimatedTime": "15 min", "difficulty": "beginner", "published": false },
+      { "slug": "tokenization-fundamentals", "title": "Tokenization: AI's Lexer", "lesson": 1, "estimatedTime": "15 min", "difficulty": "beginner", "published": true },
       { "slug": "byte-pair-encoding", "title": "BPE: Text Compression as Tokenization", "lesson": 2, "estimatedTime": "20 min", "difficulty": "intermediate", "published": false },
       { "slug": "token-vocabularies", "title": "Token Vocabularies: Your Model's Enum", "lesson": 3, "estimatedTime": "12 min", "difficulty": "beginner", "published": false },
-      { "slug": "context-windows", "title": "Context Windows: The Buffer Size of AI", "lesson": 4, "estimatedTime": "18 min", "difficulty": "beginner", "published": false },
+      { "slug": "context-windows", "title": "Context Windows: The Buffer Size of AI", "lesson": 4, "estimatedTime": "18 min", "difficulty": "beginner", "published": true },
       { "slug": "special-tokens", "title": "Special Tokens: Reserved Keywords", "lesson": 5, "estimatedTime": "12 min", "difficulty": "beginner", "published": false },
       { "slug": "tokenizer-playground", "title": "Hands-On: Build a Tokenizer Visualizer", "lesson": 6, "estimatedTime": "30 min", "difficulty": "intermediate", "published": false }
     ]
@@ -76,8 +76,8 @@
     "icon": "⚙️",
     "color": "amber",
     "lessons": [
-      { "slug": "why-transformers", "title": "Why Transformers Beat Everything Else", "lesson": 1, "estimatedTime": "18 min", "difficulty": "intermediate", "published": false },
-      { "slug": "self-attention", "title": "Self-Attention: A Database JOIN on Relevance", "lesson": 2, "estimatedTime": "25 min", "difficulty": "intermediate", "published": false },
+      { "slug": "why-transformers", "title": "Why Transformers Beat Everything Else", "lesson": 1, "estimatedTime": "18 min", "difficulty": "intermediate", "published": true },
+      { "slug": "self-attention", "title": "Self-Attention: A Database JOIN on Relevance", "lesson": 2, "estimatedTime": "25 min", "difficulty": "intermediate", "published": true },
       { "slug": "query-key-value", "title": "Query, Key, Value: The REST API of Attention", "lesson": 3, "estimatedTime": "20 min", "difficulty": "intermediate", "published": false },
       { "slug": "multi-head-attention", "title": "Multi-Head Attention: Parallel Search Queries", "lesson": 4, "estimatedTime": "22 min", "difficulty": "intermediate", "published": false },
       { "slug": "positional-encoding", "title": "Positional Encoding: Array Indexes for AI", "lesson": 5, "estimatedTime": "15 min", "difficulty": "intermediate", "published": false },
@@ -95,7 +95,7 @@
     "color": "rose",
     "lessons": [
       { "slug": "what-makes-a-model-large", "title": "What Makes a Model 'Large'?", "lesson": 1, "estimatedTime": "15 min", "difficulty": "beginner", "published": false },
-      { "slug": "next-token-prediction", "title": "Next-Token Prediction: AI Is Just Autocomplete", "lesson": 2, "estimatedTime": "18 min", "difficulty": "beginner", "published": false },
+      { "slug": "next-token-prediction", "title": "Next-Token Prediction: AI Is Just Autocomplete", "lesson": 2, "estimatedTime": "18 min", "difficulty": "beginner", "published": true },
       { "slug": "temperature-and-sampling", "title": "Temperature & Sampling: Controlling Randomness", "lesson": 3, "estimatedTime": "15 min", "difficulty": "beginner", "published": false },
       { "slug": "gpt-family", "title": "The GPT Family: Version Releases With Breaking Changes", "lesson": 4, "estimatedTime": "20 min", "difficulty": "beginner", "published": false },
       { "slug": "open-source-llms", "title": "Open Source LLMs: The Linux of AI", "lesson": 5, "estimatedTime": "20 min", "difficulty": "intermediate", "published": false },
@@ -111,7 +111,7 @@
     "icon": "✍️",
     "color": "pink",
     "lessons": [
-      { "slug": "prompt-structure", "title": "Prompt Structure: System, User, Assistant (HTTP Headers)", "lesson": 1, "estimatedTime": "15 min", "difficulty": "beginner", "published": false },
+      { "slug": "prompt-structure", "title": "Prompt Structure: System, User, Assistant (HTTP Headers)", "lesson": 1, "estimatedTime": "15 min", "difficulty": "beginner", "published": true },
       { "slug": "zero-shot-prompting", "title": "Zero-Shot vs Few-Shot: No Examples vs Test Cases", "lesson": 2, "estimatedTime": "15 min", "difficulty": "beginner", "published": false },
       { "slug": "chain-of-thought", "title": "Chain-of-Thought: console.log() Debugging for AI", "lesson": 3, "estimatedTime": "18 min", "difficulty": "intermediate", "published": false },
       { "slug": "structured-output", "title": "Structured Output: Schema-Enforced API Responses", "lesson": 4, "estimatedTime": "20 min", "difficulty": "intermediate", "published": false },
@@ -159,7 +159,7 @@
     "icon": "🏗️",
     "color": "violet",
     "lessons": [
-      { "slug": "what-is-rag", "title": "RAG: Give Your AI a Search Engine", "lesson": 1, "estimatedTime": "22 min", "difficulty": "intermediate", "published": false },
+      { "slug": "what-is-rag", "title": "RAG: Give Your AI a Search Engine", "lesson": 1, "estimatedTime": "22 min", "difficulty": "intermediate", "published": true },
       { "slug": "chunking-strategies", "title": "Chunking: Paginating Your Knowledge Base", "lesson": 2, "estimatedTime": "18 min", "difficulty": "intermediate", "published": false },
       { "slug": "function-calling", "title": "Function Calling: Your Model Can Call Your APIs", "lesson": 3, "estimatedTime": "25 min", "difficulty": "intermediate", "published": false },
       { "slug": "ai-agents", "title": "AI Agents: Autonomous Services With Decision Loops", "lesson": 4, "estimatedTime": "28 min", "difficulty": "advanced", "published": false },

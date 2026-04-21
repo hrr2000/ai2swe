@@ -1,0 +1,85 @@
+.button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
+
+.button:hover {
+  border-color: var(--accent-blue);
+  background: rgba(0, 102, 255, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
+.learned {
+  background: var(--accent-blue);
+  color: white;
+  border-color: var(--accent-blue);
+}
+
+.learned:hover {
+  background: #0052cc;
+  border-color: #0052cc;
+}
+
+.iconContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.learned .iconContainer {
+  background: white;
+  color: var(--accent-blue);
+}
+
+.plus {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.text {
+  font-size: 0.95rem;
+}
+
+.skeleton {
+  width: 200px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--card-bg);
+  opacity: 0.5;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+  100% { opacity: 0.3; }
+}
+
+@media (max-width: 640px) {
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}

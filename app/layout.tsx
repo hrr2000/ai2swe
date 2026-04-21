@@ -41,17 +41,26 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+import InlineAssistant from "@/components/content/InlineAssistant";
+import { ProgressProvider } from "@/context/ProgressContext";
+import { getTutorialSlugs } from "@/lib/content";
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const allSlugs = await getTutorialSlugs();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <Header />
-        <main style={{ minHeight: "calc(100vh - 64px)" }}>{children}</main>
-        <Footer />
+        <ProgressProvider allSlugs={allSlugs}>
+          <Header />
+          <main style={{ minHeight: "calc(100vh - 64px)" }}>{children}</main>
+          <Footer />
+          <InlineAssistant />
+        </ProgressProvider>
       </body>
     </html>
   );

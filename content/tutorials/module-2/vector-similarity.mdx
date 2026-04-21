@@ -1,0 +1,51 @@
+---
+title: "Vector Similarity: Fuzzy Matching at Scale"
+summary: "Measuring the distance between meanings using Cosine Similarity and Euclidean Distance."
+module: 2
+lesson: 3
+slug: "vector-similarity"
+analogy: "Similarity as distance/angle between concept points"
+estimatedTime: "15 min"
+readingTime: "8 min"
+---
+
+# Vector Similarity
+
+If every concept is a point on a map, then "Searching" is just a task of finding the **Nearest Point**.
+
+In traditional programming, string matching is binary:
+```javascript
+"apple" === "apple" // true
+"apple" === "orange" // false
+```
+
+In AI, we use **Vector Similarity** to find out *how close* two things are.
+
+## 1. Cosine Similarity (The Gold Standard)
+
+Cosine similarity measures the **Angle** between two vectors. It doesn't care how long the vectors are; it only cares which way they are pointing.
+
+- **1.0**: Pointing exactly the same way (Perfect Semantic Match).
+- **0.0**: Perpendicular (Completely Unrelated).
+- **-1.0**: Pointing opposite ways (Opposite Meaning).
+
+This is perfect for text because a long document and a short summary might have different "lengths" (vector magnitudes) but point in the same "meaning direction."
+
+## 2. Euclidean Distance (L2)
+
+This measures the **Straight Line distance** between two points. It’s the "as the crow flies" distance.
+
+If you have two vectors `[1, 2]` and `[4, 6]`, the Euclidean distance is the length of the hypotenuse connecting them. This is often used for Image embeddings where the "intensity" of the signal matters.
+
+## The Engineering Problem: Scale
+
+If you have 100,000 documents, calculating the Cosine Similarity for every single one of them whenever a user types a search query is slow (`O(n)`). 
+
+In production, we use **ANN (Approximate Nearest Neighbors)**. 
+
+Instead of checking every document, we pre-organize the map into "neighborhoods." When a query comes in, we only check the documents in the nearest neighbor buckets. This is how Google and Netflix search millions of items in milliseconds.
+
+> [!TIP]
+> When building a RAG (Retrieval-Augmented Generation) system, **Cosine Similarity** is almost always the correct metric to start with.
+
+Now that we can measure distance, let's understand why we need 768 or 1536 dimensions to define a single word. **Embedding Dimensions.**

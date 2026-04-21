@@ -1,0 +1,173 @@
+.page {
+  padding: 6rem 10% 8rem;
+  max-width: var(--wide-width);
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 4rem;
+  text-align: center;
+}
+
+.title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-heading);
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  position: relative;
+  padding-left: 2rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  background: var(--border-default);
+}
+
+.tier {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tierBadge {
+  position: absolute;
+  top: 0;
+  left: -2rem;
+  transform: translateX(-50%);
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  border: 2px solid var(--accent-blue);
+  z-index: 2;
+}
+
+.tierBeginner .tierBadge { border-color: var(--accent-emerald); }
+.tierIntermediate .tierBadge { border-color: var(--accent-blue); }
+.tierAdvanced .tierBadge { border-color: var(--accent-violet); }
+.tierExpert .tierBadge { border-color: var(--accent-rose); }
+.tierOrchestration .tierBadge { border-color: var(--accent-amber); }
+.tierEvaluation .tierBadge { border-color: var(--accent-cyan); }
+.tierTdd .tierBadge { border-color: #a78bfa; }
+.tierMemory .tierBadge { border-color: #fb923c; }
+.tierAutonomous .tierBadge { border-color: #f87171; }
+
+.tierHeader h2 {
+  font-size: 1.75rem;
+  color: var(--text-heading);
+  margin-bottom: 0.5rem;
+}
+
+.tierDesc {
+  color: var(--text-secondary);
+  font-size: 1.125rem;
+}
+
+.toolGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.toolCard {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.toolCard:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-hover);
+}
+
+.toolHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.toolName {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-heading);
+}
+
+.toolType {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--bg-tertiary);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.toolDescription {
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.tradeoffs {
+  margin-top: auto;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 1rem;
+}
+
+.tradeoffTitle {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.tradeoffList {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tradeoffItem {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tradeoffItem::before {
+  content: '→';
+  color: var(--border-focus);
+}
+
+@media (max-width: 768px) {
+  .page { padding: 4rem 1.5rem 6rem; }
+  .timeline { padding-left: 1.5rem; }
+  .tierBadge { left: -1.5rem; }
+}

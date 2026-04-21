@@ -3,41 +3,44 @@
   top: var(--header-height);
   height: calc(100vh - var(--header-height));
   overflow-y: auto;
-  background: var(--bg-secondary);
+  scrollbar-gutter: stable;
+  background: var(--bg-primary);
   border-right: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
 }
 
 .sidebarHeader {
-  padding: 1.25rem 1rem 0.875rem;
+  padding: 2rem 1.5rem 1.5rem;
   border-bottom: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 1rem;
 }
 
 .backLink {
+  font-family: var(--font-mono);
   font-size: 0.8125rem;
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
   text-decoration: none;
   transition: color var(--transition-fast);
 }
 
-.backLink:hover { color: var(--text-primary); opacity: 1; }
+.backLink:hover { color: var(--text-primary); text-decoration: none; }
 
 .sidebarTitle {
-  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--text-tertiary);
+  color: var(--text-heading);
 }
 
 .nav {
   flex: 1;
   overflow-y: auto;
-  padding: 0.75rem 0;
+  padding: 1rem 0;
 }
 
 /* ─── Module Button ──────────────────────────────────────── */
@@ -47,8 +50,8 @@
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 0.625rem;
-  padding: 0.75rem 1rem;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
   background: none;
   border: none;
   cursor: pointer;
@@ -58,7 +61,7 @@
 }
 
 .moduleBtn:hover {
-  background: var(--bg-tertiary);
+  background: var(--bg-secondary);
   color: var(--text-primary);
 }
 
@@ -66,31 +69,28 @@
   color: var(--text-primary);
 }
 
-.moduleBtnIcon { font-size: 1.1rem; flex-shrink: 0; }
+.moduleBtnIcon { display: none; /* icons removed for minimalist logic */ }
 
 .moduleBtnText {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
+  gap: 0.25rem;
 }
 
 .moduleBtnLabel {
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--text-tertiary);
 }
 
 .moduleBtnTitle {
-  font-size: 0.85rem;
+  font-size: 0.9375rem;
   font-weight: 500;
   color: inherit;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .moduleBtnChevron {
@@ -103,54 +103,117 @@
 .moduleBtnChevron.expanded { transform: rotate(90deg); }
 
 /* ─── Lesson List ────────────────────────────────────────── */
+.moduleMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fullyLearned {
+  color: var(--accent-blue);
+  fill: rgba(0, 102, 255, 0.1);
+}
+
+.moduleBtnTitle {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+  transition: color 0.2s ease;
+}
+
+.expandableArea {
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.moduleProgressBar {
+  height: 2px;
+  background: rgba(0, 0, 0, 0.05);
+  width: 100%;
+}
+
+.moduleProgressFill {
+  height: 100%;
+  background: var(--accent-blue);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .lessonList {
   list-style: none;
-  padding: 0.25rem 0 0.5rem;
-  background: rgba(0, 0, 0, 0.15);
+  padding: 0 0 1rem 0;
+  background: transparent;
+  margin: 0;
 }
 
 .lessonLink {
   display: flex;
-  align-items: flex-start;
-  gap: 0.625rem;
-  padding: 0.5rem 1rem 0.5rem 1.5rem;
-  font-size: 0.8375rem;
-  color: var(--text-secondary);
-  text-decoration: none;
-  transition: all var(--transition-fast);
-  line-height: 1.4;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px 10px 48px;
+  color: var(--text-subtle);
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.lessonIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-subtle);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.lessonActive .lessonIcon {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+.lessonLearned .lessonIcon {
+  background: var(--accent-blue);
+  border-color: var(--accent-blue);
+  color: white;
+}
+
+.lessonLearned .lessonTitle {
+  color: var(--text-main);
+  font-weight: 500;
 }
 
 .lessonLink:hover {
   color: var(--text-primary);
-  background: var(--bg-tertiary);
-  opacity: 1;
+  text-decoration: none;
 }
 
 .lessonActive {
-  color: var(--accent-blue) !important;
-  background: rgba(59,130,246,0.08) !important;
+  color: var(--text-primary) !important;
+  font-weight: 500;
+  border-left: 2px solid var(--text-primary);
+  padding-left: calc(1.5rem - 2px);
 }
 
 .lessonNum {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--text-tertiary);
   flex-shrink: 0;
-  margin-top: 0.15rem;
-  min-width: 1rem;
 }
 
 .lessonTitle {
   flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .comingSoon {
-  padding: 0.4rem 1rem 0.4rem 1.5rem;
-  font-size: 0.75rem;
+  padding: 0.5rem 1.5rem;
+  font-size: 0.8125rem;
   color: var(--text-tertiary);
   font-style: italic;
+  font-family: var(--font-mono);
 }

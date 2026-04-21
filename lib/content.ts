@@ -2,6 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import matter from "gray-matter";
 import readingTime from "reading-time";
+import { cacheLife, unstable_cacheLife } from "next/cache";
 
 const CONTENT_DIR = path.join(process.cwd(), "content");
 
@@ -69,6 +70,12 @@ export interface SyllabusModule {
 // ─── Tutorial Helpers ─────────────────────────────────────────────────────────
 
 export async function getAllTutorials(): Promise<Tutorial[]> {
+  "use cache";
+  try {
+    if (typeof cacheLife !== "undefined") cacheLife("days");
+    else if (typeof unstable_cacheLife !== "undefined") unstable_cacheLife("days");
+  } catch {}
+
   const dir = path.join(CONTENT_DIR, "tutorials");
   const tutorials: Tutorial[] = [];
 
@@ -115,6 +122,18 @@ export async function getTutorialSlugs(): Promise<string[]> {
 // ─── Blog Helpers ─────────────────────────────────────────────────────────────
 
 export async function getAllPosts(): Promise<BlogPost[]> {
+  "use cache";
+  try {
+    // Next.js versions differ on exact import, fallback to standard cache setup.
+    if (typeof cacheLife !== "undefined") {
+      cacheLife("days");
+    } else if (typeof unstable_cacheLife !== "undefined") {
+      unstable_cacheLife("days");
+    }
+  } catch (e) {
+    // Ignore if not supported in this minor version
+  }
+
   const dir = path.join(CONTENT_DIR, "blog");
   const posts: BlogPost[] = [];
 
@@ -153,6 +172,12 @@ export async function getPostSlugs(): Promise<string[]> {
 // ─── Syllabus ─────────────────────────────────────────────────────────────────
 
 export async function getSyllabus(): Promise<SyllabusModule[]> {
+  "use cache";
+  try {
+    if (typeof cacheLife !== "undefined") cacheLife("days");
+    else if (typeof unstable_cacheLife !== "undefined") unstable_cacheLife("days");
+  } catch {}
+  
   try {
     const raw = await fs.readFile(
       path.join(CONTENT_DIR, "syllabus.json"),

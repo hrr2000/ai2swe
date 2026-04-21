@@ -1,0 +1,47 @@
+---
+title: "Backpropagation: Reverse Git Blame"
+summary: "Attributing error back through the network layers to find which 'functions' need changing."
+module: 1
+lesson: 6
+slug: "backpropagation"
+analogy: "Error attribution as reverse git blame"
+estimatedTime: "22 min"
+readingTime: "12 min"
+---
+
+# Backpropagation: Reverse Git Blame
+
+When a bug hits production, your first step as a developer is to find out **who caused it**. You might use `git blame` to see which line of code was last modified before the error appeared.
+
+**Backpropagation** is exactly this process for a Neural Network. 
+
+## The Step-by-Step
+
+1. **Forward Pass**: You run the data (Input) through the layers and get a result (Output).
+2. **Calculate Loss**: You compare the result to the truth (The unit test).
+3. **The Reverse Walk**: We take the "Loss" and walk **backwards** through the layers of the network.
+
+At every layer, the algorithm asks: 
+> "How much did *this* specific layer contribute to the error at the end?"
+
+## Why "Reverse"?
+
+In the **Forward Pass**, data flows from Layer 1 ➔ Layer 2 ➔ Layer 3.
+In **Backpropagation**, the "error signal" flows from Layer 3 ➔ Layer 2 ➔ Layer 1.
+
+### The "Blame" Assignment
+
+If Layer 3 is a simple middleware that passes data through, it gets very little "blame." But if Layer 1 was the stage that misidentified a circle as a square, it gets assigned a high "blame" score.
+
+Mathematically, we calculate the **Gradient** (the slope) of each weight. We are finding out:
+- Should this weight be **larger**? 
+- Should this weight be **smaller**? 
+
+## Calculus: Under the Hood
+
+The reason why "Backprop" works is because every layer in a neural network is a differentiable function. Because we know the math of each layer, we can use the **Chain Rule** from calculus to "chain" the error all the way back to the very first pixel of input.
+
+> [!IMPORTANT]
+> Backpropagation doesn't *fix* the weights. It just *calculates* the error for each weight. To actually apply the fix, we use **Optimizer / Gradient Descent**, which we will cover next.
+
+Backpropagation is the **"Root Cause Analysis" (RCA)** of AI. It tells us exactly which parameters are the "buggy" ones.

@@ -1,0 +1,59 @@
+---
+title: "Tokenization: AI's Lexer"
+summary: "Why LLMs don't read words, but 'tokens' — the building blocks of language."
+module: 3
+lesson: 1
+slug: "tokenization-fundamentals"
+analogy: "Tokenization as a compiler's Lexer stage"
+estimatedTime: "15 min"
+readingTime: "8 min"
+---
+
+# Tokenization: The Lexer
+
+Before a compiler can understand your C++ or JavaScript code, it passes through a **Lexer**. The lexer breaks the raw character stream into meaningful chunks called **Tokens**.
+
+```javascript
+// Input
+const x = 5;
+
+// Lexer Output (Tokens)
+[Keyword("const"), Identifier("x"), Operator("="), Literal(5), Punctuation(";")]
+```
+
+AI models work the exact same way. Before text hits the Neural Network layers, it passes through a **Tokenizer**.
+
+## Why not just use "Words"?
+
+If we used words as our base unit, the AI's dictionary would be infinite. What about misspellings? What about new words like "rizz"? What about complex languages like German where words are joined together?
+
+If we used characters (`a`, `b`, `c`), the AI would be too slow. It would have to learn that `t + h + e` equals "the" every single time.
+
+## Byte-Pair Encoding (BPE)
+
+Modern tokenizers use **BPE**. It starts with individual characters and merges the most frequent pairs into single tokens.
+
+- **"The"** might be 1 token.
+- **"Tokenization"** might be 2 tokens: `Token` + `ization`.
+- **"asdfghjkl"** might be 9 tokens (individual characters) because it's rare.
+
+## The Developer's Rule of Thumb
+
+In production, you are billed by **Tokens**, not words.
+**1,000 tokens ≈ 750 words.**
+
+### The "Emoji" and "Whitespace" Tax
+Because common words are optimized into single tokens, they are "cheap." But emojis, complex whitespace (like deep Python indentation), and rare characters take up many tokens.
+
+```javascript
+// This is 1 token
+"hello"
+
+// This might be 3+ tokens
+"🚀🔥✨"
+```
+
+> [!CAUTION]
+> If your code uses extremely deep indentation (12+ levels), you are wasting your model's "memory" (Context Window) on whitespace tokens.
+
+Next: How many of these tokens can the AI "hold in its head" at once? **Context Windows.**

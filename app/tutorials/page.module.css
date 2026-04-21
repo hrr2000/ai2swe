@@ -1,213 +1,268 @@
 .page {
-  padding-top: var(--header-height);
+  padding-bottom: 8rem;
 }
 
 .header {
-  padding: 5rem 0 4rem;
-  background: var(--gradient-hero);
+  padding: 8rem 0 6rem;
+  background: var(--bg-primary);
   border-bottom: 1px solid var(--border-subtle);
-  margin-bottom: 4rem;
+  margin-bottom: 6rem;
 }
 
-.header h1 {
-  font-size: clamp(2rem, 5vw, 3.25rem);
-  margin: 1rem 0 1.25rem;
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4rem;
+  align-items: center;
+}
+
+.heroContent {
+  flex: 1;
 }
 
 .heroBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.35rem 0.875rem;
-  background: rgba(139,92,246,0.08);
-  border: 1px solid rgba(139,92,246,0.2);
-  border-radius: var(--radius-full);
-  font-size: 0.8rem;
-  color: #c4b5fd;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
+  display: inline-block;
+  padding: 6px 14px;
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--accent-blue);
+  border-radius: 20px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.heroBadge span {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent-violet);
-  box-shadow: 0 0 8px rgba(139,92,246,0.6);
+.header h1 {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  color: var(--text-heading);
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.header h1 span {
+  color: var(--accent-blue);
+  position: relative;
 }
 
 .subtitle {
+  font-size: clamp(1.125rem, 2vw, 1.375rem);
   color: var(--text-secondary);
-  font-size: 1.0625rem;
   max-width: 600px;
-  line-height: 1.65;
+  line-height: 1.6;
+}
+
+/* ─── Path Layout ───────────────────────────────────────── */
+.pathContainer {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.pathLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--accent-blue), var(--accent-emerald), var(--accent-amber), var(--accent-rose), var(--accent-blue));
+  opacity: 0.2;
 }
 
 .modules {
   display: flex;
   flex-direction: column;
-  gap: 3.5rem;
-  padding-bottom: 6rem;
+  gap: 6rem;
 }
 
-/* ─── Module ─────────────────────────────────────────────── */
 .module {
-  scroll-margin-top: calc(var(--header-height) + 1rem);
+  position: relative;
+  padding-left: 4rem;
+}
+
+.moduleNode {
+  position: absolute;
+  left: -8px;
+  top: 1.5rem;
+  width: 18px;
+  height: 18px;
+  background: var(--bg-primary);
+  border: 2px solid var(--accent-blue);
+  border-radius: 50%;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.moduleCompleted .moduleNode {
+  border-color: var(--accent-emerald);
+  background: var(--accent-emerald);
+}
+
+.moduleNode::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--accent-blue);
+  border-radius: 50%;
+}
+
+.moduleCompleted .moduleNode::after {
+  background: white;
+}
+
+.moduleContent {
+  max-width: 900px;
 }
 
 .moduleHeader {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 1.5rem;
-  align-items: start;
-  margin-bottom: 1.5rem;
-  padding: 1.5rem;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-default);
-  border-left: 4px solid var(--mod-color, var(--accent-blue));
-  border-radius: var(--radius-lg);
+  margin-bottom: 2.5rem;
 }
 
-.moduleIcon {
-  font-size: 2.5rem;
-  line-height: 1;
-  flex-shrink: 0;
+.moduleHeaderLink {
+  text-decoration: none;
+  color: inherit;
 }
 
-.moduleInfo { display: flex; flex-direction: column; gap: 0.5rem; }
+.moduleMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 0.75rem;
+}
 
-.moduleBadge {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--mod-color, var(--accent-blue));
+.moduleNum {
   font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.moduleCheck {
+  color: var(--accent-emerald);
 }
 
 .moduleTitle {
-  font-size: 1.4rem;
+  font-size: 2rem;
   font-weight: 700;
-  color: var(--text-heading);
-  margin: 0;
+  margin-bottom: 1rem;
+  transition: color 0.2s ease;
+}
+
+.moduleHeaderLink:hover .moduleTitle {
+  color: var(--accent-blue);
 }
 
 .moduleDesc {
+  font-size: 1.125rem;
   color: var(--text-secondary);
-  font-size: 0.9375rem;
   line-height: 1.6;
-  margin: 0;
+  margin-bottom: 1.5rem;
 }
 
-.moduleMeta { margin-top: 0.25rem; }
-.analogy { color: var(--text-secondary); font-style: italic; }
-
-.moduleProgress {
+.moduleFooter {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.5rem;
-  min-width: 120px;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-subtle);
 }
 
-.progressText {
-  font-size: 0.8rem;
+.moduleAnalogy {
+  font-size: 0.875rem;
   color: var(--text-tertiary);
+}
+
+.analogy {
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-style: normal;
+}
+
+.moduleStats {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--accent-blue);
   font-family: var(--font-mono);
 }
 
-.progressBar {
-  width: 100px;
-  height: 4px;
-  background: var(--border-default);
-  border-radius: var(--radius-full);
-  overflow: hidden;
-}
-
-.progressFill {
-  height: 100%;
-  border-radius: var(--radius-full);
-  transition: width 0.6s ease;
-}
-
-/* ─── Lessons Grid ───────────────────────────────────────── */
-.lessonsGrid {
+/* ─── Lessons List ───────────────────────────────────────── */
+.lessonsList {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
 }
 
-.lessonLink, .lessonLinkDisabled {
+.lessonLink {
   text-decoration: none;
   color: inherit;
-  display: block;
 }
 
-.lessonCard {
+.lessonItem {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1rem 1.25rem;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  transition: all var(--transition-base);
-  cursor: pointer;
+  padding: 1rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.lessonLink:hover .lessonCard {
-  border-color: var(--mod-color, var(--border-accent));
-  background: var(--bg-tertiary);
-  transform: translateX(4px);
+.lessonLink:hover .lessonItem {
+  border-color: var(--accent-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.lessonLearned .lessonIconIndicator {
+  color: var(--accent-emerald);
+}
+
+.lessonLearned .lessonTitle {
+  font-weight: 500;
 }
 
 .lessonLocked {
   opacity: 0.5;
-  cursor: default;
 }
 
-.lessonNum {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--text-tertiary);
-  width: 20px;
-  flex-shrink: 0;
-  text-align: center;
-}
-
-.lessonContent { flex: 1; min-width: 0; }
-
-.lessonTitle {
-  font-size: 0.9375rem;
-  font-weight: 500;
-  color: var(--text-heading);
-  line-height: 1.4;
-  margin-bottom: 0.375rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.lessonMeta {
+.lessonIconIndicator {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
+  justify-content: center;
+  width: 24px;
+  color: var(--text-subtle);
 }
 
-.lessonArrow {
-  color: var(--text-tertiary);
-  font-size: 1rem;
-  flex-shrink: 0;
-  transition: transform var(--transition-fast);
+.itemDot {
+  font-size: 1.5rem;
+  line-height: 1;
 }
 
-.lessonLink:hover .lessonArrow {
-  transform: translateX(4px);
-  color: var(--mod-color, var(--text-secondary));
+.lessonTitle {
+  font-size: 0.95rem;
+  color: var(--text-main);
+  line-height: 1.4;
 }
 
-@media (max-width: 768px) {
-  .moduleHeader { grid-template-columns: auto 1fr; }
-  .moduleProgress { display: none; }
-  .lessonsGrid { grid-template-columns: 1fr; }
+/* ─── Responsive ────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .heroGrid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .module { padding-left: 2.5rem; }
+  .lessonsList { grid-template-columns: 1fr; }
+  .moduleTitle { font-size: 1.5rem; }
+  .header h1 { font-size: 2.5rem; }
 }

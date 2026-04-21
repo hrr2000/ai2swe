@@ -1,0 +1,60 @@
+---
+title: "Your First Prompt: Calling an API in Natural Language"
+summary: "Understand the 'System, User, Assistant' message structure through the lens of HTTP headers and body."
+module: 0
+lesson: 5
+slug: "your-first-prompt"
+analogy: "Prompt roles as HTTP headers and request body"
+estimatedTime: "15 min"
+readingTime: "8 min"
+---
+
+# Your First Prompt: The API of Language
+
+In traditional programming, you call functions with typed arguments: `function(string, int, boolean)`.
+In AI, you call a "Model" with a **Prompt**. 
+
+But a prompt isn't just a raw string of text. To get reliable results, you must use the standard **Chat Completion Schema**.
+
+## The Message Roles
+
+Think of a prompt as an HTTP request with specific headers:
+
+### 1. The System Message (The Config)
+*Equivalent to: `package.json` config or Global Middleware.*
+This defines the identity and constraints of the model.
+> **System:** "You are a Senior TypeScript Engineer. Only output valid JSON. No yapping."
+
+### 2. The User Message (The Request)
+*Equivalent to: `req.body` or function arguments.*
+This is where you ask your question or provide data.
+> **User:** "Convert this CSV to a standard JSON schema: [data...]"
+
+### 3. The Assistant Message (The Response)
+*Equivalent to: `res.json()`.*
+This is the history of what the AI has already said. It’s used to provide "State" or "Conversation History" back to the model.
+
+## The Structure
+
+When you call an LLM via code, it looks like an array of objects:
+
+```typescript
+const prompt = [
+  { role: "system", content: "You are a code reviewer." },
+  { role: "user", content: "Review this function for security vulnerabilities: [code]" }
+];
+
+// Passing the 'Array of State' to the model
+const response = await ai.complete({ messages: prompt });
+```
+
+## Why This Matters
+
+AI models are **stateless**. They don't "remember" you across requests. Every time you send a message, you must send the *entire history* back (User + Assistant history).
+
+> [!TIP]
+> Treat the **System Message** as the most powerful part of your prompt. It's the "Initialization" phase of your program. If the System Message is weak, the output will be buggy.
+
+Congratulations! You've finished **Module 0**. You've gone from "AI is magic" to "AI is a stateless function call over a compiled binary of data." 
+
+Ready for the math? Let's go to **Module 1**.

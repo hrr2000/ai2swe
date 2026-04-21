@@ -1,0 +1,44 @@
+---
+title: "The AI Dev Lifecycle (It's Just CI/CD)"
+summary: "Map the standard software development lifecycle to the machine learning pipeline."
+module: 0
+lesson: 3
+slug: "ai-development-lifecycle"
+analogy: "Training as Compiling, Validation as Unit Testing"
+estimatedTime: "15 min"
+readingTime: "7 min"
+---
+
+# The AI Dev Lifecycle
+
+Every software engineer knows the golden loop:
+
+1. **Write Code**
+2. **Run Unit Tests**
+3. **Compile / Build**
+4. **Deploy to Prod**
+5. **Monitor Logs**
+
+The AI lifecycle looks scary because data scientists use words like "Hyperparameter Optimization" and "Inference Pipelines." But it is exactly the same loop, just with different nouns.
+
+## The 1:1 Mapping
+
+Let's translate the pipeline:
+
+### 1. Writing Code ➔ Data Engineering
+Instead of writing functions, you write logic to collect, clean, and format data. "ETL" (Extract, Transform, Load) pipelines are the new IDEs.
+
+### 2. Unit Testing ➔ Validation Split
+You don't write `expect(output).toEqual(true)`. Instead, you hold back 20% of your dataset (the "Validation Set"). If the model succeeds on the 80% but fails on the 20%, it failed its tests (this is called *overfitting*).
+
+### 3. Compiling ➔ Training
+Compiling takes your syntax tree and creates bytecode. Training takes your dataset and runs thousands of iterative mathematical loops to configure the `weights` of the model. Both processes result in a frozen artifact you can ship.
+
+### 4. Shipping ➔ Inference
+When your compiled server runs and accepts an HTTP request, that's called production. When an AI model accepts an HTTP request and outputs a prediction, it's called **Inference**.
+
+### 5. Monitoring ➔ Drift Detection
+In traditional software, you monitor for 500 server errors. In AI, you monitor for "Data Drift"—is the live data hitting your server drastically different from the data you compiled the model with?
+
+> [!NOTE]
+> Training a model is slow and expensive, just like compiling a massive C++ application. Inference is (relatively) fast.

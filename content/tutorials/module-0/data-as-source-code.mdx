@@ -1,0 +1,46 @@
+---
+title: "Data is the New Source Code"
+summary: "Why CSV files and JSON arrays replace lines of logic."
+module: 0
+lesson: 2
+slug: "data-as-source-code"
+analogy: "Datasets as source code, Training as compiling"
+estimatedTime: "10 min"
+readingTime: "5 min"
+---
+
+# Data Is the New Source Code
+
+As a software engineer, you are used to writing business logic explicitly:
+
+```javascript
+// Traditional Engineering
+function detectSpam(email) {
+  if (email.subject.includes("FREE MONEY")) return true;
+  if (email.sender === "unknown") return true;
+  return false;
+}
+```
+
+This works until edge cases explode. What if the subject says "F r e e M 0 n e y"? You add more `if` statements. This is **Rule-Based Programming**, and it scales poorly.
+
+## The Paradigm Shift
+
+In AI, you don't write the `if` statements. Instead, you provide a massive array of inputs and desired outputs, and the machine **compiles the logic** for you. 
+
+```json
+// AI Engineering (The "Source Code")
+[
+  { "input": "Get free money now!", "label": "spam" },
+  { "input": "Meeting at 9am?", "label": "ham" },
+  { "input": "F r e e M 0 n e y", "label": "spam" }
+]
+```
+
+In this new paradigm:
+- **Datasets** are your source code.
+- **Model Training** is your compiler.
+- **Weights & Biases** are your compiled binary binary.
+
+> [!TIP]
+> If your AI model is outputting garbage, your "code" isn't broken—your *dataset* is buggy. You "debug" an AI model by cleaning its data, not by rewriting its internal logic.
